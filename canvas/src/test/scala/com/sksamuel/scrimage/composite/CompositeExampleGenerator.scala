@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage.composite
 
 import com.sksamuel.scrimage.{Format, Composite, Image}
+import com.sksamuel.scrimage.canvas.Canvas
 import java.io.File
 import org.apache.commons.io.FileUtils
 
@@ -45,8 +46,8 @@ object CompositeExampleGenerator extends App {
 
     for ( alpha <- List(0.5, 1.0) ) {
 
-      val large = l1.composite(composite(alpha), l2)
-      val small = s1.composite(composite(alpha), s2)
+      val large = Canvas(l1).composite(composite(alpha), l2)
+      val small = Canvas(s1).composite(composite(alpha), s2)
 
       println(s"Generating example [$name ($alpha)]")
       large.write(new File(s"examples/composite/${name}_${alpha}_large.jpeg"), Format.JPEG)

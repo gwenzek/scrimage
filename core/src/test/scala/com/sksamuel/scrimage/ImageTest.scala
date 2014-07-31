@@ -511,6 +511,5 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     for( (p0, p1) <- image.raster.model.zip(resized.raster.model)){
       assert(p0 == p1)
     }
-    resized.write(new java.io.File("small_small_cubic.png"))
   }
 }

@@ -24,6 +24,7 @@ import java.awt.geom.AffineTransform
 /** @author Stephen Samuel */
 class MutableImage(raster: Raster) extends Image(raster) {
 
+  @deprecated("use filled", "1.4")
   override def clear(color: Color = X11Colorlist.White): Image = {
     val g2 = awt.getGraphics
     g2.setColor(color)
@@ -46,15 +47,13 @@ class MutableImage(raster: Raster) extends Image(raster) {
   }
 
   override def filled(color: Color): MutableImage = {
-    val g2 = awt.getGraphics.asInstanceOf[Graphics2D]
-    g2.setColor(color)
-    g2.fillRect(0, 0, awt.getWidth, awt.getHeight)
-    g2.dispose()
+    val pixel = raster.fromColor(color)
+    for(i <- 0 until raster.model.length) raster.model(i) = pixel
     this
   }
 
   def setPixel(x: Int, y: Int, pixel: Int) {
-    awt.setRGB(x, y, pixel)
+    raster.write(x, y, pixel)
   }
 }
 
