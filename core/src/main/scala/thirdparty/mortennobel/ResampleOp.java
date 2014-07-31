@@ -325,11 +325,10 @@ public class ResampleOp extends AdvancedResizeOp {
       horizontallyFromSrcToWorkGray(srcImg, workPixels, start, delta);
       return;
     }
-    final
-    int[]
-        tempPixels =
-        new int[srcWidth];   // Used if we work on int based bitmaps, later used to keep channel values
-    final byte[] srcPixels = new byte[srcWidth * nrChannels]; // create reusable row to minimize memory overhead
+    // Used if we work on int based bitmaps, later used to keep channel values
+    final int[] tempPixels = new int[srcWidth];
+    // create reusable row to minimize memory overhead
+    final byte[] srcPixels = new byte[srcWidth * nrChannels];
     final boolean useChannel3 = nrChannels > 3;
 
     for (int k = start; k < srcHeight; k = k + delta) {
@@ -371,13 +370,14 @@ public class ResampleOp extends AdvancedResizeOp {
    * Apply filter to sample horizontally from Src to Work
    */
   private void horizontallyFromSrcToWorkGray(BufferedImage srcImg, byte[][] workPixels, int start, int delta) {
-    final
-    int[]
-        tempPixels =
-        new int[srcWidth];   // Used if we work on int based bitmaps, later used to keep channel values
-    final byte[] srcPixels = new byte[srcWidth]; // create reusable row to minimize memory overhead
+    // Used if we work on int based bitmaps, later used to keep channel values
+    final int[] tempPixels = new int[srcWidth];
+
+    // create reusable row to minimize memory overhead
+    final byte[] srcPixels = new byte[srcWidth];
 
     for (int k = start; k < srcHeight; k = k + delta) {
+      //fill srcPixels with the k-th row of srcImage (with BGR or ABGR pixels ??)
       ImageUtils.getPixelsBGR(srcImg, k, srcWidth, srcPixels, tempPixels);
 
       for (int i = dstWidth - 1; i >= 0; i--) {

@@ -36,7 +36,7 @@ trait Raster {
    * @return the pixel color
    */
   def read(x: Int, y: Int): Color = toColor(model(coordinateToOffset(x, y)))
-
+  def readRaw(x: Int, y: Int): PixelType = model(coordinateToOffset(x, y))
   /**
    * Convert a Color to a pixel
    */
@@ -54,6 +54,8 @@ trait Raster {
     model(coordinateToOffset(x, y)) = fromColor(color)
   def write(x: Int, y: Int, color: Int): Unit =
     model(coordinateToOffset(x, y)) = fromInt(color)
+  def writeRaw(x: Int, y: Int, pixel: PixelType): Unit =
+    model(coordinateToOffset(x, y)) = pixel
 
   def coordinateToOffset(x: Int, y: Int): Int = y * width + x
 
@@ -105,7 +107,7 @@ class IntARGBRaster(val width: Int,
   def rasterOfSize(width: Int, height: Int) = IntARGBRaster(width, height)
 
   def listComponents(px: Int): Array[Int] =
-    Array((px >> 24) & 0xFF, (px >> 16) & 0xFF, (px >> 8) & 0xFF, px & 0xFF)
+    Array((px >> 24) & 0xff, (px >> 16) & 0xff, (px >> 8) & 0xff, px & 0xff)
 
   def fromComponents(comps: Array[Int]): Int =
     comps(0) << 24 | comps(1) << 16 | comps(2) << 8 | comps(3)
@@ -131,3 +133,11 @@ object IntARGBRaster {
   }
 }
 
+
+// class ComponentRaster[T <: Raster](parent: T, component: T.PixelType => Byte) extends Raster {
+//   type RasterType = T.RasterType
+//   type PixelType = Byte
+//   val model = parent.model
+
+
+// }
