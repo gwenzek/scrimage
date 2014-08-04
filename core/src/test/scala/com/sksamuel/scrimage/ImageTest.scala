@@ -138,7 +138,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   }
 
   test("when create a new filled image then the dimensions are as specified") {
-    val image = Image.filled(595, 911, java.awt.Color.BLACK)
+    val image = Image.filled(595, 911, java.awt.Color.RED)
     assert(595 === image.width)
     assert(911 === image.height)
   }
@@ -255,8 +255,6 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
   test("when fitting an image the output image should match as expected") {
     val fitted = image.fit(900, 300, java.awt.Color.RED)
     val expected = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird_fitted2.png"))
-    fitted.write(new java.io.File("fitted.png"))
-    expected.write(new java.io.File("expected.png"))
     assert(fitted.pixels.length === expected.pixels.length)
     assert(expected === fitted)
   }
@@ -473,44 +471,5 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     assert(expected == autocropped)
   }
 
-  // val colors = Array[Int](0xffff3f00, 0xffefff0f, 0xff004fff, 0xff1fffdf,
-  //                         0xffefff0f, 0xff004fff, 0xff00008f, 0xffff3f00,
-  //                         0xff7f0000, 0xff1fffdf, 0xffff3f00, 0xff004fff,
-  //                         0xff00008f, 0xff004fff, 0xffefff0f, 0xff00008f
-  //                         )
 
-  val colors = Array[Int](0xffff0000, 0xffdd0000, 0xffaa0000, 0xff990000,
-                          0xffcc0000, 0xffbb0000, 0xff880000, 0xff660000,
-                          0xff990000, 0xff770000, 0xff550000, 0xff330000,
-                          0xff660000, 0xff440000, 0xff220000, 0xff000000
-                        )
-
-  test("scale to with NearestNeighbor should works correctly") {
-    val image = new Image(new IntARGBRaster(4, 4, colors))
-    val scaled = image.scaleTo(200, 200, ScaleMethod.FastScale)
-    assert(scaled.pixel(10, 10) == image.pixel(0, 0))
-    assert(scaled.pixel(60, 30) == image.pixel(1, 1))
-    scaled.write(new java.io.File("big_nn_2.png"))
-    image.write(new java.io.File("small_2.png"))
-    assert(scaled.pixel(190, 60) == image.pixel(3, 2))
-  }
-
-  test("scale to with Bilinear should be revertible") {
-    val image = new Image(new IntARGBRaster(4, 4, colors))
-    val scaled = image.scaleTo(200, 200, ScaleMethod.Bilinear)
-    val resized = scaled.scaleTo(4, 4, ScaleMethod.Bilinear)
-    for( (p0, p1) <- image.raster.model.zip(resized.raster.model)){
-      assert(p0 == p1)
-    }
-  }
-
-  test("scale to with Bicubic should be revertible") {
-    val image = new Image(new IntARGBRaster(4, 4, colors))
-    val scaled = image.scaleTo(200, 200, ScaleMethod.Bicubic)
-    scaled.write(new java.io.File("big_cubic_2.png"))
-    val resized = scaled.scaleTo(4, 4, ScaleMethod.Bicubic)
-    for( (p0, p1) <- image.raster.model.zip(resized.raster.model)){
-      assert(p0 == p1)
-    }
-  }
 }

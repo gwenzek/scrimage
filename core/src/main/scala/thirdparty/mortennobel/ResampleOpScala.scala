@@ -5,9 +5,7 @@
 // //remove if not needed
 // import scala.collection.JavaConversions._
 
-// object ResampleOp {
-
-//   private val MAX_CHANNEL_VALUE = 255
+// object ResampleOpScala {
 
 //   case class SubSamplingData(
 //     arrN: Array[Int],
@@ -94,11 +92,11 @@
 //         }
 //       }
 //     }
-//     new SubSamplingData(arrN, arrPixel, arrWeight, numContributors)
+//     SubSamplingData(arrN, arrPixel, arrWeight, numContributors)
 //   }
 // }
 
-// class ResampleOp(
+// class ResampleOpScala(
 //     val numberOfThreads: Int,
 //     val filter: ResampleFilter,
 //     destWidth: Int,
@@ -129,13 +127,11 @@
 //         " but must be" +
 //         " at least 3x3.")
 //     }
-//     if (srcImg.getType == BufferedImage.TYPE_BYTE_BINARY || srcImg.getType == BufferedImage.TYPE_BYTE_INDEXED ||
-//       srcImg.getType == BufferedImage.TYPE_CUSTOM) srcImg = ImageUtils.convert(srcImg, if (srcImg.getColorModel.hasAlpha()) BufferedImage.TYPE_4BYTE_ABGR else BufferedImage.TYPE_3BYTE_BGR)
-//     this.nrChannels = ImageUtils.nrChannels(srcImg)
+//     this.nrChannels = srcImg.raster.colorModel.n_comp
 //     assert(nrChannels > 0)
-//     this.srcWidth = srcImg.getWidth
-//     this.srcHeight = srcImg.getHeight
-//     var workPixels = Array.ofDim[Byte](srcHeight, dstWidth * nrChannels)
+//     this.srcWidth = srcImg.width
+//     this.srcHeight = srcImg.height
+//     val workPixels = Array.ofDim[Byte](srcHeight, dstWidth * nrChannels)
 //     horizontalSubsamplingData = createSubSampling(filter, srcWidth, dstWidth)
 //     verticalSubsamplingData = createSubSampling(filter, srcHeight, dstHeight)
 //     val scrImgCopy = srcImg
@@ -144,7 +140,6 @@
 //     for (i <- 1 until numberOfThreads) {
 //       val finalI = i
 //       threads(i - 1) = new Thread(new Runnable() {
-
 //         def run() {
 //           horizontallyFromSrcToWork(scrImgCopy, workPixelsCopy, finalI, numberOfThreads)
 //         }
@@ -167,10 +162,7 @@
 //     }
 //     verticalFromWorkToDst(workPixelsCopy, outPixelsCopy, 0, numberOfThreads)
 //     waitForAllThreads(threads)
-//     workPixels = null
-//     var out: BufferedImage = new BufferedImage(dstWidth, dstHeight, getResultBufferedImageType(srcImg))
-//     ImageUtils.setBGRPixels(outPixels, out, 0, 0, dstWidth, dstHeight)
-//     out
+//     new Image(new IntARGBRaster(workPixels))
 //   }
 
 //   private def waitForAllThreads(threads: Array[Thread]) {
@@ -350,11 +342,4 @@
 //     (f + 0.5f).toByte
 //   }
 
-//   protected def getResultBufferedImageType(srcImg: BufferedImage): Int = {
-//     if (nrChannels == 3) BufferedImage.TYPE_3BYTE_BGR
-//     else{
-//       if (nrChannels == 4) BufferedImage.TYPE_4BYTE_ABGR
-//       else (if (srcImg.getSampleModel.getDataType == DataBuffer.TYPE_USHORT) BufferedImage.TYPE_USHORT_GRAY else BufferedImage.TYPE_BYTE_GRAY))
-//     }
-//   }
 // }

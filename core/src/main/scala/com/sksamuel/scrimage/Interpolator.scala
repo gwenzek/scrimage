@@ -106,13 +106,13 @@ class BicubicInterpolator(val image: Image) extends Interpolator {
     val raster = image.raster
 
     def extract(x: Float, y: Float) = {
-        val xs = Array(-1, 0, 1, 2).map(dx => coerce(x-0.5f+dx, 0, raster.width - 1))
-        val ys = Array(-1, 0, 1, 2).map(dy => coerce(y-0.5f+dy, 0, raster.height - 1))
+        val xs = Array(-1, 0, 1, 2).map(dx => coerce(x+dx, 0, raster.width - 1))
+        val ys = Array(-1, 0, 1, 2).map(dy => coerce(y+dy, 0, raster.height - 1))
         ys.flatMap(y => xs.map(x => raster.pixel(x, y)))
     }
 
     def interpolateFrom(x: Float, y: Float)(extracted: Array[Int]) = {
-        val x1 = x - (x-0.5f).toInt - 0.5f
+        val x1 = x - x.toInt
         val x2 = x1 * x1
         val x3 = x2 * x1
 
@@ -121,21 +121,26 @@ class BicubicInterpolator(val image: Image) extends Interpolator {
         val b1 = q(x1, x2, x3)(extracted(8), extracted(9), extracted(10), extracted(11))
         val b2 = q(x1, x2, x3)(extracted(12), extracted(13), extracted(14), extracted(15))
 
-        val y1 = y - (y-0.5f).toInt - 0.5f
+        val y1 = y - y.toInt
         val y2 = y1 * y1
         val y3 = y2 * y1
-
+        // println(""+(x,y)+(x1, y1))
         coerce(q(y1, y2, y3)(b_1, b0, b1, b2))
     }
 
     def q(x1: Float, x2: Float, x3: Float)(a_1: Float, a0: Float, a1: Float, a2: Float) = {
-        // (1f*a0 + 0.5f*x1*(a1-a_1)
-        //     + x2*(a_1 - 2.5f*a0 + 2f*a1 - 0.5f*a2)
-        //     + x3*(0.5f*(a2-a_1) + 1.5f*(a0-a1)))
-        ( (0.5f * x3 - x2 + 0.5f * x1) * a_1 +
-          (2.5f * x3 - 3.5f * x2 + 1f) * a0 +
-          (-2.5f * x3 + 4f*x2 - 0.5f*x1) * a1 +
-          (-0.5f * x3 + 0.5f * x2) * a2
-        )
+        // wikipedia
+        val w_1 = (-0.5f*x1 + x2 - 0.5f*x3)
+        val w0 = (1f - 2.5f*x2 + 1.5f*x3)
+        val w1 = (0.5f*x1 + 2f*x2 - 1.5f*x3)
+        val w2 =  0.5f * (x3 - x2)
+        ( w_1*a_1 + w0*a0 + w1*a1 + w2*a2 )
+        // extrapolated from mortennobel --false
+        // val w_1 = (0.5f*x1 - x2 + 0.5f*x3)
+        // val w0 = (1f - 3.5f*x2 + 2.5f*x3)
+        // val w1 = (-0.5f*x1 + 4f*x2 - 2.5f*x3)
+        // val w2 =  -0.5f * (x3 - x2)
+        // val tot = w_1 + w0 + w1 + w2
+        // ( w_1*a_1 + w0*a0 + w1*a1 + w2*a2 ) / tot
     }
 }

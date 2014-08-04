@@ -431,7 +431,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     scaleMethod match {
       case FastScale => new NNInterpolator(this).scaleTo(targetWidth, targetHeight)
       case Bilinear => new BilinearInterpolator(this).scaleTo(targetWidth, targetHeight)
-      case Bicubic => new BicubicInterpolator(this).scaleTo(targetWidth, targetHeight)
+      // case Bicubic => new BicubicInterpolator(this).scaleTo(targetWidth, targetHeight)
       case _ =>
         val method = scaleMethod match {
           case Bilinear => ResampleFilters.triangleFilter
