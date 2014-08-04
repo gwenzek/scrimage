@@ -40,6 +40,9 @@ class InterpolatorTest extends FunSuite {
     val expected = Image(op.filter(image.awt, null))
     expected.write(new java.io.File("small_linear_expected.png"))
     scaled.write(new java.io.File("small_linear.png"))
+    // for( (p0, p1) <- expected.raster.model.zip(scaled.raster.model)){
+    //   assert(p0 == p1)
+    // }
     assert(expected == scaled)
 
     val resized = scaled.scaleTo(4, 4, ScaleMethod.Bilinear)
@@ -63,22 +66,21 @@ class InterpolatorTest extends FunSuite {
     // }
   }
 
-  println("With a big image")
   val bigImage = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/bird.jpg"))
 
-  test("scale to with Bilinear should still match Mortennobel") {
-    val scaled = new BilinearInterpolator(bigImage).scaleTo(200, 200)
-    val op = new ResampleOp(Image.SCALE_THREADS, ResampleFilters.triangleFilter, 200, 200)
-    val expected = Image(op.filter(image.awt, null))
+  test("scale to with Bilinear should match Mortennobel with bird.jpg") {
+    val scaled = new BilinearInterpolator(bigImage).scaleTo(600, 400)
+    val op = new ResampleOp(Image.SCALE_THREADS, ResampleFilters.triangleFilter, 600, 400)
+    val expected = Image(op.filter(bigImage.awt, null))
     expected.write(new java.io.File("big_linear_expected.png"))
     scaled.write(new java.io.File("big_linear.png"))
     assert(expected == scaled)
   }
 
-  test("scale to with Bicubic should still match Mortennobel") {
-    val scaled = new BicubicInterpolator(bigImage).scaleTo(200, 200)
-    val op = new ResampleOp(Image.SCALE_THREADS, ResampleFilters.biCubicFilter, 200, 200)
-    val expected = Image(op.filter(image.awt, null))
+  test("scale to with Bicubic should still match Mortennobel with bird.jpg") {
+    val scaled = new BicubicInterpolator(bigImage).scaleTo(600, 400)
+    val op = new ResampleOp(Image.SCALE_THREADS, ResampleFilters.biCubicFilter, 600, 400)
+    val expected = Image(op.filter(bigImage.awt, null))
     expected.write(new java.io.File("big_cubic_expected.png"))
     scaled.write(new java.io.File("big_cubic.png"))
     assert(expected == scaled)
