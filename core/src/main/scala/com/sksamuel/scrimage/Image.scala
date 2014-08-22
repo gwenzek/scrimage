@@ -61,11 +61,11 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   @deprecated("java.awt is to be removed", "22 Jul 2014")
   lazy val awt: BufferedImage = {
     import java.awt.image.{ ColorModel, DataBufferInt, Raster }
-    val cm = ColorModel.getRGBdefault()
+    val cm = ColorModel.getRGBdefault
     val sm = cm.createCompatibleSampleModel(width, height)
-    val db = new DataBufferInt(raster.extract.map(_.toInt), width * height);
-    val wr = java.awt.image.Raster.createWritableRaster(sm, db, null);
-    new BufferedImage(cm, wr, false, null);
+    val db = new DataBufferInt(raster.extract.map(_.toInt), width * height)
+    val wr = java.awt.image.Raster.createWritableRaster(sm, db, null)
+    new BufferedImage(cm, wr, false, null)
   }
 
   /** This a workaround to allow code written for the old version image to work.
@@ -219,15 +219,15 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     require(x + subWidth < width)
     require(y >= 0)
     require(y + subHeight < height)
-    val raster = ARGBRaster(subWidth, subHeight)
+    val subraster = raster.empty(subWidth, subHeight)
     // Simply copy the pixels over, one by one.
     for (
       yIndex <- 0 until subHeight;
       xIndex <- 0 until subWidth
     ) {
-      raster.write(xIndex, yIndex, subpixel(xIndex + x, yIndex + y))
+      subraster.write(xIndex, yIndex, subpixel(xIndex + x, yIndex + y))
     }
-    new Image(raster)
+    new Image(subraster)
   }
 
   /** Extract a patch, centered at a subpixel point.
@@ -267,11 +267,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     *
     * @return
     */
-  def pixels: Array[Int] = {
-    raster match {
-      case i: ARGBRaster => i.extract.map(_.argb)
-    }
-  }
+  def pixels: Array[Int] = raster.extract.map(_.argb)
 
   /** Creates a copy of this image with the given filter applied.
     * The original (this) image is unchanged.
@@ -302,7 +298,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
       RGBColor(r, g, b)
     }
     val rgbColors = raster.extract.map(_.toRGB).map(rmTransparency)
-    new Image(ARGBRaster(width, height, rgbColors))
+    new Image(RGBARaster(width, height, rgbColors))
   }
 
   /** Flips this image horizontally.
@@ -334,7 +330,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     * @return
     */
   def rotateLeft = {
-    val raster = ARGBRaster(height, width)
+    val raster = RGBARaster(height, width)
     new Image(raster)
   }
 
@@ -343,7 +339,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     * @return
     */
   def rotateRight = {
-    val raster = ARGBRaster(height, width)
+    val raster = RGBARaster(height, width)
     new Image(raster)
   }
 
@@ -729,7 +725,7 @@ object Image {
     val g2 = buff.getGraphics.asInstanceOf[Graphics2D]
     g2.drawImage(awt, 0, 0, null)
     g2.dispose()
-    val raster = ARGBRaster(
+    val raster = RGBARaster(
       awt.getWidth(null),
       awt.getHeight(null),
       buff.getRaster.getDataBuffer.asInstanceOf[DataBufferInt].getData
@@ -755,7 +751,7 @@ object Image {
     * @return the new Image
     */
   def filled(width: Int, height: Int, color: Color = Color.White): Image = {
-    val r = ARGBRaster(width, height, color)
+    val r = RGBARaster(width, height, color)
     new Image(r)
   }
 
@@ -767,7 +763,7 @@ object Image {
     *
     * @return the new Image with the given width and height
     */
-  def empty(width: Int, height: Int): Image = new Image(ARGBRaster(width, height))
+  def empty(width: Int, height: Int): Image = new Image(RGBARaster(width, height))
 }
 
 sealed trait ScaleMethod

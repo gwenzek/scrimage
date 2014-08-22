@@ -240,7 +240,7 @@ object ResampleOpScala {
           c0 = src.offset(hSampling.arrPixel(index), y)
           c = 0
           while (c < n_channel) {
-            sample(c) += (src.readChannel(c0)) * hSampling.arrWeight(index)
+            sample(c) += src.readChannel(c0) * hSampling.arrWeight(index)
             c += 1
             c0 += src.channelSize
           }
@@ -286,7 +286,7 @@ object ResampleOpScala {
           c0 = work.offset(x, vSampling.arrPixel(index))
           c = 0
           while (c < n_channel) {
-            sample(c) += (work.readChannel(c0)) * vSampling.arrWeight(index)
+            sample(c) += work.readChannel(c0) * vSampling.arrWeight(index)
             c0 += work.channelSize
             c += 1
           }
