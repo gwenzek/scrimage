@@ -16,20 +16,20 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which performs a "smart blur". i.e. a blur which blurs smotth parts of the image while preserving edges.
  */
-public class SmartBlurFilter extends AbstractBufferedImageOp {
+public class SmartBlurFilter extends AbstractImageOp {
 
 	private int hRadius = 5;
 	private int vRadius = 5;
 	private int threshold = 10;
-	
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
@@ -51,8 +51,8 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	 */
 	private void thresholdBlur(Kernel kernel, int[] inPixels, int[] outPixels, int width, int height, boolean alpha) {
 		int index = 0;
-		float[] matrix = kernel.getKernelData( null );
-		int cols = kernel.getWidth();
+		float[] matrix = kernel.data;
+		int cols = kernel.width();
 		int cols2 = cols/2;
 
 		for (int y = 0; y < height; y++) {
@@ -127,7 +127,7 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	public void setHRadius(int hRadius) {
 		this.hRadius = hRadius;
 	}
-	
+
 	/**
 	 * Get the horizontal size of the blur.
 	 * @return the radius of the blur in the horizontal direction
@@ -136,7 +136,7 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	public int getHRadius() {
 		return hRadius;
 	}
-	
+
 	/**
 	 * Set the vertical size of the blur.
 	 * @param vRadius the radius of the blur in the vertical direction
@@ -146,7 +146,7 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	public void setVRadius(int vRadius) {
 		this.vRadius = vRadius;
 	}
-	
+
 	/**
 	 * Get the vertical size of the blur.
 	 * @return the radius of the blur in the vertical direction
@@ -155,7 +155,7 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	public int getVRadius() {
 		return vRadius;
 	}
-	
+
 	/**
 	 * Set the radius of the effect.
 	 * @param radius the radius
@@ -165,7 +165,7 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	public void setRadius(int radius) {
 		this.hRadius = this.vRadius = radius;
 	}
-	
+
 	/**
 	 * Get the radius of the effect.
 	 * @return the radius
@@ -174,7 +174,7 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	public int getRadius() {
 		return hRadius;
 	}
-	
+
 	/**
      * Set the threshold value.
      * @param threshold the threshold value
@@ -183,7 +183,7 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	public void setThreshold(int threshold) {
 		this.threshold = threshold;
 	}
-	
+
 	/**
      * Get the threshold value.
      * @return the threshold value
@@ -192,7 +192,7 @@ public class SmartBlurFilter extends AbstractBufferedImageOp {
 	public int getThreshold() {
 		return threshold;
 	}
-	
+
 	public String toString() {
 		return "Blur/Smart Blur...";
 	}

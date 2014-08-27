@@ -16,13 +16,13 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 import java.awt.geom.*;
 
 /**
  * A filter which produces motion blur the slow, but higher-quality way.
  */
-public class MotionBlurFilter extends AbstractBufferedImageOp {
+public class MotionBlurFilter extends AbstractImageOp {
 
 	private float angle = 0.0f;
 	private float falloff = 1.0f;
@@ -51,7 +51,7 @@ public class MotionBlurFilter extends AbstractBufferedImageOp {
         this.rotation = rotation;
         this.zoom = zoom;
     }
-    
+
 	/**
      * Specifies the angle of blur.
      * @param angle the angle of blur.
@@ -70,7 +70,7 @@ public class MotionBlurFilter extends AbstractBufferedImageOp {
 	public float getAngle() {
 		return angle;
 	}
-	
+
 	/**
      * Set the distance of blur.
      * @param distance the distance of blur.
@@ -88,7 +88,7 @@ public class MotionBlurFilter extends AbstractBufferedImageOp {
 	public float getDistance() {
 		return distance;
 	}
-	
+
 	/**
      * Set the blur rotation.
      * @param rotation the angle of rotation.
@@ -106,7 +106,7 @@ public class MotionBlurFilter extends AbstractBufferedImageOp {
 	public float getRotation() {
 		return rotation;
 	}
-	
+
 	/**
      * Set the blur zoom.
      * @param zoom the zoom factor.
@@ -124,7 +124,7 @@ public class MotionBlurFilter extends AbstractBufferedImageOp {
 	public float getZoom() {
 		return zoom;
 	}
-	
+
 	/**
      * Set whether to wrap at the image edges.
      * @param wrapEdges true if it should wrap.
@@ -161,9 +161,9 @@ public class MotionBlurFilter extends AbstractBufferedImageOp {
 		return premultiplyAlpha;
 	}
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );

@@ -16,13 +16,13 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * Edge detection via the Laplacian operator.
  * @author Jerry Huxtable
  */
-public class LaplaceFilter extends AbstractBufferedImageOp {
+public class LaplaceFilter extends AbstractImageOp {
 
     private void brightness( int[] row ) {
         for ( int i = 0; i < row.length; i++ ) {
@@ -34,9 +34,9 @@ public class LaplaceFilter extends AbstractBufferedImageOp {
         }
     }
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );

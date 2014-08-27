@@ -101,6 +101,24 @@ trait Raster { self: ColorModel =>
     this
   }
 
+  def getRGB(x0: Int, y0: Int, w: Int, h: Int, colors: Array[Int], off: Int, scansize: Int): Array[Int] = {
+    var i = 0
+    for (x <- x0 until x0 + w; y <- y0 until y0 + h) {
+      colors(off + (y - y0) * scansize + (x - x0)) = pixel(x, y)
+      i += 1
+    }
+    colors
+  }
+
+  def setRGB(x0: Int, y0: Int, w: Int, h: Int, colors: Array[Int], off: Int, scansize: Int): Raster = {
+    var i = 0
+    for (x <- x0 until x0 + w; y <- y0 until y0 + h) {
+      writeARGB(offset(x, y), model)(colors(off + (y - y0) * scansize + (x - x0)))
+      i += 1
+    }
+    this
+  }
+
   /** Returns a new Raster which is a copy of this Raster.
     * Any changes made to the new Raster will not write back to this Raster.
     *
@@ -129,6 +147,9 @@ trait Raster { self: ColorModel =>
   def empty(width: Int, height: Int): RasterType = {
     copyWith(width, height, newDataModel(width, height))
   }
+
+  /** Returns an empty raster of the same size. */
+  def mimic: RasterType = empty(width, height)
 
   /** Fills the raster with given color. */
   def fill(color: Color) = {

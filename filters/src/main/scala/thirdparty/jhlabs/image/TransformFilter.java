@@ -17,13 +17,13 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import java.awt.*;
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * An abstract superclass for filters which distort images in some way. The subclass only needs to override
  * two methods to provide the mapping between source and destination pixels.
  */
-public abstract class TransformFilter extends AbstractBufferedImageOp {
+public abstract class TransformFilter extends AbstractImageOp {
 
     /**
      * Treat pixels off the edge as zero.
@@ -92,7 +92,7 @@ public abstract class TransformFilter extends AbstractBufferedImageOp {
 	public int getEdgeAction() {
 		return edgeAction;
 	}
-	
+
     /**
      * Set the type of interpolation to perform.
      * @param interpolation one of NEAREST_NEIGHBOUR or BILINEAR
@@ -110,7 +110,7 @@ public abstract class TransformFilter extends AbstractBufferedImageOp {
 	public int getInterpolation() {
 		return interpolation;
 	}
-	
+
     /**
      * Inverse transform a point. This method needs to be overriden by all subclasses.
      * @param x the X position of the pixel in the output image
@@ -126,11 +126,11 @@ public abstract class TransformFilter extends AbstractBufferedImageOp {
 	protected void transformSpace(Rectangle rect) {
 	}
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 		int type = src.getType();
-		WritableRaster srcRaster = src.getRaster();
+		Raster srcRaster = src.raster;
 
 		originalSpace = new Rectangle(0, 0, width, height);
 		transformedSpace = new Rectangle(0, 0, width, height);
@@ -138,9 +138,9 @@ public abstract class TransformFilter extends AbstractBufferedImageOp {
 
         if ( dst == null ) {
             ColorModel dstCM = src.getColorModel();
-			dst = new BufferedImage(dstCM, dstCM.createCompatibleWritableRaster(transformedSpace.width, transformedSpace.height), dstCM.isAlphaPremultiplied(), null);
+			dst = new Image(dstCM, dstCM.createCompatibleRaster(transformedSpace.width, transformedSpace.height), dstCM.isAlphaPremultiplied(), null);
 		}
-		WritableRaster dstRaster = dst.getRaster();
+		Raster dstRaster = dst.raster;
 
 		int[] inPixels = getRGB( src, 0, 0, width, height, null );
 
@@ -208,7 +208,7 @@ public abstract class TransformFilter extends AbstractBufferedImageOp {
 		return pixels[ y*width+x ];
 	}
 
-	protected BufferedImage filterPixelsNN( BufferedImage dst, int width, int height, int[] inPixels, Rectangle transformedSpace ) {
+	protected Image filterPixelsNN( Image dst, int width, int height, int[] inPixels, Rectangle transformedSpace ) {
 		int srcWidth = width;
 		int srcHeight = height;
 		int outWidth = transformedSpace.width;

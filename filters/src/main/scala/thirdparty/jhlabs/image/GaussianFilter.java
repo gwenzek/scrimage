@@ -16,8 +16,8 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.Kernel;
+import com.sksamuel.scrimage.Image;
+import thirdparty.jhlabs.image.Kernel;
 
 /**
  * A filter which applies Gaussian blur to an image. This is a subclass of ConvolveFilter
@@ -76,23 +76,23 @@ public class GaussianFilter extends ConvolveFilter {
         return radius;
     }
 
-    public BufferedImage filter(BufferedImage src, BufferedImage dst) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+    public Image filter(Image src, Image dst) {
+        int width = src.width();
+        int height = src.height();
 
         if (dst == null)
             dst = createCompatibleDestImage(src, null);
 
         int[] inPixels = new int[width * height];
         int[] outPixels = new int[width * height];
-        src.getRGB(0, 0, width, height, inPixels, 0, width);
+        src.raster().getRGB(0, 0, width, height, inPixels, 0, width);
 
         if (radius > 0) {
             convolveAndTranspose(kernel, inPixels, outPixels, width, height, alpha, alpha && premultiplyAlpha, false, CLAMP_EDGES);
             convolveAndTranspose(kernel, outPixels, inPixels, height, width, alpha, false, alpha && premultiplyAlpha, CLAMP_EDGES);
         }
 
-        dst.setRGB(0, 0, width, height, inPixels, 0, width);
+        dst.raster().setRGB(0, 0, width, height, inPixels, 0, width);
         return dst;
     }
 
@@ -108,8 +108,8 @@ public class GaussianFilter extends ConvolveFilter {
      * @param edgeAction what to do at the edges
      */
     public static void convolveAndTranspose(Kernel kernel, int[] inPixels, int[] outPixels, int width, int height, boolean alpha, boolean premultiply, boolean unpremultiply, int edgeAction) {
-        float[] matrix = kernel.getKernelData(null);
-        int cols = kernel.getWidth();
+        float[] matrix = kernel.data();
+        int cols = kernel.width();
         int cols2 = cols / 2;
 
         for (int y = 0; y < height; y++) {

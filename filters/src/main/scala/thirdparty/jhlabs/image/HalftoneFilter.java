@@ -16,17 +16,17 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which uses a another image as a ask to produce a halftoning effect.
  */
-public class HalftoneFilter extends AbstractBufferedImageOp {
-	
+public class HalftoneFilter extends AbstractImageOp {
+
 	private float softness = 0.1f;
 	private boolean invert;
 	private boolean monochrome;
-	private BufferedImage mask;
+	private Image mask;
 
 	public HalftoneFilter() {
 	}
@@ -41,7 +41,7 @@ public class HalftoneFilter extends AbstractBufferedImageOp {
 	public void setSoftness( float softness ) {
 		this.softness = softness;
 	}
-	
+
 	/**
 	 * Get the softness of the effect.
 	 * @return the softness
@@ -50,33 +50,33 @@ public class HalftoneFilter extends AbstractBufferedImageOp {
 	public float getSoftness() {
 		return softness;
 	}
-	
+
 	/**
 	 * Set the halftone mask.
 	 * @param mask the mask
      * @see #getMask
 	 */
-	public void setMask( BufferedImage mask ) {
+	public void setMask( Image mask ) {
 		this.mask = mask;
 	}
-	
+
 	/**
 	 * Get the halftone mask.
 	 * @return the mask
      * @see #setMask
 	 */
-	public BufferedImage getMask() {
+	public Image getMask() {
 		return mask;
 	}
-	
+
 	public void setInvert( boolean invert ) {
 		this.invert = invert;
 	}
-	
+
 	public boolean getInvert() {
 		return invert;
 	}
-	
+
 	/**
 	 * Set whether to do monochrome halftoning.
 	 * @param monochrome true for monochrome halftoning
@@ -85,7 +85,7 @@ public class HalftoneFilter extends AbstractBufferedImageOp {
 	public void setMonochrome(boolean monochrome) {
 		this.monochrome = monochrome;
 	}
-	
+
 	/**
 	 * Get whether to do monochrome halftoning.
 	 * @return true for monochrome halftoning
@@ -95,16 +95,16 @@ public class HalftoneFilter extends AbstractBufferedImageOp {
 		return monochrome;
 	}
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
 		if ( mask == null )
 			return dst;
 
-        int maskWidth = mask.getWidth();
+        int maskWidth = mask.width();
         int maskHeight = mask.getHeight();
 
         float s = 255*softness;

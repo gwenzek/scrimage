@@ -17,8 +17,8 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 /**
- * A filter which premultiplies an image's alpha. 
- * Note: this does not change the image type of the BufferedImage
+ * A filter which premultiplies an image's alpha.
+ * Note: this does not change the image type of the Image
  */
 public class PremultiplyFilter extends PointFilter {
 

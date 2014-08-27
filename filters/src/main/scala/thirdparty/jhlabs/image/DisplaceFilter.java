@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which simulates the appearance of looking through glass. A separate grayscale displacement image is provided and
@@ -25,19 +25,19 @@ import java.awt.image.*;
 public class DisplaceFilter extends TransformFilter {
 
 	private float amount = 1;
-	private BufferedImage displacementMap = null;
+	private Image displacementMap = null;
 	private int[] xmap, ymap;
 	private int dw, dh;
 
 	public DisplaceFilter() {
 	}
-	
+
 	/**
 	 * Set the displacement map.
 	 * @param displacementMap an image representing the displacment at each point
      * @see #getDisplacementMap
 	 */
-	public void setDisplacementMap(BufferedImage displacementMap) {
+	public void setDisplacementMap(Image displacementMap) {
 		this.displacementMap = displacementMap;
 	}
 
@@ -46,7 +46,7 @@ public class DisplaceFilter extends TransformFilter {
 	 * @return an image representing the displacment at each point
      * @see #setDisplacementMap
 	 */
-	public BufferedImage getDisplacementMap() {
+	public Image getDisplacementMap() {
 		return displacementMap;
 	}
 
@@ -60,7 +60,7 @@ public class DisplaceFilter extends TransformFilter {
 	public void setAmount(float amount) {
 		this.amount = amount;
 	}
-	
+
 	/**
 	 * Get the amount of distortion.
 	 * @return the amount
@@ -69,21 +69,21 @@ public class DisplaceFilter extends TransformFilter {
 	public float getAmount() {
 		return amount;
 	}
-	
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-		int w = src.getWidth();
-		int h = src.getHeight();
 
-		BufferedImage dm = displacementMap != null ? displacementMap : src;
+    public Image filter( Image src, Image dst ) {
+		int w = src.width();
+		int h = src.height();
 
-		dw = dm.getWidth();
+		Image dm = displacementMap != null ? displacementMap : src;
+
+		dw = dm.width();
 		dh = dm.getHeight();
-		
+
 		int[] mapPixels = new int[dw*dh];
 		getRGB( dm, 0, 0, dw, dh, mapPixels );
 		xmap = new int[dw*dh];
 		ymap = new int[dw*dh];
-		
+
 		int i = 0;
 		for ( int y = 0; y < dh; y++ ) {
 			for ( int x = 0; x < dw; x++ ) {
@@ -115,7 +115,7 @@ public class DisplaceFilter extends TransformFilter {
 		xmap = ymap = null;
 		return dst;
 	}
-	
+
 	protected void transformInverse(int x, int y, float[] out) {
 		float xDisplacement, yDisplacement;
 		float nx = x;

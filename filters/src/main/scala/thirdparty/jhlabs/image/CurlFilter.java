@@ -17,13 +17,13 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import java.awt.*;
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A page curl effect.
  */
 public class CurlFilter extends TransformFilter {
-	
+
 	private float angle = 0;
 	private float transition = 0.0f;
 
@@ -41,19 +41,19 @@ public class CurlFilter extends TransformFilter {
 	public void setTransition( float transition ) {
 		this.transition = transition;
 	}
-	
+
 	public float getTransition() {
 		return transition;
 	}
-	
+
 	public void setAngle(float angle) {
 		this.angle = angle;
 	}
-	
+
 	public float getAngle() {
 		return angle;
 	}
-	
+
 	public void setRadius( float radius ) {
 		this.radius = radius;
 	}
@@ -61,11 +61,11 @@ public class CurlFilter extends TransformFilter {
 	public float getRadius() {
 		return radius;
 	}
-	
+
 /*
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-		this.width = src.getWidth();
-		this.height = src.getHeight();
+    public Image filter( Image src, Image dst ) {
+		this.width = src.width();
+		this.height = src.height();
 		return super.filter( src, dst );
 	}
 */
@@ -74,14 +74,14 @@ public class CurlFilter extends TransformFilter {
 		private int edgeAction;
 		private int width, height;
 		private int[] inPixels;
-		
-		public Sampler( BufferedImage image ) {
-			int width = image.getWidth();
+
+		public Sampler( Image image ) {
+			int width = image.width();
 			int height = image.getHeight();
 			int type = image.getType();
 			inPixels = ImageUtils.getRGB( image, 0, 0, width, height, null );
 		}
-		
+
 		public int sample( float x, float y ) {
 			int srcX = (int)Math.floor( x );
 			int srcY = (int)Math.floor( y );
@@ -121,12 +121,12 @@ public class CurlFilter extends TransformFilter {
 			return pixels[ y*width+x ];
 		}
 	}
-	
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
-		this.width = src.getWidth();
-		this.height = src.getHeight();
+
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
+		this.width = src.width();
+		this.height = src.height();
 		int type = src.getType();
 
 		originalSpace = new Rectangle(0, 0, width, height);
@@ -135,9 +135,9 @@ public class CurlFilter extends TransformFilter {
 
         if ( dst == null ) {
             ColorModel dstCM = src.getColorModel();
-			dst = new BufferedImage(dstCM, dstCM.createCompatibleWritableRaster(transformedSpace.width, transformedSpace.height), dstCM.isAlphaPremultiplied(), null);
+			dst = new Image(dstCM, dstCM.createCompatibleRaster(transformedSpace.width, transformedSpace.height), dstCM.isAlphaPremultiplied(), null);
 		}
-		WritableRaster dstRaster = dst.getRaster();
+		Raster dstRaster = dst.raster;
 
 		int[] inPixels = getRGB( src, 0, 0, width, height, null );
 
@@ -254,7 +254,7 @@ public class CurlFilter extends TransformFilter {
 		boolean oncurl = !(outside || unfolded);
 
 		qx = qx > tx*2 ? qx : 2*tx-qx;
-	
+
 		// Transform back into rotated coordinates
 		px = qx * c - qy * s;
 		py = qx * s + qy * c;
@@ -269,7 +269,7 @@ public class CurlFilter extends TransformFilter {
 			px = x;
 			py = y;
 		}
-	
+
 		// Shade the curl
 		float shade = !offpage && oncurl ? 1.9f * (1.0f-(float)Math.cos( Math.exp((qx-tx)/radius) )) : 0;
 		out[2] = 1-shade;
@@ -280,7 +280,7 @@ public class CurlFilter extends TransformFilter {
 			out[0] = px;
 			out[1] = py;
 		}
-		
+
 		out[3] = !offpage && oncurl ? 1 : 0;
 	}
 

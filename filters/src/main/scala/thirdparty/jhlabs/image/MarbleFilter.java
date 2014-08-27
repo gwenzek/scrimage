@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 import thirdparty.jhlabs.math.*;
 
 /**
@@ -29,11 +29,11 @@ public class MarbleFilter extends TransformFilter {
 	private float yScale = 4;
 	private float amount = 1;
 	private float turbulence = 1;
-	
+
 	public MarbleFilter() {
 		setEdgeAction(CLAMP);
 	}
-	
+
 	/**
      * Set the X scale of the effect.
      * @param xScale the scale.
@@ -123,14 +123,14 @@ public class MarbleFilter extends TransformFilter {
 	private int displacementMap(int x, int y) {
 		return PixelUtils.clamp((int)(127 * (1+Noise.noise2(x / xScale, y / xScale))));
 	}
-	
+
 	protected void transformInverse(int x, int y, float[] out) {
 		int displacement = displacementMap(x, y);
 		out[0] = x + sinTable[displacement];
 		out[1] = y + cosTable[displacement];
 	}
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
+    public Image filter( Image src, Image dst ) {
 		initialize();
 		return super.filter( src, dst );
 	}

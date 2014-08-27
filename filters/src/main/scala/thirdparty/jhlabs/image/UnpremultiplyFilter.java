@@ -18,7 +18,7 @@ package thirdparty.jhlabs.image;
 
 /**
  * A filter which unpremultiplies an image's alpha.
- * Note: this does not change the image type of the BufferedImage
+ * Note: this does not change the image type of the Image
  */
 public class UnpremultiplyFilter extends PointFilter {
 

@@ -17,11 +17,11 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import java.awt.*;
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 import thirdparty.jhlabs.composite.*;
 
-public class ShineFilter extends AbstractBufferedImageOp {
-	
+public class ShineFilter extends AbstractImageOp {
+
 	private float radius = 5;
 	private float angle = (float)Math.PI*7/4;
 	private float distance = 5;
@@ -57,7 +57,7 @@ public class ShineFilter extends AbstractBufferedImageOp {
 	public void setRadius(float radius) {
 		this.radius = radius;
 	}
-	
+
 	/**
 	 * Get the radius of the kernel.
 	 * @return the radius
@@ -93,11 +93,11 @@ public class ShineFilter extends AbstractBufferedImageOp {
 	public void setBrightness(float brightness) {
 		this.brightness = brightness;
 	}
-	
+
 	public float getBrightness() {
 		return brightness;
 	}
-	
+
 	public void setSoftness(float softness) {
 		this.softness = softness;
 	}
@@ -106,9 +106,9 @@ public class ShineFilter extends AbstractBufferedImageOp {
 		return softness;
 	}
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
@@ -116,11 +116,11 @@ public class ShineFilter extends AbstractBufferedImageOp {
 		float xOffset = distance*(float)Math.cos(angle);
 		float yOffset = -distance*(float)Math.sin(angle);
 
-        BufferedImage matte = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Image matte = new Image(width, height, Image.TYPE_INT_ARGB);
         ErodeAlphaFilter s = new ErodeAlphaFilter( bevel * 10, 0.75f, 0.1f );
         matte = s.filter( src, null );
 
-        BufferedImage shineLayer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Image shineLayer = new Image(width, height, Image.TYPE_INT_ARGB);
 		Graphics2D g = shineLayer.createGraphics();
 		g.setColor( new Color( shineColor ) );
         g.fillRect( 0, 0, width, height );

@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 import thirdparty.jhlabs.math.*;
 import thirdparty.jhlabs.vecmath.*;
 import java.awt.*;
@@ -26,7 +26,7 @@ import java.util.*;
  * A filter which produces lighting and embossing effects.
  */
 public class LightFilter extends WholeImageFilter {
-	
+
     /**
      * Take the output colors from the input image.
      */
@@ -144,10 +144,10 @@ public class LightFilter extends WholeImageFilter {
 		return viewDistance;
 	}
 
-	public void setEnvironmentMap(BufferedImage environmentMap) {
+	public void setEnvironmentMap(Image environmentMap) {
 		this.environmentMap = environmentMap;
 		if (environmentMap != null) {
-			envWidth = environmentMap.getWidth();
+			envWidth = environmentMap.width();
 			envHeight = environmentMap.getHeight();
 			envPixels = getRGB( environmentMap, 0, 0, envWidth, envHeight, null );
 		} else {
@@ -187,21 +187,21 @@ public class LightFilter extends WholeImageFilter {
 	public void addLight(Light light) {
 		lights.addElement(light);
 	}
-	
+
 	public void removeLight(Light light) {
 		lights.removeElement(light);
 	}
-	
+
 	public Vector getLights() {
 		return lights;
 	}
-	
+
 	protected final static float r255 = 1.0f/255.0f;
 
 	protected void setFromRGB( Color4f c, int argb ) {
 		c.set( ((argb >> 16) & 0xff) * r255, ((argb >> 8) & 0xff) * r255, (argb & 0xff) * r255, ((argb >> 24) & 0xff) * r255 );
 	}
-	
+
 	protected int[] filterPixels( int width, int height, int[] inPixels, Rectangle transformedSpace ) {
 		int index = 0;
 		int[] outPixels = new int[width * height];
@@ -223,7 +223,7 @@ public class LightFilter extends WholeImageFilter {
 				int[] bumpPixels = inPixels;
 				if ( bumpSource == BUMPS_FROM_MAP && bumpFunction instanceof ImageFunction2D ) {
 					ImageFunction2D if2d = (ImageFunction2D)bumpFunction;
-					bumpWidth = if2d.getWidth();
+					bumpWidth = if2d.width();
 					bumpHeight = if2d.getHeight();
 					bumpPixels = if2d.getPixels();
 				}
@@ -296,7 +296,7 @@ if ( bumpShape != 0 ) {
 			for (int x = 0; x < width; x++) {
 				boolean x0 = x > 0;
 				boolean x1 = x < width-1;
-				
+
 				// Calculate the normal at this point
 				if (bumpSource != BUMPS_FROM_BEVEL) {
 					// Complicated and slower method
@@ -381,7 +381,7 @@ if ( bumpShape != 0 ) {
 						// Reflect
 						tmpv.scale( 2.0f*tmpv.dot(tmpv2) );
 						tmpv.sub(v);
-						
+
 						tmpv.normalize();
 						setFromRGB(envColor, getEnvironmentMap(tmpv, inPixels, width, height));//FIXME-interpolate()
 						diffuseColor.x = reflectivity*envColor.x + areflectivity*diffuseColor.x;
@@ -418,7 +418,7 @@ if ( bumpShape != 0 ) {
 			float nDotL = n.dot(l);
 			if (nDotL >= 0.0) {
 				float dDotL = 0;
-				
+
 				v.set(viewpoint);
 				v.sub(position);
 				v.normalize();
@@ -452,7 +452,7 @@ if ( bumpShape != 0 ) {
 					rv *= e;
 					nDotL *= e;
 				}
-				
+
 				diffuse_color.set(diffuseColor);
 				diffuse_color.scale(material.diffuseReflectivity);
 				diffuse_color.x *= light.realColor.x * nDotL;
@@ -486,7 +486,7 @@ if ( bumpShape != 0 ) {
 
 				if (f > 1.0f)
 					f = 1.0f;
-				else if (f < -1.0f) 
+				else if (f < -1.0f)
 					f = -1.0f;
 
 				x = (float)Math.acos(f)/ImageMath.PI;
@@ -506,7 +506,7 @@ if ( bumpShape != 0 ) {
 		}
 		return 0;
 	}
-	
+
 	public String toString() {
 		return "Stylize/Light Effects...";
 	}
@@ -579,13 +579,13 @@ if ( bumpShape != 0 ) {
 		public Light() {
 			this(270*ImageMath.PI/180.0f, 0.5235987755982988f, 1.0f);
 		}
-		
+
 		public Light(float azimuth, float elevation, float intensity) {
 			this.azimuth = azimuth;
 			this.elevation = elevation;
 			this.intensity = intensity;
 		}
-		
+
 		public void setAzimuth(float azimuth) {
 			this.azimuth = azimuth;
 		}
@@ -650,7 +650,7 @@ if ( bumpShape != 0 ) {
 		public void setCentreX(float x) {
 			centreX = x;
 		}
-		
+
         /**
          * Get the centre of the light in the X direction as a proportion of the image size.
          * @return the center
@@ -668,7 +668,7 @@ if ( bumpShape != 0 ) {
 		public void setCentreY(float y) {
 			centreY = y;
 		}
-		
+
         /**
          * Get the centre of the light in the Y direction as a proportion of the image size.
          * @return the center
@@ -701,7 +701,7 @@ if ( bumpShape != 0 ) {
 			realColor.scale(intensity);
 			cosConeAngle = (float)Math.cos(coneAngle);
 		}
-		
+
 		public Object clone() {
 			try {
 				Light copy = (Light)super.clone();

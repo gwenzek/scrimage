@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which adds Gaussian blur to an image, producing a glowing effect.
@@ -25,11 +25,11 @@ import java.awt.image.*;
 public class GlowFilter extends GaussianFilter {
 
 	private float amount = 0.5f;
-	
+
 	public GlowFilter() {
 		radius = 2;
 	}
-	
+
 	/**
 	 * Set the amount of glow.
 	 * @param amount the amount
@@ -40,7 +40,7 @@ public class GlowFilter extends GaussianFilter {
 	public void setAmount( float amount ) {
 		this.amount = amount;
 	}
-	
+
 	/**
 	 * Get the amount of glow.
 	 * @return the amount
@@ -49,24 +49,24 @@ public class GlowFilter extends GaussianFilter {
 	public float getAmount() {
 		return amount;
 	}
-	
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
 
         int[] inPixels = new int[width*height];
         int[] outPixels = new int[width*height];
-        src.getRGB( 0, 0, width, height, inPixels, 0, width );
+        src.raster().getRGB( 0, 0, width, height, inPixels, 0, width );
 
 		if ( radius > 0 ) {
 			convolveAndTranspose(kernel, inPixels, outPixels, width, height, alpha, alpha && premultiplyAlpha, false, CLAMP_EDGES);
 			convolveAndTranspose(kernel, outPixels, inPixels, height, width, alpha, false, alpha && premultiplyAlpha, CLAMP_EDGES);
 		}
 
-        src.getRGB( 0, 0, width, height, outPixels, 0, width );
+        src.raster().getRGB( 0, 0, width, height, outPixels, 0, width );
 
 		float a = 4*amount;
 
@@ -92,7 +92,7 @@ public class GlowFilter extends GaussianFilter {
 			}
 		}
 
-        dst.setRGB( 0, 0, width, height, inPixels, 0, width );
+        dst.raster().setRGB( 0, 0, width, height, inPixels, 0, width );
         return dst;
     }
 

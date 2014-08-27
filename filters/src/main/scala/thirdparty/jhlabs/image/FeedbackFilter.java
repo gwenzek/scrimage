@@ -18,12 +18,12 @@ package thirdparty.jhlabs.image;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which priduces a video feedback effect by repeated transformations.
  */
-public class FeedbackFilter extends AbstractBufferedImageOp {
+public class FeedbackFilter extends AbstractImageOp {
     private float centreX = 0.5f, centreY = 0.5f;
     private float distance;
     private float angle;
@@ -38,7 +38,7 @@ public class FeedbackFilter extends AbstractBufferedImageOp {
      */
     public FeedbackFilter() {
 	}
-	
+
     /**
      * Construct a FeedbackFilter.
      * @param distance the distance to move on each iteration
@@ -52,7 +52,7 @@ public class FeedbackFilter extends AbstractBufferedImageOp {
         this.rotation = rotation;
         this.zoom = zoom;
     }
-    
+
 	/**
      * Specifies the angle of each iteration.
      * @param angle the angle of each iteration.
@@ -71,7 +71,7 @@ public class FeedbackFilter extends AbstractBufferedImageOp {
 	public float getAngle() {
 		return angle;
 	}
-	
+
 	/**
      * Specifies the distance to move on each iteration.
      * @param distance the distance
@@ -89,7 +89,7 @@ public class FeedbackFilter extends AbstractBufferedImageOp {
 	public float getDistance() {
 		return distance;
 	}
-	
+
 	/**
      * Specifies the amount of rotation on each iteration.
      * @param rotation the angle of rotation
@@ -109,7 +109,7 @@ public class FeedbackFilter extends AbstractBufferedImageOp {
 	public float getRotation() {
 		return rotation;
 	}
-	
+
 	/**
      * Specifies the amount to scale on each iteration.
      * @param zoom the zoom factor
@@ -127,7 +127,7 @@ public class FeedbackFilter extends AbstractBufferedImageOp {
 	public float getZoom() {
 		return zoom;
 	}
-	
+
 	/**
      * Set the alpha value at the first iteration.
      * @param startAlpha the alpha value
@@ -147,7 +147,7 @@ public class FeedbackFilter extends AbstractBufferedImageOp {
 	public float getStartAlpha() {
 		return startAlpha;
 	}
-	
+
 	/**
      * Set the alpha value at the last iteration.
      * @param endAlpha the alpha value
@@ -167,7 +167,7 @@ public class FeedbackFilter extends AbstractBufferedImageOp {
 	public float getEndAlpha() {
 		return endAlpha;
 	}
-	
+
 	/**
 	 * Set the centre of the effect in the X direction as a proportion of the image size.
 	 * @param centreX the center
@@ -185,7 +185,7 @@ public class FeedbackFilter extends AbstractBufferedImageOp {
 	public float getCentreX() {
 		return centreX;
 	}
-	
+
 	/**
 	 * Set the centre of the effect in the Y direction as a proportion of the image size.
 	 * @param centreY the center
@@ -203,7 +203,7 @@ public class FeedbackFilter extends AbstractBufferedImageOp {
 	public float getCentreY() {
 		return centreY;
 	}
-	
+
 	/**
 	 * Set the centre of the effect as a proportion of the image size.
 	 * @param centre the center
@@ -222,7 +222,7 @@ public class FeedbackFilter extends AbstractBufferedImageOp {
 	public Point2D getCentre() {
 		return new Point2D.Float( centreX, centreY );
 	}
-	
+
 	/**
      * Set the number of iterations.
      * @param iterations the number of iterations
@@ -241,12 +241,12 @@ public class FeedbackFilter extends AbstractBufferedImageOp {
 	public int getIterations() {
 		return iterations;
 	}
-	
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
+
+    public Image filter( Image src, Image dst ) {
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
-        float cx = (float)src.getWidth() * centreX;
-        float cy = (float)src.getHeight() * centreY;
+        float cx = (float)src.width()* centreX;
+        float cy = (float)src.height()* centreY;
         float imageRadius = (float)Math.sqrt( cx*cx + cy*cy );
         float translateX = (float)(distance * Math.cos( angle ));
         float translateY = (float)(distance * -Math.sin( angle ));
@@ -259,7 +259,7 @@ public class FeedbackFilter extends AbstractBufferedImageOp {
             g.dispose();
             return dst;
         }
-        
+
 		Graphics2D g = dst.createGraphics();
 		g.drawImage( src, null, null );
         for ( int i = 0; i < iterations; i++ ) {
@@ -278,7 +278,7 @@ public class FeedbackFilter extends AbstractBufferedImageOp {
 		g.dispose();
         return dst;
     }
-    
+
 	public String toString() {
 		return "Effects/Feedback...";
 	}

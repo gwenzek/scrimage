@@ -17,7 +17,7 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import java.awt.geom.*;
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which performs the popular whirl-and-pinch distortion effect.
@@ -35,7 +35,7 @@ public class PinchFilter extends TransformFilter {
 	private float icentreY;
 	private float width;
 	private float height;
-	
+
 	public PinchFilter() {
 	}
 
@@ -47,7 +47,7 @@ public class PinchFilter extends TransformFilter {
 	public void setAngle(float angle) {
 		this.angle = angle;
 	}
-	
+
 	/**
 	 * Get the angle of twist.
 	 * @return the angle in radians.
@@ -56,7 +56,7 @@ public class PinchFilter extends TransformFilter {
 	public float getAngle() {
 		return angle;
 	}
-	
+
 	/**
 	 * Set the centre of the effect in the X direction as a proportion of the image size.
 	 * @param centreX the center
@@ -74,7 +74,7 @@ public class PinchFilter extends TransformFilter {
 	public float getCentreX() {
 		return centreX;
 	}
-	
+
 	/**
 	 * Set the centre of the effect in the Y direction as a proportion of the image size.
 	 * @param centreY the center
@@ -92,7 +92,7 @@ public class PinchFilter extends TransformFilter {
 	public float getCentreY() {
 		return centreY;
 	}
-	
+
 	/**
 	 * Set the centre of the effect as a proportion of the image size.
 	 * @param centre the center
@@ -111,7 +111,7 @@ public class PinchFilter extends TransformFilter {
 	public Point2D getCentre() {
 		return new Point2D.Float( centreX, centreY );
 	}
-	
+
 	/**
 	 * Set the radius of the effect.
 	 * @param radius the radius
@@ -151,9 +151,9 @@ public class PinchFilter extends TransformFilter {
 		return amount;
 	}
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-		width = src.getWidth();
-		height = src.getHeight();
+    public Image filter( Image src, Image dst ) {
+		width = src.width();
+		height = src.height();
 		icentreX = width * centreX;
 		icentreY = height * centreY;
 		if ( radius == 0 )
@@ -161,7 +161,7 @@ public class PinchFilter extends TransformFilter {
 		radius2 = radius*radius;
 		return super.filter( src, dst );
 	}
-	
+
 	protected void transformInverse(int x, int y, float[] out) {
 		float dx = x-icentreX;
 		float dy = y-icentreY;

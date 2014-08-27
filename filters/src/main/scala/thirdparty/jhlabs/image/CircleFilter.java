@@ -17,7 +17,7 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import java.awt.geom.*;
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which wraps an image around a circular arc.
@@ -136,7 +136,7 @@ public class CircleFilter extends TransformFilter {
 	public float getCentreX() {
 		return centreX;
 	}
-	
+
 	/**
 	 * Set the centre of the effect in the Y direction as a proportion of the image size.
 	 * @param centreY the center
@@ -154,7 +154,7 @@ public class CircleFilter extends TransformFilter {
 	public float getCentreY() {
 		return centreY;
 	}
-	
+
 	/**
 	 * Set the centre of the effect as a proportion of the image size.
 	 * @param centre the center
@@ -173,16 +173,16 @@ public class CircleFilter extends TransformFilter {
 	public Point2D getCentre() {
 		return new Point2D.Float( centreX, centreY );
 	}
-	
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-		iWidth = src.getWidth();
-		iHeight = src.getHeight();
+
+    public Image filter( Image src, Image dst ) {
+		iWidth = src.width();
+		iHeight = src.height();
 		icentreX = iWidth * centreX;
 		icentreY = iHeight * centreY;
 		iWidth--;
 		return super.filter( src, dst );
 	}
-	
+
 	protected void transformInverse(int x, int y, float[] out) {
 		float dx = x-icentreX;
 		float dy = y-icentreY;

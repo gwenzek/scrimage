@@ -16,13 +16,13 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 public abstract class TransferFilter extends PointFilter {
 
 	protected int[] rTable, gTable, bTable;
 	protected boolean initialized = false;
-	
+
 	public TransferFilter() {
 		canFilterIndexColorModel = true;
 	}
@@ -38,7 +38,7 @@ public abstract class TransferFilter extends PointFilter {
 		return a | (r << 16) | (g << 8) | b;
 	}
 
-	public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
+	public Image filter( Image src, Image dst ) {
 		if (!initialized)
 			initialize();
 		return super.filter( src, dst );
@@ -69,6 +69,6 @@ public abstract class TransferFilter extends PointFilter {
 		}
 		return lut;
 	}
-	
+
 }
 

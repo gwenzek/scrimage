@@ -16,13 +16,13 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A Filter to pixellate images.
  */
-public class ColorHalftoneFilter extends AbstractBufferedImageOp {
-	
+public class ColorHalftoneFilter extends AbstractImageOp {
+
 	private float dotRadius = 2;
     private float cyanScreenAngle = (float)Math.toRadians( 108 );
     private float magentaScreenAngle = (float)Math.toRadians( 162 );
@@ -105,11 +105,11 @@ public class ColorHalftoneFilter extends AbstractBufferedImageOp {
 		this.yellowScreenAngle = yellowScreenAngle;
 	}
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 		int type = src.getType();
-		WritableRaster srcRaster = src.getRaster();
+		Raster srcRaster = src.raster;
 
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
@@ -135,7 +135,7 @@ public class ColorHalftoneFilter extends AbstractBufferedImageOp {
                     // Transform x,y into halftone screen coordinate space
                     float tx = x*cos + y*sin;
                     float ty = -x*sin + y*cos;
-                    
+
                     // Find the nearest grid point
                     tx = tx-ImageMath.mod( tx-halfGridSize, gridSize )+halfGridSize;
                     ty = ty-ImageMath.mod( ty-halfGridSize, gridSize )+halfGridSize;

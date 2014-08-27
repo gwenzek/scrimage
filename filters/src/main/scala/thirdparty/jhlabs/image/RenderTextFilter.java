@@ -18,25 +18,25 @@ package thirdparty.jhlabs.image;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which renders text onto an image.
  */
-public class RenderTextFilter extends AbstractBufferedImageOp {
+public class RenderTextFilter extends AbstractImageOp {
 
 	private String text;
 	private Font font;
     private Paint paint;
 	private Composite composite;
     private AffineTransform transform;
-	
+
 	/**
      * Construct a RenderTextFilter.
      */
     public RenderTextFilter() {
 	}
-	
+
 	/**
      * Construct a RenderTextFilter.
      * @param text the text
@@ -52,7 +52,7 @@ public class RenderTextFilter extends AbstractBufferedImageOp {
 		this.paint = paint;
 		this.transform = transform;
 	}
-	
+
 	/**
      * Set the text to paint.
      * @param text the text
@@ -61,7 +61,7 @@ public class RenderTextFilter extends AbstractBufferedImageOp {
 	public void setText( String text ) {
 		this.text = text;
 	}
-    
+
 	/**
      * Get the text to paint.
      * @return the text
@@ -70,7 +70,7 @@ public class RenderTextFilter extends AbstractBufferedImageOp {
     public String getText() {
         return text;
     }
-	
+
 	/**
      * Set the composite with which to paint the text.
      * @param composite the composite
@@ -79,7 +79,7 @@ public class RenderTextFilter extends AbstractBufferedImageOp {
 	public void setComposite( Composite composite ) {
 		this.composite = composite;
 	}
-    
+
 	/**
      * Get the composite with which to paint the text.
      * @return the composite
@@ -88,7 +88,7 @@ public class RenderTextFilter extends AbstractBufferedImageOp {
     public Composite getComposite() {
         return composite;
     }
-	
+
 	/**
      * Set the paint with which to paint the text.
      * @param paint the paint
@@ -97,7 +97,7 @@ public class RenderTextFilter extends AbstractBufferedImageOp {
 	public void setPaint( Paint paint ) {
 		this.paint = paint;
 	}
-    
+
 	/**
      * Get the paint with which to paint the text.
      * @return the paint
@@ -106,7 +106,7 @@ public class RenderTextFilter extends AbstractBufferedImageOp {
     public Paint getPaint() {
         return paint;
     }
-	
+
 	/**
      * Set the font with which to paint the text.
      * @param font the font
@@ -115,7 +115,7 @@ public class RenderTextFilter extends AbstractBufferedImageOp {
 	public void setFont( Font font ) {
 		this.font = font;
 	}
-    
+
 	/**
      * Get the font with which to paint the text.
      * @return the font
@@ -124,7 +124,7 @@ public class RenderTextFilter extends AbstractBufferedImageOp {
     public Font getFont() {
         return font;
     }
-	
+
 	/**
      * Set the transform with which to paint the text.
      * @param transform the transform
@@ -133,7 +133,7 @@ public class RenderTextFilter extends AbstractBufferedImageOp {
 	public void setTransform( AffineTransform transform ) {
 		this.transform = transform;
 	}
-    
+
 	/**
      * Get the transform with which to paint the text.
      * @return the transform
@@ -142,8 +142,8 @@ public class RenderTextFilter extends AbstractBufferedImageOp {
     public AffineTransform getTransform() {
         return transform;
     }
-	
-	public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
+
+	public Image filter( Image src, Image dst ) {
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
 

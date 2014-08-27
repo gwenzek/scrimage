@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which produces a rubber-stamp type of effect by performing a thresholded blur.
@@ -55,7 +55,7 @@ public class StampFilter extends PointFilter {
 	public void setRadius(float radius) {
 		this.radius = radius;
 	}
-	
+
 	/**
 	 * Get the radius of the effect.
 	 * @return the radius
@@ -73,7 +73,7 @@ public class StampFilter extends PointFilter {
 	public void setThreshold(float threshold) {
 		this.threshold = threshold;
 	}
-	
+
 	/**
      * Get the threshold value.
      * @return the threshold value
@@ -82,7 +82,7 @@ public class StampFilter extends PointFilter {
 	public float getThreshold() {
 		return threshold;
 	}
-	
+
 	/**
 	 * Set the softness of the effect in the range 0..1.
 	 * @param softness the softness
@@ -139,7 +139,7 @@ public class StampFilter extends PointFilter {
 		return black;
 	}
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
+    public Image filter( Image src, Image dst ) {
         dst = new GaussianFilter( (int)radius ).filter( src, null );
         lowerThreshold3 = 255*3*(threshold - softness*0.5f);
         upperThreshold3 = 255*3*(threshold + softness*0.5f);

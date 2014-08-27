@@ -17,7 +17,7 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import java.awt.*;
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 import thirdparty.jhlabs.composite.*;
 
 /**
@@ -33,7 +33,7 @@ public class RaysFilter extends MotionBlurOp {
 
     public RaysFilter() {
 	}
-	
+
 	/**
      * Set the opacity of the rays.
      * @param opacity the opacity.
@@ -60,7 +60,7 @@ public class RaysFilter extends MotionBlurOp {
 	public void setThreshold( float threshold ) {
 		this.threshold = threshold;
 	}
-	
+
 	/**
      * Get the threshold value.
      * @return the threshold value
@@ -69,7 +69,7 @@ public class RaysFilter extends MotionBlurOp {
 	public float getThreshold() {
 		return threshold;
 	}
-	
+
 	/**
      * Set the strength of the rays.
      * @param strength the strength.
@@ -78,7 +78,7 @@ public class RaysFilter extends MotionBlurOp {
 	public void setStrength( float strength ) {
 		this.strength = strength;
 	}
-	
+
 	/**
      * Get the strength of the rays.
      * @return the strength.
@@ -87,7 +87,7 @@ public class RaysFilter extends MotionBlurOp {
 	public float getStrength() {
 		return strength;
 	}
-	
+
 	/**
      * Set whether to render only the rays.
      * @param raysOnly true to render rays only.
@@ -114,7 +114,7 @@ public class RaysFilter extends MotionBlurOp {
 	public void setColormap(Colormap colormap) {
 		this.colormap = colormap;
 	}
-	
+
     /**
      * Get the colormap to be used for the filter.
      * @return the colormap
@@ -123,14 +123,14 @@ public class RaysFilter extends MotionBlurOp {
 	public Colormap getColormap() {
 		return colormap;
 	}
-	
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 		int[] pixels = new int[width];
 		int[] srcPixels = new int[width];
 
-        BufferedImage rays = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Image rays = new Image(width, height, Image.TYPE_INT_ARGB);
 
 		int threshold3 = (int)(threshold*3*255);
 		for ( int y = 0; y < height; y++ ) {
@@ -163,7 +163,7 @@ public class RaysFilter extends MotionBlurOp {
 				int r = (rgb >> 16) & 0xff;
 				int g = (rgb >> 8) & 0xff;
 				int b = rgb & 0xff;
-				
+
 				if ( colormap != null ) {
 					int l = r + g + b;
 					rgb = colormap.getColor( l * strength * (1/3f) );
@@ -193,7 +193,7 @@ public class RaysFilter extends MotionBlurOp {
 
         return dst;
     }
-    
+
 	public String toString() {
 		return "Stylize/Rays...";
 	}

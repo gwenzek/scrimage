@@ -16,8 +16,6 @@ limitations under the License.
 
 package thirdparty.jhlabs.math;
 
-import java.awt.*;
-import java.awt.image.*;
 import thirdparty.jhlabs.image.*;
 
 public class ImageFunction2D implements Function2D {
@@ -25,33 +23,33 @@ public class ImageFunction2D implements Function2D {
 	public final static int ZERO = 0;
 	public final static int CLAMP = 1;
 	public final static int WRAP = 2;
-	
+
 	protected int[] pixels;
 	protected int width;
 	protected int height;
 	protected int edgeAction = ZERO;
 	protected boolean alpha = false;
-	
-	public ImageFunction2D(BufferedImage image) {
+
+	public ImageFunction2D(Image image) {
 		this(image, false);
 	}
-	
-	public ImageFunction2D(BufferedImage image, boolean alpha) {
+
+	public ImageFunction2D(Image image, boolean alpha) {
 		this(image, ZERO, alpha);
 	}
-	
-	public ImageFunction2D(BufferedImage image, int edgeAction, boolean alpha) {
+
+	public ImageFunction2D(Image image, int edgeAction, boolean alpha) {
 		init( getRGB( image, 0, 0, image.getWidth(), image.getHeight(), null), image.getWidth(), image.getHeight(), edgeAction, alpha);
 	}
-	
+
 	public ImageFunction2D(int[] pixels, int width, int height, int edgeAction, boolean alpha) {
 		init(pixels, width, height, edgeAction, alpha);
 	}
-	
+
  	public ImageFunction2D(Image image) {
 		this( image, ZERO, false );
  	}
-	
+
 	public ImageFunction2D(Image image, int edgeAction, boolean alpha) {
  		PixelGrabber pg = new PixelGrabber(image, 0, 0, -1, -1, null, 0, -1);
  		try {
@@ -67,12 +65,10 @@ public class ImageFunction2D implements Function2D {
 
 	/**
 	 * A convenience method for getting ARGB pixels from an image. This tries to avoid the performance
-	 * penalty of BufferedImage.getRGB unmanaging the image.
+	 * penalty of Image.getRGB unmanaging the image.
 	 */
-	public int[] getRGB( BufferedImage image, int x, int y, int width, int height, int[] pixels ) {
-		int type = image.getType();
-		if ( type == BufferedImage.TYPE_INT_ARGB || type == BufferedImage.TYPE_INT_RGB )
-			return (int [])image.getRaster().getDataElements( x, y, width, height, pixels );
+	public int[] getRGB( Image image, int x, int y, int width, int height, int[] pixels ) {
+		if (pixels.equals(null))
 		return image.getRGB( x, y, width, height, pixels, 0, width );
     }
 
@@ -83,7 +79,7 @@ public class ImageFunction2D implements Function2D {
 		this.edgeAction = edgeAction;
 		this.alpha = alpha;
 	}
-	
+
 	public float evaluate(float x, float y) {
 		int ix = (int)x;
 		int iy = (int)y;
@@ -104,7 +100,7 @@ public class ImageFunction2D implements Function2D {
 		}
 		return alpha ? ((pixels[iy*width+ix] >> 24) & 0xff) / 255.0f : PixelUtils.brightness(pixels[iy*width+ix]) / 255.0f;
 	}
-	
+
 	public void setEdgeAction(int edgeAction) {
 		this.edgeAction = edgeAction;
 	}
@@ -116,11 +112,11 @@ public class ImageFunction2D implements Function2D {
 	public int getWidth() {
 		return width;
 	}
-	
+
 	public int getHeight() {
 		return height;
 	}
-	
+
 	public int[] getPixels() {
 		return pixels;
 	}

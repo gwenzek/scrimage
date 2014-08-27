@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.BufferedImage;
+import com.sksamuel.scrimage.Image;
 
 public class OffsetFilter extends TransformFilter {
 
@@ -57,9 +57,9 @@ public class OffsetFilter extends TransformFilter {
         }
     }
 
-    public BufferedImage filter(BufferedImage src, BufferedImage dst) {
-        this.width = src.getWidth();
-        this.height = src.getHeight();
+    public Image filter(Image src, Image dst) {
+        this.width = src.width();
+        this.height = src.height();
         if (wrap) {
             while (xOffset < 0)
                 xOffset += width;

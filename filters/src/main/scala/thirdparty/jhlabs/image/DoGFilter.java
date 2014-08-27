@@ -17,23 +17,23 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import java.awt.*;
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 import thirdparty.jhlabs.composite.*;
 
 /**
  * Edge detection by difference of Gaussians.
  * @author Jerry Huxtable
  */
-public class DoGFilter extends AbstractBufferedImageOp {
+public class DoGFilter extends AbstractImageOp {
 
 	private float radius1 = 1;
 	private float radius2 = 2;
     private boolean normalize = true;
     private boolean invert;
-	
+
 	public DoGFilter() {
 	}
-	
+
 	/**
 	 * Set the radius of the kernel, and hence the amount of blur. The bigger the radius, the longer this filter will take.
 	 * @param radius the radius of the blur in pixels.
@@ -44,7 +44,7 @@ public class DoGFilter extends AbstractBufferedImageOp {
 	public void setRadius1(float radius1) {
 		this.radius1 = radius1;
 	}
-	
+
 	/**
 	 * Get the radius of the kernel.
 	 * @return the radius
@@ -64,7 +64,7 @@ public class DoGFilter extends AbstractBufferedImageOp {
 	public void setRadius2(float radius2) {
 		this.radius2 = radius2;
 	}
-	
+
 	/**
 	 * Get the radius of the kernel.
 	 * @return the radius
@@ -73,28 +73,28 @@ public class DoGFilter extends AbstractBufferedImageOp {
 	public float getRadius2() {
 		return radius2;
 	}
-	
+
     public void setNormalize( boolean normalize ) {
         this.normalize = normalize;
     }
-    
+
     public boolean getNormalize() {
         return normalize;
     }
-    
+
     public void setInvert( boolean invert ) {
         this.invert = invert;
     }
-    
+
     public boolean getInvert() {
         return invert;
     }
-    
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
-        BufferedImage image1 = new BoxBlurFilter( radius1, radius1, 3 ).filter( src, null );
-        BufferedImage image2 = new BoxBlurFilter( radius2, radius2, 3 ).filter( src, null );
+
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
+        Image image1 = new BoxBlurFilter( radius1, radius1, 3 ).filter( src, null );
+        Image image2 = new BoxBlurFilter( radius2, radius2, 3 ).filter( src, null );
         Graphics2D g2d = image2.createGraphics();
         g2d.setComposite( new SubtractComposite( 1.0f ) );
         g2d.drawImage( image1, 0, 0, null );

@@ -16,25 +16,25 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which performs a box blur on an image. The horizontal and vertical blurs can be specified separately
  * and a number of iterations can be given which allows an approximation to Gaussian blur.
  */
-public class BoxBlurFilter extends AbstractBufferedImageOp {
+public class BoxBlurFilter extends AbstractImageOp {
 
 	private float hRadius;
 	private float vRadius;
 	private int iterations = 1;
 	private boolean premultiplyAlpha = true;
-	
+
     /**
      * Construct a default BoxBlurFilter.
      */
     public BoxBlurFilter() {
 	}
-	
+
     /**
      * Construct a BoxBlurFilter.
      * @param hRadius the horizontal radius of blur
@@ -46,7 +46,7 @@ public class BoxBlurFilter extends AbstractBufferedImageOp {
 		this.vRadius = vRadius;
 		this.iterations = iterations;
 	}
-	
+
     /**
      * Set whether to premultiply the alpha channel.
      * @param premultiplyAlpha true to premultiply the alpha
@@ -65,9 +65,9 @@ public class BoxBlurFilter extends AbstractBufferedImageOp {
 		return premultiplyAlpha;
 	}
 
-	public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+	public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
@@ -109,7 +109,7 @@ public class BoxBlurFilter extends AbstractBufferedImageOp {
             divide[i] = i/tableSize;
 
         int inIndex = 0;
-        
+
         for ( int y = 0; y < height; y++ ) {
             int outIndex = y;
             int ta = 0, tr = 0, tg = 0, tb = 0;
@@ -143,12 +143,12 @@ public class BoxBlurFilter extends AbstractBufferedImageOp {
             inIndex += width;
         }
     }
-        
+
     public static void blurFractional( int[] in, int[] out, int width, int height, float radius ) {
         radius -= (int)radius;
         float f = 1.0f/(1+2*radius);
         int inIndex = 0;
-        
+
         for ( int y = 0; y < height; y++ ) {
             int outIndex = y;
 
@@ -197,7 +197,7 @@ public class BoxBlurFilter extends AbstractBufferedImageOp {
 	public void setHRadius(float hRadius) {
 		this.hRadius = hRadius;
 	}
-	
+
 	/**
 	 * Get the horizontal size of the blur.
 	 * @return the radius of the blur in the horizontal direction
@@ -206,7 +206,7 @@ public class BoxBlurFilter extends AbstractBufferedImageOp {
 	public float getHRadius() {
 		return hRadius;
 	}
-	
+
 	/**
 	 * Set the vertical size of the blur.
 	 * @param vRadius the radius of the blur in the vertical direction
@@ -216,7 +216,7 @@ public class BoxBlurFilter extends AbstractBufferedImageOp {
 	public void setVRadius(float vRadius) {
 		this.vRadius = vRadius;
 	}
-	
+
 	/**
 	 * Get the vertical size of the blur.
 	 * @return the radius of the blur in the vertical direction
@@ -225,7 +225,7 @@ public class BoxBlurFilter extends AbstractBufferedImageOp {
 	public float getVRadius() {
 		return vRadius;
 	}
-	
+
 	/**
 	 * Set both the horizontal and vertical sizes of the blur.
 	 * @param radius the radius of the blur in both directions
@@ -235,7 +235,7 @@ public class BoxBlurFilter extends AbstractBufferedImageOp {
 	public void setRadius(float radius) {
 		this.hRadius = this.vRadius = radius;
 	}
-	
+
 	/**
 	 * Get the size of the blur.
 	 * @return the radius of the blur in the horizontal direction
@@ -244,7 +244,7 @@ public class BoxBlurFilter extends AbstractBufferedImageOp {
 	public float getRadius() {
 		return hRadius;
 	}
-	
+
 	/**
 	 * Set the number of iterations the blur is performed.
 	 * @param iterations the number of iterations
@@ -254,7 +254,7 @@ public class BoxBlurFilter extends AbstractBufferedImageOp {
 	public void setIterations(int iterations) {
 		this.iterations = iterations;
 	}
-	
+
 	/**
 	 * Get the number of iterations the blur is performed.
 	 * @return the number of iterations
@@ -263,7 +263,7 @@ public class BoxBlurFilter extends AbstractBufferedImageOp {
 	public int getIterations() {
 		return iterations;
 	}
-	
+
 	public String toString() {
 		return "Blur/Box Blur...";
 	}

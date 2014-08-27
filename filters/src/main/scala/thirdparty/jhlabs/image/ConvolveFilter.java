@@ -16,16 +16,15 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
-import java.awt.image.*;
-import java.awt.geom.*;
+import com.sksamuel.scrimage.Image;
+import thirdparty.jhlabs.image.Kernel;
 
 /**
  * A filter which applies a convolution kernel to an image.
  * @author Jerry Huxtable
  */
-public class ConvolveFilter extends AbstractBufferedImageOp {
-	
+public class ConvolveFilter extends AbstractImageOp {
+
     /**
      * Treat pixels off the edge as zero.
      */
@@ -75,7 +74,7 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
 	public ConvolveFilter(float[] matrix) {
 		this(new Kernel(3, 3, matrix));
 	}
-	
+
 	/**
 	 * Construct a filter with the given kernel.
 	 * @param rows	the number of rows in the kernel
@@ -85,13 +84,13 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
 	public ConvolveFilter(int rows, int cols, float[] matrix) {
 		this(new Kernel(cols, rows, matrix));
 	}
-	
+
 	/**
 	 * Construct a filter with the given 3x3 kernel.
 	 * @param kernel the convolution kernel
 	 */
 	public ConvolveFilter(Kernel kernel) {
-		this.kernel = kernel;	
+		this.kernel = kernel;
 	}
 
     /**
@@ -166,9 +165,9 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
 		return premultiplyAlpha;
 	}
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
@@ -187,27 +186,6 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
         return dst;
     }
 
-    public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel dstCM) {
-        if ( dstCM == null )
-            dstCM = src.getColorModel();
-        return new BufferedImage(dstCM, dstCM.createCompatibleWritableRaster(src.getWidth(), src.getHeight()), dstCM.isAlphaPremultiplied(), null);
-    }
-    
-    public Rectangle2D getBounds2D( BufferedImage src ) {
-        return new Rectangle(0, 0, src.getWidth(), src.getHeight());
-    }
-    
-    public Point2D getPoint2D( Point2D srcPt, Point2D dstPt ) {
-        if ( dstPt == null )
-            dstPt = new Point2D.Double();
-        dstPt.setLocation( srcPt.getX(), srcPt.getY() );
-        return dstPt;
-    }
-
-    public RenderingHints getRenderingHints() {
-        return null;
-    }
-
     /**
      * Convolve a block of pixels.
      * @param kernel the kernel
@@ -220,7 +198,7 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
 	public static void convolve(Kernel kernel, int[] inPixels, int[] outPixels, int width, int height, int edgeAction) {
 		convolve(kernel, inPixels, outPixels, width, height, true, edgeAction);
 	}
-	
+
     /**
      * Convolve a block of pixels.
      * @param kernel the kernel
@@ -232,14 +210,14 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
      * @param edgeAction what to do at the edges
      */
 	public static void convolve(Kernel kernel, int[] inPixels, int[] outPixels, int width, int height, boolean alpha, int edgeAction) {
-		if (kernel.getHeight() == 1)
+		if (kernel.height == 1)
 			convolveH(kernel, inPixels, outPixels, width, height, alpha, edgeAction);
-		else if (kernel.getWidth() == 1)
+		else if (kernel.width == 1)
 			convolveV(kernel, inPixels, outPixels, width, height, alpha, edgeAction);
 		else
 			convolveHV(kernel, inPixels, outPixels, width, height, alpha, edgeAction);
 	}
-	
+
 	/**
 	 * Convolve with a 2D kernel.
      * @param kernel the kernel
@@ -252,9 +230,9 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
 	 */
 	public static void convolveHV(Kernel kernel, int[] inPixels, int[] outPixels, int width, int height, boolean alpha, int edgeAction) {
 		int index = 0;
-		float[] matrix = kernel.getKernelData( null );
-		int rows = kernel.getHeight();
-		int cols = kernel.getWidth();
+		float[] matrix = kernel.data;
+		int rows = kernel.height;
+		int cols = kernel.width();
 		int rows2 = rows/2;
 		int cols2 = cols/2;
 
@@ -316,8 +294,8 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
 	 */
 	public static void convolveH(Kernel kernel, int[] inPixels, int[] outPixels, int width, int height, boolean alpha, int edgeAction) {
 		int index = 0;
-		float[] matrix = kernel.getKernelData( null );
-		int cols = kernel.getWidth();
+		float[] matrix = kernel.data;
+		int cols = kernel.width();
 		int cols2 = cols/2;
 
 		for (int y = 0; y < height; y++) {
@@ -369,8 +347,8 @@ public class ConvolveFilter extends AbstractBufferedImageOp {
 	 */
 	public static void convolveV(Kernel kernel, int[] inPixels, int[] outPixels, int width, int height, boolean alpha, int edgeAction) {
 		int index = 0;
-		float[] matrix = kernel.getKernelData( null );
-		int rows = kernel.getHeight();
+		float[] matrix = kernel.data;
+		int rows = kernel.height;
 		int rows2 = rows/2;
 
 		for (int y = 0; y < height; y++) {

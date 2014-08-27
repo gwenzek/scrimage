@@ -18,22 +18,22 @@ package thirdparty.jhlabs.image;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which composites two images together with an optional transform.
  */
-public class CompositeFilter extends AbstractBufferedImageOp {
+public class CompositeFilter extends AbstractImageOp {
 
 	private Composite composite;
     private AffineTransform transform;
-	
+
 	/**
      * Construct a CompositeFilter.
      */
     public CompositeFilter() {
 	}
-	
+
 	/**
      * Construct a CompositeFilter.
      * @param composite the composite to use
@@ -41,7 +41,7 @@ public class CompositeFilter extends AbstractBufferedImageOp {
 	public CompositeFilter( Composite composite ) {
 		this.composite = composite;
 	}
-	
+
 	/**
      * Construct a CompositeFilter.
      * @param composite the composite to use
@@ -51,7 +51,7 @@ public class CompositeFilter extends AbstractBufferedImageOp {
 		this.composite = composite;
 		this.transform = transform;
 	}
-	
+
 	/**
      * Set the composite.
      * @param composite the composite to use
@@ -60,7 +60,7 @@ public class CompositeFilter extends AbstractBufferedImageOp {
 	public void setComposite( Composite composite ) {
 		this.composite = composite;
 	}
-    
+
 	/**
      * Get the composite.
      * @return the composite to use
@@ -69,7 +69,7 @@ public class CompositeFilter extends AbstractBufferedImageOp {
     public Composite getComposite() {
         return composite;
     }
-	
+
 	/**
      * Set the transform.
      * @param transform the transform to use
@@ -78,7 +78,7 @@ public class CompositeFilter extends AbstractBufferedImageOp {
 	public void setTransform( AffineTransform transform ) {
 		this.transform = transform;
 	}
-    
+
 	/**
      * Get the transform.
      * @return the transform to use
@@ -87,8 +87,8 @@ public class CompositeFilter extends AbstractBufferedImageOp {
     public AffineTransform getTransform() {
         return transform;
     }
-	
-	public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
+
+	public Image filter( Image src, Image dst ) {
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
 

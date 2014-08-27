@@ -17,7 +17,7 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import java.awt.*;
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 import java.lang.reflect.*;
 import java.beans.*;
 
@@ -25,10 +25,10 @@ import java.beans.*;
  * A filter which uses another filter to perform a transition.
  * e.g. to create a blur transition, you could write: new TransitionFilter( new BoxBlurFilter(), "radius", 0, 100 );
  */
-public class TransitionFilter extends AbstractBufferedImageOp {
-	
+public class TransitionFilter extends AbstractImageOp {
+
 	private float transition = 0;
-	private BufferedImage destination;
+	private Image destination;
     private String property;
     private Method method;
 
@@ -93,7 +93,7 @@ public class TransitionFilter extends AbstractBufferedImageOp {
 	public void setTransition( float transition ) {
 		this.transition = transition;
 	}
-	
+
 	/**
 	 * Get the transition of the image.
 	 * @return the transition
@@ -102,35 +102,35 @@ public class TransitionFilter extends AbstractBufferedImageOp {
 	public float getTransition() {
 		return transition;
 	}
-	
+
     /**
      * Set the destination image.
      * @param destination the destination image
      * @see #getDestination
      */
-	public void setDestination( BufferedImage destination ) {
+	public void setDestination( Image destination ) {
 		this.destination = destination;
 	}
-	
+
     /**
      * Get the destination image.
      * @return the destination image
      * @see #setDestination
      */
-	public BufferedImage getDestination() {
+	public Image getDestination() {
 		return destination;
 	}
-	
+
 /*
 	public void setFilter( BufferedImageOp filter ) {
 		this.filter = filter;
 	}
-	
+
 	public int getFilter() {
 		return filter;
 	}
 */
-	
+
     /**
      * Prepare the filter for the transiton at a given time.
      * The default implementation sets the given filter property, but you could override this method to make other changes.
@@ -144,8 +144,8 @@ public class TransitionFilter extends AbstractBufferedImageOp {
             throw new IllegalArgumentException("Error setting value for property: "+property);
         }
 	}
-	
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
+
+    public Image filter( Image src, Image dst ) {
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
 		if ( destination == null )

@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which performs a tritone conversion on an image. Given three colors for shadows, midtones and highlights,
@@ -28,8 +28,8 @@ public class TritoneFilter extends PointFilter {
 	private int midColor = 0xff888888;
 	private int highColor = 0xffffffff;
     private int[] lut;
-	
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
+
+    public Image filter( Image src, Image dst ) {
         lut = new int[256];
         for ( int i = 0; i < 128; i++ ) {
             float t = i / 127.0f;
@@ -43,7 +43,7 @@ public class TritoneFilter extends PointFilter {
         lut = null;
         return dst;
     }
-    
+
 	public int filterRGB( int x, int y, int rgb ) {
         return lut[ PixelUtils.brightness( rgb ) ];
 	}
@@ -56,7 +56,7 @@ public class TritoneFilter extends PointFilter {
 	public void setShadowColor( int shadowColor ) {
 		this.shadowColor = shadowColor;
 	}
-	
+
     /**
      * Get the shadow color.
      * @return the shadow color
@@ -74,7 +74,7 @@ public class TritoneFilter extends PointFilter {
 	public void setMidColor( int midColor ) {
 		this.midColor = midColor;
 	}
-	
+
     /**
      * Get the mid color.
      * @return the mid color
@@ -92,7 +92,7 @@ public class TritoneFilter extends PointFilter {
 	public void setHighColor( int highColor ) {
 		this.highColor = highColor;
 	}
-	
+
     /**
      * Get the high color.
      * @return the high color

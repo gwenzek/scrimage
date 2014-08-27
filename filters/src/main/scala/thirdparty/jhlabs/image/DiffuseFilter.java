@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.BufferedImage;
+import com.sksamuel.scrimage.Image;
 
 /**
  * This filter diffuses an image by moving its pixels in random directions.
@@ -59,7 +59,7 @@ public class DiffuseFilter extends TransformFilter {
         out[1] = y + distance * cosTable[angle];
     }
 
-    public BufferedImage filter(BufferedImage src, BufferedImage dst) {
+    public Image filter(Image src, Image dst) {
         sinTable = new float[256];
         cosTable = new float[256];
         for (int i = 0; i < 256; i++) {

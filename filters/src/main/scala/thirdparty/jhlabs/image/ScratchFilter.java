@@ -17,10 +17,10 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import java.awt.*;
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 import java.util.*;
 
-public class ScratchFilter extends AbstractBufferedImageOp {
+public class ScratchFilter extends AbstractImageOp {
     private float density = 0.1f;
     private float angle;
     private float angleVariation = 1.0f;
@@ -31,7 +31,7 @@ public class ScratchFilter extends AbstractBufferedImageOp {
 
     public ScratchFilter() {
 	}
-	
+
 	public void setAngle( float angle ) {
 		this.angle = angle;
 	}
@@ -39,7 +39,7 @@ public class ScratchFilter extends AbstractBufferedImageOp {
 	public float getAngle() {
 		return angle;
 	}
-	
+
 	public void setAngleVariation( float angleVariation ) {
 		this.angleVariation = angleVariation;
 	}
@@ -47,7 +47,7 @@ public class ScratchFilter extends AbstractBufferedImageOp {
 	public float getAngleVariation() {
 		return angleVariation;
 	}
-	
+
 	public void setDensity( float density ) {
 		this.density = density;
 	}
@@ -55,7 +55,7 @@ public class ScratchFilter extends AbstractBufferedImageOp {
 	public float getDensity() {
 		return density;
 	}
-	
+
 	public void setLength( float length ) {
 		this.length = length;
 	}
@@ -63,7 +63,7 @@ public class ScratchFilter extends AbstractBufferedImageOp {
 	public float getLength() {
 		return length;
 	}
-	
+
 	public void setWidth( float width ) {
 		this.width = width;
 	}
@@ -71,7 +71,7 @@ public class ScratchFilter extends AbstractBufferedImageOp {
 	public float getWidth() {
 		return width;
 	}
-	
+
 	public void setColor( int color ) {
 		this.color = color;
 	}
@@ -88,12 +88,12 @@ public class ScratchFilter extends AbstractBufferedImageOp {
 		return seed;
 	}
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
+    public Image filter( Image src, Image dst ) {
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
 
-        int width = src.getWidth();
-        int height = src.getHeight();
+        int width = src.width();
+        int height = src.height();
         int numScratches = (int)(density * width * height / 100);
         float l = length * width;
         Random random = new Random( seed );
@@ -114,10 +114,10 @@ public class ScratchFilter extends AbstractBufferedImageOp {
             g.drawLine( (int)x1, (int)y1, (int)x2, (int)y2 );
         }
         g.dispose();
-        
+
         return dst;
     }
-    
+
 	public String toString() {
 		return "Render/Scratches...";
 	}

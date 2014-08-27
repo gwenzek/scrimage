@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 public class ErodeAlphaFilter extends PointFilter {
 
@@ -39,7 +39,7 @@ public class ErodeAlphaFilter extends PointFilter {
 	public void setRadius(float radius) {
 		this.radius = radius;
 	}
-	
+
 	public float getRadius() {
 		return radius;
 	}
@@ -47,11 +47,11 @@ public class ErodeAlphaFilter extends PointFilter {
 	public void setThreshold(float threshold) {
 		this.threshold = threshold;
 	}
-	
+
 	public float getThreshold() {
 		return threshold;
 	}
-	
+
 	public void setSoftness(float softness) {
 		this.softness = softness;
 	}
@@ -60,7 +60,7 @@ public class ErodeAlphaFilter extends PointFilter {
 		return softness;
 	}
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
+    public Image filter( Image src, Image dst ) {
         dst = new GaussianFilter( (int)radius ).filter( src, null );
         lowerThreshold = 255*(threshold - softness*0.5f);
         upperThreshold = 255*(threshold + softness*0.5f);

@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which simulates chrome.
@@ -55,7 +55,7 @@ public class ChromeFilter extends LightFilter {
 	public void setExposure(float exposure) {
 		this.exposure = exposure;
 	}
-	
+
 	/**
 	 * Get the exppsure of the effect.
 	 * @return the exposure
@@ -65,7 +65,7 @@ public class ChromeFilter extends LightFilter {
 		return exposure;
 	}
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
+    public Image filter( Image src, Image dst ) {
 		setColorSource( LightFilter.COLORS_CONSTANT );
 		dst = super.filter( src, dst );
 		TransferFilter tf = new TransferFilter() {

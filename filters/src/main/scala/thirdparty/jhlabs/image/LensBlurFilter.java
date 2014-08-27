@@ -18,12 +18,12 @@ package thirdparty.jhlabs.image;
 
 import thirdparty.jhlabs.math.FFT;
 
-import java.awt.image.BufferedImage;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which use FFTs to simulate lens blur on an image.
  */
-public class LensBlurFilter extends AbstractBufferedImageOp {
+public class LensBlurFilter extends AbstractImageOp {
 
     private float radius = 10;
     private float bloom = 2;
@@ -111,9 +111,9 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
     }
 
 
-    public BufferedImage filter(BufferedImage src, BufferedImage dst) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+    public Image filter(Image src, Image dst) {
+        int width = src.width();
+        int height = src.height();
         int rows = 1, cols = 1;
         int log2rows = 0, log2cols = 0;
         int iradius = (int) Math.ceil(radius);
@@ -127,7 +127,7 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
         tileHeight = iradius < 32 ? Math.min(128, height + 2 * iradius) : Math.min(256, height + 2 * iradius);
 
         if (dst == null)
-            dst = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            dst = new Image(width, height, Image.TYPE_INT_ARGB);
 
         while (rows < tileHeight) {
             rows *= 2;
@@ -214,7 +214,7 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
                     tw = width - tx;
                 if (ty + th > height)
                     th = height - ty;
-                src.getRGB(tx, ty, tw, th, rgb, fy * w + fx, w);
+                src.raster().getRGB(tx, ty, tw, th, rgb, fy * w + fx, w);
 
                 // Create a float array from the pixels. Any pixels off the edge of the source image get duplicated from the edge.
                 i = 0;
@@ -328,7 +328,7 @@ public class LensBlurFilter extends AbstractBufferedImageOp {
                     tw = width - tx;
                 if (ty + th > height)
                     th = height - ty;
-                dst.setRGB(tx, ty, tw, th, rgb, iradius * w + iradius, w);
+                dst.raster().setRGB(tx, ty, tw, th, rgb, iradius * w + iradius, w);
             }
         }
         return dst;

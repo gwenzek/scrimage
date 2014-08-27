@@ -16,13 +16,12 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 import thirdparty.jhlabs.math.*;
 import thirdparty.jhlabs.vecmath.*;
-import java.awt.*;
 
 public class ShadeFilter extends WholeImageFilter {
-	
+
 	public final static int COLORS_FROM_IMAGE = 0;
 	public final static int COLORS_CONSTANT = 1;
 
@@ -37,7 +36,7 @@ public class ShadeFilter extends WholeImageFilter {
 	private int colorSource = COLORS_FROM_IMAGE;
 	private int bumpSource = BUMPS_FROM_IMAGE;
 	private Function2D bumpFunction;
-	private BufferedImage environmentMap;
+	private Image environmentMap;
 	private int[] envPixels;
 	private int envWidth = 1, envHeight = 1;
 	private Vector3f l;
@@ -85,10 +84,10 @@ public class ShadeFilter extends WholeImageFilter {
 		return bumpSoftness;
 	}
 
-	public void setEnvironmentMap(BufferedImage environmentMap) {
+	public void setEnvironmentMap(Image environmentMap) {
 		this.environmentMap = environmentMap;
 		if (environmentMap != null) {
-			envWidth = environmentMap.getWidth();
+			envWidth = environmentMap.width();
 			envHeight = environmentMap.getHeight();
 			envPixels = getRGB( environmentMap, 0, 0, envWidth, envHeight, null );
 		} else {
@@ -97,7 +96,7 @@ public class ShadeFilter extends WholeImageFilter {
 		}
 	}
 
-	public BufferedImage getEnvironmentMap() {
+	public Image getEnvironmentMap() {
 		return environmentMap;
 	}
 
@@ -114,7 +113,7 @@ public class ShadeFilter extends WholeImageFilter {
 	protected void setFromRGB( Color4f c, int argb ) {
 		c.set( ((argb >> 16) & 0xff) * r255, ((argb >> 8) & 0xff) * r255, (argb & 0xff) * r255, ((argb >> 24) & 0xff) * r255 );
 	}
-	
+
 	protected int[] filterPixels( int width, int height, int[] inPixels, Rectangle transformedSpace ) {
 		int index = 0;
 		int[] outPixels = new int[width * height];
@@ -157,7 +156,7 @@ public class ShadeFilter extends WholeImageFilter {
 			position.y = y;
 			for (int x = 0; x < width; x++) {
 				float nx = x;
-				
+
 				// Calculate the normal at this point
 				if (bumpSource != BUMPS_FROM_BEVEL) {
 					// Complicated and slower method
@@ -169,7 +168,7 @@ public class ShadeFilter extends WholeImageFilter {
 					float m2 = y > 0 ? width45*bump.evaluate(nx, ny - 1.0f)-m0 : -2;
 					float m3 = x < width-1 ? width45*bump.evaluate(nx + 1.0f, ny)-m0 : -2;
 					float m4 = y < height-1 ? width45*bump.evaluate(nx, ny + 1.0f)-m0 : -2;
-					
+
 					if (m1 != -2 && m4 != -2) {
 						v1.x = -1.0f; v1.y = 0.0f; v1.z = m1;
 						v2.x = 0.0f; v2.y = 1.0f; v2.z = m4;
@@ -258,7 +257,7 @@ public class ShadeFilter extends WholeImageFilter {
 						// Reflect
 						tmpv.scale( 2.0f*tmpv.dot(tmpv2) );
 						tmpv.sub(v);
-						
+
 						tmpv.normalize();
 						setFromRGB(c, getEnvironmentMapP(normal, inPixels, width, height));//FIXME-interpolate()
 						int alpha = inPixels[index] & 0xff000000;
@@ -291,7 +290,7 @@ public class ShadeFilter extends WholeImageFilter {
 		}
 		return 0;
 	}
-	
+
 	public String toString() {
 		return "Stylize/Shade...";
 	}

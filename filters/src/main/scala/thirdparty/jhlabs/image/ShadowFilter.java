@@ -18,13 +18,13 @@ package thirdparty.jhlabs.image;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which draws a drop shadow based on the alpha channel of the image.
  */
-public class ShadowFilter extends AbstractBufferedImageOp {
-	
+public class ShadowFilter extends AbstractImageOp {
+
 	private float radius = 5;
 	private float angle = (float)Math.PI*6/4;
 	private float distance = 5;
@@ -98,7 +98,7 @@ public class ShadowFilter extends AbstractBufferedImageOp {
 	public void setRadius(float radius) {
 		this.radius = radius;
 	}
-	
+
 	/**
 	 * Get the radius of the kernel.
 	 * @return the radius
@@ -180,8 +180,8 @@ public class ShadowFilter extends AbstractBufferedImageOp {
 		return shadowOnly;
 	}
 
-    public Rectangle2D getBounds2D( BufferedImage src ) {
-        Rectangle r = new Rectangle(0, 0, src.getWidth(), src.getHeight());
+    public Rectangle2D getBounds2D( Image src ) {
+        Rectangle r = new Rectangle(0, 0, src.width, src.height);
 		if ( addMargins ) {
 			float xOffset = distance*(float)Math.cos(angle);
 			float yOffset = -distance*(float)Math.sin(angle);
@@ -190,7 +190,7 @@ public class ShadowFilter extends AbstractBufferedImageOp {
 		}
         return r;
     }
-    
+
     public Point2D getPoint2D( Point2D srcPt, Point2D dstPt ) {
         if ( dstPt == null )
             dstPt = new Point2D.Double();
@@ -207,9 +207,9 @@ public class ShadowFilter extends AbstractBufferedImageOp {
         return dstPt;
     }
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 
 		float xOffset = distance*(float)Math.cos(angle);
 		float yOffset = -distance*(float)Math.sin(angle);
@@ -217,7 +217,7 @@ public class ShadowFilter extends AbstractBufferedImageOp {
         if ( dst == null ) {
             if ( addMargins ) {
 				ColorModel cm = src.getColorModel();
-				dst = new BufferedImage(cm, cm.createCompatibleWritableRaster(src.getWidth() + (int) (Math.abs(xOffset) + radius), src.getHeight() + (int) (Math.abs(yOffset) + radius)), cm.isAlphaPremultiplied(), null);
+				dst = new Image(cm, cm.createCompatibleRaster(src.width()+ (int) (Math.abs(xOffset) + radius), src.height()+ (int) (Math.abs(yOffset) + radius)), cm.isAlphaPremultiplied(), null);
 			} else
 				dst = createCompatibleDestImage( src, null );
 		}
@@ -226,15 +226,15 @@ public class ShadowFilter extends AbstractBufferedImageOp {
         float shadowG = ((shadowColor >> 8) & 0xff) / 255f;
         float shadowB = (shadowColor & 0xff) / 255f;
 
-		// Make a black mask from the image's alpha channel 
+		// Make a black mask from the image's alpha channel
         float[][] extractAlpha = {
             { 0, 0, 0, shadowR },
             { 0, 0, 0, shadowG },
             { 0, 0, 0, shadowB },
             { 0, 0, 0, opacity }
         };
-        BufferedImage shadow = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        new BandCombineOp( extractAlpha, null ).filter( src.getRaster(), shadow.getRaster() );
+        Image shadow = new Image(width, height, Image.TYPE_INT_ARGB);
+        new BandCombineOp( extractAlpha, null ).filter( src.raster, shadow.raster );
         shadow = new GaussianFilter( radius ).filter( shadow, null );
 
 		Graphics2D g = dst.createGraphics();

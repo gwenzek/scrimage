@@ -16,15 +16,16 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.Raster;
 
 /**
  * A filter which uses the alpha channel of a "mask" image to interpolate between a source and destination image.
  */
-public class ApplyMaskFilter extends AbstractBufferedImageOp {
-	
-	private BufferedImage destination;
-	private BufferedImage maskImage;
+public class ApplyMaskFilter extends AbstractImageOp {
+
+	private Image destination;
+	private Image maskImage;
 
     /**
      * Construct an ApplyMaskFIlter.
@@ -37,7 +38,7 @@ public class ApplyMaskFilter extends AbstractBufferedImageOp {
      * @param maskImage the mask image
      * @param destination the destination image
      */
-	public ApplyMaskFilter( BufferedImage maskImage, BufferedImage destination ) {
+	public ApplyMaskFilter( Image maskImage, Image destination ) {
 		this.maskImage = maskImage;
 		this.destination = destination;
 	}
@@ -47,48 +48,48 @@ public class ApplyMaskFilter extends AbstractBufferedImageOp {
      * @param destination the destination image
      * @see #getDestination
      */
-	public void setDestination( BufferedImage destination ) {
+	public void setDestination( Image destination ) {
 		this.destination = destination;
 	}
-	
+
     /**
      * Get the destination image.
      * @return the destination image
      * @see #setDestination
      */
-	public BufferedImage getDestination() {
+	public Image getDestination() {
 		return destination;
 	}
-	
+
     /**
      * Set the mask image.
      * @param maskImage the mask image
      * @see #getMaskImage
      */
-	public void setMaskImage( BufferedImage maskImage ) {
+	public void setMaskImage( Image maskImage ) {
 		this.maskImage = maskImage;
 	}
-	
+
     /**
      * Get the mask image.
      * @return the mask image
      * @see #setMaskImage
      */
-	public BufferedImage getMaskImage() {
+	public Image getMaskImage() {
 		return maskImage;
 	}
-		
+
     /**
      * Interpolates between two rasters according to the alpha level of a mask raster.
      * @param src the source raster
      * @param dst the destination raster
      * @param sel the mask raster
      */
-	public static void composeThroughMask(Raster src, WritableRaster dst, Raster sel) {
-		int x = src.getMinX();
-		int y = src.getMinY();
-		int w = src.getWidth();
-		int h = src.getHeight();
+	public static void composeThroughMask(Raster src, Raster dst, Raster sel) {
+		int x = 0;
+		int y = 0;
+		int w = src.width();
+		int h = src.height();
 
 		int srcRGB[] = null;
 		int selRGB[] = null;
@@ -113,9 +114,9 @@ public class ApplyMaskFilter extends AbstractBufferedImageOp {
 				float a = selRGB[k+3]/255f;
 				float ac = 1-a;
 
-				dstRGB[k] = (int)(a*sr + ac*dir); 
-				dstRGB[k+1] = (int)(a*sg + ac*dig); 
-				dstRGB[k+2] = (int)(a*sb + ac*dib); 
+				dstRGB[k] = (int)(a*sr + ac*dir);
+				dstRGB[k+1] = (int)(a*sg + ac*dig);
+				dstRGB[k+2] = (int)(a*sb + ac*dib);
 				dstRGB[k+3] = (int)(a*sa + ac*dia);
 				k += 4;
 			}
@@ -125,18 +126,17 @@ public class ApplyMaskFilter extends AbstractBufferedImageOp {
 		}
 	}
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
-		int type = src.getType();
-		WritableRaster srcRaster = src.getRaster();
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
+		Raster srcRaster = src.raster;
 
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
-		WritableRaster dstRaster = dst.getRaster();
+            dst = createCompatibleDestImage(src);
+		Raster dstRaster = dst.raster;
 
         if ( destination != null && maskImage != null )
-			composeThroughMask( src.getRaster(), dst.getRaster(), maskImage.getRaster() );
+			composeThroughMask( src.raster, dst.raster, maskImage.raster );
 
         return dst;
     }

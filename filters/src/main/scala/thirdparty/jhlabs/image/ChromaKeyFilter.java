@@ -17,13 +17,13 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import java.awt.*;
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which can be used to produce wipes by transferring the luma of a Destination image into the alpha channel of the source.
  */
-public class ChromaKeyFilter extends AbstractBufferedImageOp {
-	
+public class ChromaKeyFilter extends AbstractImageOp {
+
 	private float hTolerance = 0;
 	private float sTolerance = 0;
 	private float bTolerance = 0;
@@ -39,44 +39,44 @@ public class ChromaKeyFilter extends AbstractBufferedImageOp {
 	public void setHTolerance( float hTolerance ) {
 		this.hTolerance = hTolerance;
 	}
-	
+
 	public float getHTolerance() {
 		return hTolerance;
 	}
-	
+
 	public void setSTolerance( float sTolerance ) {
 		this.sTolerance = sTolerance;
 	}
-	
+
 	public float getSTolerance() {
 		return sTolerance;
 	}
-	
+
 	public void setBTolerance( float bTolerance ) {
 		this.bTolerance = bTolerance;
 	}
-	
+
 	public float getBTolerance() {
 		return bTolerance;
 	}
-	
+
 	public void setColor( int color ) {
 		this.color = color;
 	}
-	
+
 	public int getColor() {
 		return color;
 	}
-		
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 		int type = src.getType();
-		WritableRaster srcRaster = src.getRaster();
+		Raster srcRaster = src.raster;
 
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
-		WritableRaster dstRaster = dst.getRaster();
+		Raster dstRaster = dst.raster;
 
 		float[] hsb1 = null;
 		float[] hsb2 = null;

@@ -16,15 +16,15 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which interpolates betwen two images. You can set the interpolation factor outside the range 0 to 1
  * to extrapolate images.
  */
-public class InterpolateFilter extends AbstractBufferedImageOp {
-	
-	private BufferedImage destination;
+public class InterpolateFilter extends AbstractImageOp {
+
+	private Image destination;
 	private float interpolation;
 
 	public InterpolateFilter() {
@@ -35,19 +35,19 @@ public class InterpolateFilter extends AbstractBufferedImageOp {
      * @param destination the destination image
      * @see #getDestination
      */
-	public void setDestination( BufferedImage destination ) {
+	public void setDestination( Image destination ) {
 		this.destination = destination;
 	}
-	
+
     /**
      * Get the destination image.
      * @return the destination image
      * @see #setDestination
      */
-	public BufferedImage getDestination() {
+	public Image getDestination() {
 		return destination;
 	}
-	
+
     /**
      * Set the interpolation factor.
      * @param interpolation the interpolation factor
@@ -56,7 +56,7 @@ public class InterpolateFilter extends AbstractBufferedImageOp {
 	public void setInterpolation( float interpolation ) {
 		this.interpolation = interpolation;
 	}
-	
+
     /**
      * Get the interpolation factor.
      * @return the interpolation factor
@@ -65,20 +65,20 @@ public class InterpolateFilter extends AbstractBufferedImageOp {
 	public float getInterpolation() {
 		return interpolation;
 	}
-	
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 		int type = src.getType();
-		WritableRaster srcRaster = src.getRaster();
+		Raster srcRaster = src.raster;
 
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
-		WritableRaster dstRaster = dst.getRaster();
+		Raster dstRaster = dst.raster;
 
         if ( destination != null ) {
-			width = Math.min( width, destination.getWidth() );
-			height = Math.min( height, destination.getWidth() );
+			width = Math.min( width, destination.width() );
+			height = Math.min( height, destination.width() );
 			int[] pixels1 = null;
 			int[] pixels2 = null;
 

@@ -16,13 +16,13 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.image.*;
+import com.sksamuel.scrimage.Image;
 
 /**
  * A Filter to pixellate images.
  */
-public class BlockFilter extends AbstractBufferedImageOp {
-	
+public class BlockFilter extends AbstractImageOp {
+
 	private int blockSize = 2;
 
     /**
@@ -59,11 +59,11 @@ public class BlockFilter extends AbstractBufferedImageOp {
 		return blockSize;
 	}
 
-    public BufferedImage filter( BufferedImage src, BufferedImage dst ) {
-        int width = src.getWidth();
-        int height = src.getHeight();
+    public Image filter( Image src, Image dst ) {
+        int width = src.width();
+        int height = src.height();
 		int type = src.getType();
-		WritableRaster srcRaster = src.getRaster();
+		Raster srcRaster = src.raster;
 
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
