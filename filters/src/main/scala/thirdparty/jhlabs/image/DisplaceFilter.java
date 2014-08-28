@@ -77,10 +77,10 @@ public class DisplaceFilter extends TransformFilter {
 		Image dm = displacementMap != null ? displacementMap : src;
 
 		dw = dm.width();
-		dh = dm.getHeight();
+		dh = dm.height();
 
 		int[] mapPixels = new int[dw*dh];
-		getRGB( dm, 0, 0, dw, dh, mapPixels );
+		dm.raster().getRGB(0, 0, dw, dh, mapPixels );
 		xmap = new int[dw*dh];
 		ymap = new int[dw*dh];
 

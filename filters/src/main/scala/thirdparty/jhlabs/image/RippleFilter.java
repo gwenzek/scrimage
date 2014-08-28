@@ -16,6 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
+import com.sksamuel.scrimage.geom.Rectangle;
 import thirdparty.jhlabs.math.Noise;
 
 
@@ -161,12 +162,15 @@ public class RippleFilter extends TransformFilter {
         return waveType;
     }
 
-    protected void transformSpace(Rectangle r) {
+    protected Rectangle transformSpace(Rectangle r) {
         if (edgeAction == ZERO) {
-            r.x -= (int) xAmplitude;
-            r.width += (int) (2 * xAmplitude);
-            r.y -= (int) yAmplitude;
-            r.height += (int) (2 * yAmplitude);
+            int x = r.x() - (int) xAmplitude;
+            int width = r.width() + (int) (2 * xAmplitude);
+            int y = r.y() - (int) yAmplitude;
+            int height = r.height() + (int) (2 * yAmplitude);
+            return new Rectangle(x, y, width, height);
+        } else {
+            return r;
         }
     }
 

@@ -17,6 +17,7 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.geom.*;
 import thirdparty.jhlabs.math.*;
 import thirdparty.jhlabs.vecmath.*;
 
@@ -88,8 +89,8 @@ public class ShadeFilter extends WholeImageFilter {
 		this.environmentMap = environmentMap;
 		if (environmentMap != null) {
 			envWidth = environmentMap.width();
-			envHeight = environmentMap.getHeight();
-			envPixels = getRGB( environmentMap, 0, 0, envWidth, envHeight, null );
+			envHeight = environmentMap.height();
+			envPixels = environmentMap.raster().getRGB(0, 0, envWidth, envHeight);
 		} else {
 			envWidth = envHeight = 1;
 			envPixels = null;

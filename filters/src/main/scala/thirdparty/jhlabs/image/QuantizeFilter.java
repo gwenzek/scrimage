@@ -17,6 +17,7 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
+import com.sksamuel.scrimage.geom.Rectangle;
 
 /**
  * A filter which quantizes an image to a set number of colors - useful for producing

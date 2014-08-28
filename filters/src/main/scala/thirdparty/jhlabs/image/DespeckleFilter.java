@@ -17,6 +17,7 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
+import com.sksamuel.scrimage.geom.Rectangle;
 
 /**
  * A filter which removes noise from an image using a "pepper and salt" algorithm.

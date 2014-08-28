@@ -17,6 +17,7 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
+import com.sksamuel.scrimage.geom.Rectangle;
 
 /**
  * A filter which uses Floyd-Steinberg error diffusion dithering to halftone an image.

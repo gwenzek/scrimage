@@ -17,9 +17,11 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.geom.Rectangle;
 import thirdparty.jhlabs.math.*;
 import thirdparty.jhlabs.vecmath.*;
 
+import java.awt.Color;
 import java.util.*;
 
 /**
@@ -148,8 +150,8 @@ public class LightFilter extends WholeImageFilter {
 		this.environmentMap = environmentMap;
 		if (environmentMap != null) {
 			envWidth = environmentMap.width();
-			envHeight = environmentMap.getHeight();
-			envPixels = getRGB( environmentMap, 0, 0, envWidth, envHeight, null );
+			envHeight = environmentMap.height();
+			envPixels = environmentMap.raster().getRGB(0, 0, envWidth, envHeight, null );
 		} else {
 			envWidth = envHeight = 1;
 			envPixels = null;
@@ -223,7 +225,7 @@ public class LightFilter extends WholeImageFilter {
 				int[] bumpPixels = inPixels;
 				if ( bumpSource == BUMPS_FROM_MAP && bumpFunction instanceof ImageFunction2D ) {
 					ImageFunction2D if2d = (ImageFunction2D)bumpFunction;
-					bumpWidth = if2d.width();
+					bumpWidth = if2d.getWidth();
 					bumpHeight = if2d.getHeight();
 					bumpPixels = if2d.getPixels();
 				}
@@ -644,7 +646,7 @@ if ( bumpShape != 0 ) {
 
         /**
          * Set the centre of the light in the X direction as a proportion of the image size.
-         * @param centreX the center
+         * @param x the center
          * @see #getCentreX
          */
 		public void setCentreX(float x) {
@@ -662,7 +664,7 @@ if ( bumpShape != 0 ) {
 
         /**
          * Set the centre of the light in the Y direction as a proportion of the image size.
-         * @param centreY the center
+         * @param y the center
          * @see #getCentreY
          */
 		public void setCentreY(float y) {

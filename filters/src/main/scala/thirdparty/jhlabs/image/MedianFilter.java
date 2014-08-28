@@ -17,6 +17,7 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
+import com.sksamuel.scrimage.geom.Rectangle;
 
 /**
  * A filter which performs a 3x3 median operation. Useful for removing dust and noise.

@@ -18,6 +18,8 @@ package thirdparty.jhlabs.image;
 
 
 import java.util.*;
+
+import com.sksamuel.scrimage.geom.Rectangle;
 import thirdparty.jhlabs.math.*;
 
 /**
@@ -200,10 +202,10 @@ public class CausticsFilter extends WholeImageFilter {
 		s = (float)Math.sin(0.1);
 		c = (float)Math.cos(0.1);
 
-		int srcWidth = originalSpace.width;
-		int srcHeight = originalSpace.height;
-		int outWidth = transformedSpace.width;
-		int outHeight = transformedSpace.height;
+		int srcWidth = originalSpace.width();
+		int srcHeight = originalSpace.height();
+		int outWidth = transformedSpace.width();
+		int outHeight = transformedSpace.height();
 		int index = 0;
 		int[] pixels = new int[outWidth * outHeight];
 

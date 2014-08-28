@@ -81,7 +81,7 @@ public class GaussianFilter extends ConvolveFilter {
         int height = src.height();
 
         if (dst == null)
-            dst = createCompatibleDestImage(src, null);
+            dst = createCompatibleDestImage(src);
 
         int[] inPixels = new int[width * height];
         int[] outPixels = new int[width * height];

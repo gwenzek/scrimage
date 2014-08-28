@@ -18,8 +18,11 @@ package thirdparty.jhlabs.image;
 
 
 
+import com.sksamuel.scrimage.ARGBRaster;
 import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.geom.Rectangle;
+
 import java.awt.geom.*;
 
 /**
@@ -57,11 +60,11 @@ public class VariableBlurFilter extends AbstractImageFilter {
         int height = src.height();
 
         if ( dst == null )
-            dst = new Image( width, height, Image.TYPE_INT_ARGB );
+            dst = new Image( ARGBRaster.apply(width, height));
 
         int[] inPixels = new int[width*height];
         int[] outPixels = new int[width*height];
-        getRGB( src, 0, 0, width, height, inPixels );
+        src.raster().getRGB(0, 0, width, height, inPixels );
 
         if ( premultiplyAlpha )
 			ImageMath.premultiply( inPixels, 0, inPixels.length );
@@ -72,18 +75,12 @@ public class VariableBlurFilter extends AbstractImageFilter {
         if ( premultiplyAlpha )
 			ImageMath.unpremultiply( inPixels, 0, inPixels.length );
 
-        setRGB( dst, 0, 0, width, height, inPixels );
+        dst.raster().setRGB(0, 0, width, height, inPixels );
         return dst;
     }
 
-    public Image createCompatibleDestImage(Image src, ColorModel dstCM) {
-        if ( dstCM == null )
-            dstCM = src.getColorModel();
-        return new Image(dstCM, dstCM.createCompatibleRaster(src.width, src.height), dstCM.isAlphaPremultiplied(), null);
-    }
-
-    public Rectangle2D getBounds2D( Image src ) {
-        return new Rectangle(0, 0, src.width, src.height);
+    public Rectangle getBounds2D( Image src ) {
+        return new Rectangle(0, 0, src.width(), src.height());
     }
 
     public Point2D getPoint2D( Point2D srcPt, Point2D dstPt ) {
@@ -91,10 +88,6 @@ public class VariableBlurFilter extends AbstractImageFilter {
             dstPt = new Point2D.Double();
         dstPt.setLocation( srcPt.getX(), srcPt.getY() );
         return dstPt;
-    }
-
-    public RenderingHints getRenderingHints() {
-        return null;
     }
 
     public void blur( int[] in, int[] out, int width, int height, int radius, int pass ) {
@@ -112,9 +105,9 @@ public class VariableBlurFilter extends AbstractImageFilter {
 
 			if ( blurMask != null ) {
 				if ( pass == 1 )
-					getRGB( blurMask, 0, y, width, 1, mask );
+					blurMask.raster().getRGB(0, y, width, 1, mask );
 				else
-					getRGB( blurMask, y, 0, 1, width, mask );
+					blurMask.raster().getRGB(y, 0, 1, width, mask );
 			}
 
             for ( int x = 0; x < width; x++ ) {

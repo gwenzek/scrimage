@@ -16,6 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.math;
 
+import com.sksamuel.scrimage.Image;
 import thirdparty.jhlabs.image.*;
 
 public class ImageFunction2D implements Function2D {
@@ -39,29 +40,12 @@ public class ImageFunction2D implements Function2D {
 	}
 
 	public ImageFunction2D(Image image, int edgeAction, boolean alpha) {
-		init( getRGB( image, 0, 0, image.getWidth(), image.getHeight(), null), image.getWidth(), image.getHeight(), edgeAction, alpha);
+		init( getRGB( image, 0, 0, image.width(), image.height(), null), image.width(), image.height(), edgeAction, alpha);
 	}
 
 	public ImageFunction2D(int[] pixels, int width, int height, int edgeAction, boolean alpha) {
 		init(pixels, width, height, edgeAction, alpha);
 	}
-
- 	public ImageFunction2D(Image image) {
-		this( image, ZERO, false );
- 	}
-
-	public ImageFunction2D(Image image, int edgeAction, boolean alpha) {
- 		PixelGrabber pg = new PixelGrabber(image, 0, 0, -1, -1, null, 0, -1);
- 		try {
- 			pg.grabPixels();
- 		} catch (InterruptedException e) {
- 			throw new RuntimeException("interrupted waiting for pixels!");
- 		}
- 		if ((pg.status() & ImageObserver.ABORT) != 0) {
- 			throw new RuntimeException("image fetch aborted");
- 		}
- 		init((int[])pg.getPixels(), pg.getWidth(), pg.getHeight(), edgeAction, alpha);
-  	}
 
 	/**
 	 * A convenience method for getting ARGB pixels from an image. This tries to avoid the performance
@@ -69,7 +53,8 @@ public class ImageFunction2D implements Function2D {
 	 */
 	public int[] getRGB( Image image, int x, int y, int width, int height, int[] pixels ) {
 		if (pixels.equals(null))
-		return image.getRGB( x, y, width, height, pixels, 0, width );
+            pixels = new int[width * height];
+		return image.raster().getRGB( x, y, width, height, pixels, 0, width );
     }
 
 	public void init(int[] pixels, int width, int height, int edgeAction, boolean alpha) {

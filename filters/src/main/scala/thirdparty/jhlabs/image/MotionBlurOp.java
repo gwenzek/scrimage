@@ -194,7 +194,7 @@ public class MotionBlurOp extends AbstractImageFilter {
 
     public Image filter( Image src, Image dst ) {
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage( src);
         Image tsrc = src;
         float cx = (float)src.width()* centreX;
         float cy = (float)src.height()* centreY;

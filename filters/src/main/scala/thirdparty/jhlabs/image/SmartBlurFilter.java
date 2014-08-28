@@ -33,17 +33,17 @@ public class SmartBlurFilter extends AbstractImageFilter {
         int height = src.height();
 
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage( src);
 
         int[] inPixels = new int[width*height];
         int[] outPixels = new int[width*height];
-        getRGB( src, 0, 0, width, height, inPixels );
+        src.raster().getRGB(0, 0, width, height, inPixels );
 
 		thirdparty.jhlabs.image.Kernel kernel = GaussianFilter.makeKernel(hRadius);
 		thresholdBlur( kernel, inPixels, outPixels, width, height, true );
 		thresholdBlur( kernel, outPixels, inPixels, height, width, true );
 
-        setRGB( dst, 0, 0, width, height, inPixels );
+        dst.raster().setRGB(0, 0, width, height, inPixels );
         return dst;
     }
 

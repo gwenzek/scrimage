@@ -17,10 +17,11 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
-import java.awt.geom.*;
-
 import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 /**
  * A filter which renders text onto an image.
@@ -147,21 +148,22 @@ public class RenderTextFilter extends AbstractImageFilter {
 
 	public Image filter( Image src, Image dst ) {
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage( src);
 
-		Graphics2D g = dst.createGraphics();
-        g.setRenderingHint( RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON );
-        if ( font != null )
-            g.setFont( font );
-        if ( transform != null )
-            g.setTransform( transform );
-        if ( composite != null )
-            g.setComposite( composite );
-        if ( paint != null )
-            g.setPaint( paint );
-        if ( text != null )
-            g.drawString( text, 10, 100 );
-        g.dispose();
+         //TODO
+//		Graphics2D g = dst.createGraphics();
+//        g.setRenderingHint( RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON );
+//        if ( font != null )
+//            g.setFont( font );
+//        if ( transform != null )
+//            g.setTransform( transform );
+//        if ( composite != null )
+//            g.setComposite( composite );
+//        if ( paint != null )
+//            g.setPaint( paint );
+//        if ( text != null )
+//            g.drawString( text, 10, 100 );
+//        g.dispose();
 		return dst;
 	}
 }

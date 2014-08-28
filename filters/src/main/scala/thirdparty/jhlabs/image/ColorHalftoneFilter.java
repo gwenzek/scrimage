@@ -18,6 +18,7 @@ package thirdparty.jhlabs.image;
 
 import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.Raster;
 
 /**
  * A Filter to pixellate images.
@@ -109,11 +110,10 @@ public class ColorHalftoneFilter extends AbstractImageFilter {
     public Image filter( Image src, Image dst ) {
         int width = src.width();
         int height = src.height();
-		int type = src.getType();
-		Raster srcRaster = src.raster;
+		Raster srcRaster = src.raster();
 
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage( src);
 
         float gridSize = 2*dotRadius*1.414f;
         float[] angles = { cyanScreenAngle, magentaScreenAngle, yellowScreenAngle };
@@ -121,7 +121,7 @@ public class ColorHalftoneFilter extends AbstractImageFilter {
         float[] my = new float[] { 0, 0, 0, -1, 1 };
         float halfGridSize = (float)gridSize/2;
         int[] outPixels = new int[width];
-        int[] inPixels = getRGB( src, 0, 0, width, height, null );
+        int[] inPixels = srcRaster.getRGB(0, 0, width, height);
         for ( int y = 0; y < height; y++ ) {
             for ( int x = 0, ix = y*width; x < width; x++, ix++ )
                 outPixels[x] = (inPixels[ix] & 0xff000000) | 0xffffff;
@@ -176,7 +176,7 @@ public class ColorHalftoneFilter extends AbstractImageFilter {
                     outPixels[x] &= v;
                 }
             }
-			setRGB( dst, 0, y, width, 1, outPixels );
+			dst.raster().setRGB(0, y, width, 1, outPixels );
         }
 
         return dst;

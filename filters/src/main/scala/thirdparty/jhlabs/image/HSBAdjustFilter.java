@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-
+import java.awt.Color;
 
 public class HSBAdjustFilter extends PointFilter {
 

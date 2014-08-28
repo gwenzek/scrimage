@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.vecmath;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * Vector math package, converted to look similar to javax.vecmath.
@@ -62,6 +62,11 @@ public class Color4f extends Tuple4f {
 	public void set( Color c ) {
 		set( c.getRGBComponents( null ) );
 	}
+
+//    public void set( Color c ) {
+//        RGBColor rgb = c.toRGB();
+//        set( rgb.red(), rgb.green(), rgb.blue(), rgb.alpha() );
+//    }
 
 	public Color get() {
 		return new Color( x, y, z, w );

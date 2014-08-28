@@ -17,6 +17,7 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
+import com.sksamuel.scrimage.geom.Rectangle;
 
 /**
  * A filter which draws contours on an image at given brightness levels.

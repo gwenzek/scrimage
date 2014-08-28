@@ -100,6 +100,12 @@ case class HSVColor(hue: Float, saturation: Float, value: Float, alpha: Float) e
   }
 }
 
+// object HSVColor {
+//   def fromRGB(red: Int, green: Int, blue: Int, alpha: Int = 255) = {
+
+//   }
+// }
+
 /** The hue component should be between 0.0 and 360.0
   * The saturation component should be between 0.0 and 1.0
   * The lightness component should be between 0.0 and 1.0

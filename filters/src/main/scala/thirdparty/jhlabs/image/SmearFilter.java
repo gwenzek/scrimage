@@ -17,6 +17,8 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
+import com.sksamuel.scrimage.geom.Rectangle;
+
 import java.util.Date;
 import java.util.Random;
 

@@ -18,6 +18,9 @@ package thirdparty.jhlabs.image;
 
 import com.sksamuel.scrimage.ARGBRaster;
 import com.sksamuel.scrimage.Image;
+import thirdparty.jhlabs.composite.MiscComposite;
+
+import java.awt.*;
 
 /**
  * A filter which produces the effect of light rays shining out of an image.
@@ -133,7 +136,7 @@ public class RaysFilter extends MotionBlurOp {
 
 		int threshold3 = (int)(threshold*3*255);
 		for ( int y = 0; y < height; y++ ) {
-			getRGB( src, 0, y, width, 1, pixels );
+			src.raster().getRGB(0, y, width, 1, pixels );
 			for ( int x = 0; x < width; x++ ) {
 				int rgb = pixels[x];
 				int a = rgb & 0xff000000;
@@ -148,14 +151,14 @@ public class RaysFilter extends MotionBlurOp {
 					pixels[x] = a | (l << 16) | (l << 8) | l;
 				}
 			}
-			setRGB( rays, 0, y, width, 1, pixels );
+			rays.raster().setRGB(0, y, width, 1, pixels );
 		}
 
 		rays = super.filter( rays, null );
 
 		for ( int y = 0; y < height; y++ ) {
-			getRGB( rays, 0, y, width, 1, pixels );
-			getRGB( src, 0, y, width, 1, srcPixels );
+			rays.raster().getRGB(0, y, width, 1, pixels );
+			src.raster().getRGB(0, y, width, 1, srcPixels );
 			for ( int x = 0; x < width; x++ ) {
 				int rgb = pixels[x];
 				int a = rgb & 0xff000000;
@@ -175,22 +178,22 @@ public class RaysFilter extends MotionBlurOp {
 
 				pixels[x] = rgb;
 			}
-			setRGB( rays, 0, y, width, 1, pixels );
+            rays.raster().setRGB(0, y, width, 1, pixels );
 		}
 
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage( src );
 
         //TODO
-//		Graphics2D g = dst.createGraphics();
-//		if ( !raysOnly ) {
-//			g.setComposite( AlphaComposite.SrcOver );
-//			g.drawRenderedImage( src, null );
-//		}
-//		g.setComposite( MiscComposite.getInstance( MiscComposite.ADD, opacity ) );
-//		g.drawRenderedImage( rays, null );
-//		g.dispose();
-
+		Graphics2D g = dst.awt().createGraphics();
+		if ( !raysOnly ) {
+			g.setComposite( AlphaComposite.SrcOver );
+			g.drawRenderedImage( src.awt(), null );
+		}
+		g.setComposite( MiscComposite.getInstance(MiscComposite.ADD, opacity) );
+		g.drawRenderedImage( rays.awt(), null );
+		g.dispose();
+        dst.updateFromAWT();
         return dst;
     }
 

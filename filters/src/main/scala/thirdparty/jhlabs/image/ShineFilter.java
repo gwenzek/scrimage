@@ -111,7 +111,7 @@ public class ShineFilter extends AbstractImageFilter {
         int height = src.height();
 
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage( src );
 
 		float xOffset = distance*(float)Math.cos(angle);
 		float yOffset = -distance*(float)Math.sin(angle);

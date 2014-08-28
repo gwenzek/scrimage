@@ -101,7 +101,7 @@ public class HalftoneFilter extends AbstractImageFilter {
         int height = src.height();
 
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage(src);
 		if ( mask == null )
 			return dst;
 

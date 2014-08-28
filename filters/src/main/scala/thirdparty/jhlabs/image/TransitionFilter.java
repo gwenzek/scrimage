@@ -37,7 +37,7 @@ public class TransitionFilter extends AbstractImageFilter {
     /**
      * The filter used for the transition.
      */
-    protected BufferedImageOp filter;
+    protected AbstractImageFilter filter;
 
     /**
      * The start value for the filter property.
@@ -62,7 +62,7 @@ public class TransitionFilter extends AbstractImageFilter {
      * @param minValue the start value for the filter property
      * @param maxValue the end value for the filter property
      */
-	public TransitionFilter( BufferedImageOp filter, String property, float minValue, float maxValue ) {
+	public TransitionFilter( AbstractImageFilter filter, String property, float minValue, float maxValue ) {
 		this.filter = filter;
 		this.property = property;
 		this.minValue = minValue;
@@ -149,25 +149,26 @@ public class TransitionFilter extends AbstractImageFilter {
 
     public Image filter( Image src, Image dst ) {
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage(src);
 		if ( destination == null )
 			return dst;
 
 		float itransition = 1-transition;
 
-		Graphics2D g = dst.createGraphics();
-		if ( transition != 1 ) {
-            float t = minValue + transition * ( maxValue-minValue );
-			prepareFilter( t );
-            g.drawImage( src, filter, 0, 0 );
-		}
-		if ( transition != 0 ) {
-            g.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, transition ) );
-            float t = minValue + itransition * ( maxValue-minValue );
-			prepareFilter( t );
-            g.drawImage( destination, filter, 0, 0 );
-		}
-		g.dispose();
+        //TODO
+		// Graphics2D g = dst.createGraphics();
+		// if ( transition != 1 ) {
+  //           float t = minValue + transition * ( maxValue-minValue );
+		// 	prepareFilter( t );
+  //           g.drawImage( src, filter, 0, 0 );
+		// }
+		// if ( transition != 0 ) {
+  //           g.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, transition ) );
+  //           float t = minValue + itransition * ( maxValue-minValue );
+		// 	prepareFilter( t );
+  //           g.drawImage( destination, filter, 0, 0 );
+		// }
+		// g.dispose();
 
         return dst;
     }

@@ -46,8 +46,8 @@ public class MapFilter extends TransformFilter {
 		float xMap, yMap;
 		xMap = xMapFunction.evaluate(x, y);
 		yMap = yMapFunction.evaluate(x, y);
-		out[0] = xMap * transformedSpace.width;
-		out[1] = yMap * transformedSpace.height;
+		out[0] = xMap * transformedSpace.width();
+		out[1] = yMap * transformedSpace.height();
 	}
 
 	public String toString() {

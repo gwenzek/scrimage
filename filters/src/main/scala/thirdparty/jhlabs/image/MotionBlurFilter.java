@@ -167,11 +167,11 @@ public class MotionBlurFilter extends AbstractImageFilter {
         int height = src.height();
 
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage( src);
 
         int[] inPixels = new int[width*height];
         int[] outPixels = new int[width*height];
-        getRGB( src, 0, 0, width, height, inPixels );
+        src.raster().getRGB(0, 0, width, height, inPixels );
 
 		float sinAngle = (float)Math.sin(angle);
 		float cosAngle = (float)Math.cos(angle);
@@ -247,7 +247,7 @@ public class MotionBlurFilter extends AbstractImageFilter {
         if ( premultiplyAlpha )
 			ImageMath.unpremultiply( outPixels, 0, inPixels.length );
 
-        setRGB( dst, 0, 0, width, height, outPixels );
+        dst.raster().setRGB(0, 0, width, height, outPixels );
         return dst;
     }
 

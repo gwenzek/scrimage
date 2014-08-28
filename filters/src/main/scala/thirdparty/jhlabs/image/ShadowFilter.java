@@ -217,7 +217,7 @@ public class ShadowFilter extends AbstractImageFilter {
             if ( addMargins ) {
 				dst = new Image((Raster) src.raster().empty(src.width()+ (int) (Math.abs(xOffset) + radius), src.height()+ (int) (Math.abs(yOffset) + radius)) );
 			} else
-				dst = createCompatibleDestImage( src, null );
+				dst = createCompatibleDestImage( src);
 		}
 
         float shadowR = ((shadowColor >> 16) & 0xff) / 255f;

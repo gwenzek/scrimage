@@ -67,7 +67,7 @@ public class BlockFilter extends AbstractImageFilter {
 		Raster srcRaster = src.raster();
 
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage( src);
 
 		int[] pixels = new int[blockSize * blockSize];
         for ( int y = 0; y < height; y += blockSize ) {
@@ -75,7 +75,7 @@ public class BlockFilter extends AbstractImageFilter {
                 int w = Math.min( blockSize, width-x );
                 int h = Math.min( blockSize, height-y );
                 int t = w*h;
-                getRGB( src, x, y, w, h, pixels );
+                srcRaster.getRGB(x, y, w, h, pixels );
                 int r = 0, g = 0, b = 0;
                 int argb;
                 int i = 0;
@@ -96,7 +96,7 @@ public class BlockFilter extends AbstractImageFilter {
                         i++;
                     }
                 }
-                setRGB( dst, x, y, w, h, pixels );
+                dst.raster().setRGB(x, y, w, h, pixels );
             }
         }
 

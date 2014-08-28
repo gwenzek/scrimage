@@ -92,9 +92,9 @@ public class ApplyMaskFilter extends AbstractImageFilter {
 		int w = src.width();
 		int h = src.height();
 
-		int srcRGB[] = null;
-		int selRGB[] = null;
-		int dstRGB[] = null;
+		int srcRGB[] = new int[w];
+		int selRGB[] = new int[w];
+		int dstRGB[] = new int[w];
 
 		for ( int i = 0; i < h; i++ ) {
 			srcRGB = src.getRGB(x, y, w, 1, srcRGB);

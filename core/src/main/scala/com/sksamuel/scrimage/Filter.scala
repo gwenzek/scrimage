@@ -49,7 +49,7 @@ abstract class AbstractImageFilter extends Filter {
   def getBounds2D(src: Image) = Rectangle(0, 0, src.width, src.height)
 
   def filter(src: Image, dst: Image): Image
-  def apply(image: Image) = filter(image, null)
+  def apply(image: Image) = filter(image, image)
 }
 
 abstract class StaticImageFilter extends Filter {

@@ -33,7 +33,7 @@ public abstract class PointFilter extends AbstractImageFilter {
 		Raster srcRaster = src.raster();
 
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage( src);
 		Raster dstRaster = dst.raster();
 
         setDimensions( width, height);

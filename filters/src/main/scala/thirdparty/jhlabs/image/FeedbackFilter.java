@@ -246,7 +246,7 @@ public class FeedbackFilter extends AbstractImageFilter {
 
     public Image filter( Image src, Image dst ) {
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage( src);
         float cx = (float)src.width()* centreX;
         float cy = (float)src.height()* centreY;
         float imageRadius = (float)Math.sqrt( cx*cx + cy*cy );
@@ -255,29 +255,30 @@ public class FeedbackFilter extends AbstractImageFilter {
         float scale = (float)Math.exp(zoom);
         float rotate = rotation;
 
-        if ( iterations == 0 ) {
-            Graphics2D g = dst.createGraphics();
-            g.drawRenderedImage( src, null );
-            g.dispose();
-            return dst;
-        }
-
-		Graphics2D g = dst.createGraphics();
-		g.drawImage( src, null, null );
-        for ( int i = 0; i < iterations; i++ ) {
-			g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-			g.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR );
-			g.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, ImageMath.lerp( (float)i/(iterations-1), startAlpha, endAlpha ) ) );
-
-            g.translate( cx+translateX, cy+translateY );
-            g.scale( scale, scale );  // The .0001 works round a bug on Windows where drawImage throws an ArrayIndexOutofBoundException
-            if ( rotation != 0 )
-                g.rotate( rotate );
-            g.translate( -cx, -cy );
-
-            g.drawImage( src, null, null );
-        }
-		g.dispose();
+        //TODO
+//        if ( iterations == 0 ) {
+//            Graphics2D g = dst.createGraphics();
+//            g.drawRenderedImage( src, null );
+//            g.dispose();
+//            return dst;
+//        }
+//
+//		Graphics2D g = dst.createGraphics();
+//		g.drawImage( src, null, null );
+//        for ( int i = 0; i < iterations; i++ ) {
+//			g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+//			g.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR );
+//			g.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, ImageMath.lerp( (float)i/(iterations-1), startAlpha, endAlpha ) ) );
+//
+//            g.translate( cx+translateX, cy+translateY );
+//            g.scale( scale, scale );  // The .0001 works round a bug on Windows where drawImage throws an ArrayIndexOutofBoundException
+//            if ( rotation != 0 )
+//                g.rotate( rotate );
+//            g.translate( -cx, -cy );
+//
+//            g.drawImage( src, null, null );
+//        }
+//		g.dispose();
         return dst;
     }
 

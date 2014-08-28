@@ -127,8 +127,9 @@ public abstract class TransformFilter extends AbstractImageFilter {
      * Forward transform a rectangle. Used to determine the size of the output image.
      * @param rect the rectangle to transform
      */
-	protected void transformSpace(Rectangle rect) {
-	}
+	protected Rectangle transformSpace(Rectangle rect){
+        return rect;
+    }
 
     public Image filter( Image src, Image dst ) {
         int width = src.width();

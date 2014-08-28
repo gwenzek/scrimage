@@ -20,6 +20,9 @@ package thirdparty.jhlabs.image;
 
 import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.Raster;
+
+import java.awt.*;
 
 /**
  * A filter which can be used to produce wipes by transferring the luma of a Destination image into the alpha channel of the source.
@@ -73,12 +76,11 @@ public class ChromaKeyFilter extends AbstractImageFilter {
     public Image filter( Image src, Image dst ) {
         int width = src.width();
         int height = src.height();
-		int type = src.getType();
-		Raster srcRaster = src.raster;
+		Raster srcRaster = src.raster();
 
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
-		Raster dstRaster = dst.raster;
+            dst = createCompatibleDestImage( src);
+		Raster dstRaster = dst.raster();
 
 		float[] hsb1 = null;
 		float[] hsb2 = null;
@@ -86,10 +88,10 @@ public class ChromaKeyFilter extends AbstractImageFilter {
 		int r2 = (rgb2 >> 16) & 0xff;
 		int g2 = (rgb2 >> 8) & 0xff;
 		int b2 = rgb2 & 0xff;
-		hsb2 = Color.RGBtoHSB( r2, b2, g2, hsb2 );
+		hsb2 = Color.RGBtoHSB(r2, b2, g2, hsb2);
 		int[] inPixels = null;
 		for ( int y = 0; y < height; y++ ) {
-			inPixels = getRGB( src, 0, y, width, 1, inPixels );
+			inPixels = srcRaster.getRGB(0, y, width, 1, inPixels );
 			for ( int x = 0; x < width; x++ ) {
 				int rgb1 = inPixels[x];
 
@@ -106,7 +108,7 @@ public class ChromaKeyFilter extends AbstractImageFilter {
 				else
 					inPixels[x] = rgb1;
 			}
-			setRGB( dst, 0, y, width, 1, inPixels );
+			dst.raster().setRGB(0, y, width, 1, inPixels );
 		}
 
         return dst;

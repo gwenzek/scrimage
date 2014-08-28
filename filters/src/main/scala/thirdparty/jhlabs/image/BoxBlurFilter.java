@@ -71,11 +71,11 @@ public class BoxBlurFilter extends AbstractImageFilter {
         int height = src.height();
 
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage( src);
 
         int[] inPixels = new int[width*height];
         int[] outPixels = new int[width*height];
-        getRGB( src, 0, 0, width, height, inPixels );
+        src.raster().getRGB(0, 0, width, height, inPixels );
 
         if ( premultiplyAlpha )
 			ImageMath.premultiply( inPixels, 0, inPixels.length );
@@ -88,7 +88,7 @@ public class BoxBlurFilter extends AbstractImageFilter {
         if ( premultiplyAlpha )
 			ImageMath.unpremultiply( inPixels, 0, inPixels.length );
 
-        setRGB( dst, 0, 0, width, height, inPixels );
+        dst.raster().setRGB(0, 0, width, height, inPixels );
         return dst;
     }
 

@@ -20,6 +20,7 @@ package thirdparty.jhlabs.image;
 import java.awt.geom.*;
 
 import com.sksamuel.scrimage.AbstractImageFilter;
+import com.sksamuel.scrimage.Composite;
 import com.sksamuel.scrimage.Image;
 
 /**
@@ -92,14 +93,15 @@ public class CompositeFilter extends AbstractImageFilter {
 
 	public Image filter( Image src, Image dst ) {
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
-
-		Graphics2D g = dst.createGraphics();
-        g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-        g.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR );
-        g.setComposite( composite );
-        g.drawRenderedImage( src, transform );
-        g.dispose();
+            dst = createCompatibleDestImage(src);
+        //TODO
+        composite.apply(dst, src); // ???
+//		Graphics2D g = dst.createGraphics();
+//        g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+//        g.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR );
+//        g.setComposite( composite );
+//        g.drawRenderedImage( src, transform );
+//        g.dispose();
 		return dst;
 	}
 

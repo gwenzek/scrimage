@@ -10,6 +10,7 @@ class AlphaComposite(alpha: Double) extends Composite {
     g2.setComposite(java.awt.AlphaComposite.SrcOver.derive(alpha.toFloat))
     g2.drawImage(applicative.awt, 0, 0, null)
     g2.dispose()
+    src.updateFromAWT()
   }
 }
 object AlphaComposite {

@@ -40,19 +40,19 @@ public class LaplaceFilter extends AbstractImageFilter {
         int height = src.height();
 
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage(src);
 
-        int[] row1 = null;
-        int[] row2 = null;
-        int[] row3 = null;
+        int[] row1 = new int[width];
+        int[] row2 = new int[width];
+        int[] row3 = new int[width];
         int[] pixels = new int[width];
-        row1 = getRGB( src, 0, 0, width, 1, row1 );
-        row2 = getRGB( src, 0, 0, width, 1, row2 );
+        row1 = src.raster().getRGB(0, 0, width, 1, row1 );
+        row2 = src.raster().getRGB(0, 0, width, 1, row2 );
         brightness( row1 );
         brightness( row2 );
         for ( int y = 0; y < height; y++ ) {
             if ( y < height-1) {
-                row3 = getRGB( src, 0, y+1, width, 1, row3 );
+                row3 = src.raster().getRGB(0, y+1, width, 1, row3 );
                 brightness( row3 );
             }
             pixels[0] = pixels[width-1] = 0xff000000;//FIXME
@@ -74,15 +74,15 @@ public class LaplaceFilter extends AbstractImageFilter {
                         gradient : (128 + gradient);
                 pixels[x] = r;
             }
-            setRGB( dst, 0, y, width, 1, pixels );
+            dst.raster().setRGB(0, y, width, 1, pixels );
             int[] t = row1; row1 = row2; row2 = row3; row3 = t;
         }
 
-        row1 = getRGB( dst, 0, 0, width, 1, row1 );
-        row2 = getRGB( dst, 0, 0, width, 1, row2 );
+        row1 = dst.raster().getRGB(0, 0, width, 1, row1 );
+        row2 = dst.raster().getRGB(0, 0, width, 1, row2 );
         for ( int y = 0; y < height; y++ ) {
             if ( y < height-1) {
-                row3 = getRGB( dst, 0, y+1, width, 1, row3 );
+                row3 = dst.raster().getRGB(0, y+1, width, 1, row3 );
             }
             pixels[0] = pixels[width-1] = 0xff000000;//FIXME
             for ( int x = 1; x < width-1; x++ ) {
@@ -100,7 +100,7 @@ public class LaplaceFilter extends AbstractImageFilter {
 
                 pixels[x] = 0xff000000 | (r << 16) | (r << 8) | r;
             }
-            setRGB( dst, 0, y, width, 1, pixels );
+            dst.raster().setRGB(0, y, width, 1, pixels );
             int[] t = row1; row1 = row2; row2 = row3; row3 = t;
         }
 

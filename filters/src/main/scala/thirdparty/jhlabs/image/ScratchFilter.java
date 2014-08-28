@@ -92,30 +92,31 @@ public class ScratchFilter extends AbstractImageFilter {
 
     public Image filter( Image src, Image dst ) {
         if ( dst == null )
-            dst = createCompatibleDestImage( src, null );
+            dst = createCompatibleDestImage(src);
 
         int width = src.width();
         int height = src.height();
         int numScratches = (int)(density * width * height / 100);
         float l = length * width;
         Random random = new Random( seed );
-        Graphics2D g = dst.createGraphics();
-        g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-        g.setColor( new Color( color ) );
-        g.setStroke( new BasicStroke( this.width ) );
-        for ( int i = 0; i < numScratches; i++ ) {
-            float x = width * random.nextFloat();
-            float y = height * random.nextFloat();
-            float a = angle + ImageMath.TWO_PI * (angleVariation * (random.nextFloat() - 0.5f));
-            float s = (float)Math.sin( a ) * l;
-            float c = (float)Math.cos( a ) * l;
-            float x1 = x-c;
-            float y1 = y-s;
-            float x2 = x+c;
-            float y2 = y+s;
-            g.drawLine( (int)x1, (int)y1, (int)x2, (int)y2 );
-        }
-        g.dispose();
+        //TODO
+        // Graphics2D g = dst.createGraphics();
+        // g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+        // g.setColor( new Color( color ) );
+        // g.setStroke( new BasicStroke( this.width ) );
+        // for ( int i = 0; i < numScratches; i++ ) {
+        //     float x = width * random.nextFloat();
+        //     float y = height * random.nextFloat();
+        //     float a = angle + ImageMath.TWO_PI * (angleVariation * (random.nextFloat() - 0.5f));
+        //     float s = (float)Math.sin( a ) * l;
+        //     float c = (float)Math.cos( a ) * l;
+        //     float x1 = x-c;
+        //     float y1 = y-s;
+        //     float x2 = x+c;
+        //     float y2 = y+s;
+        //     g.drawLine( (int)x1, (int)y1, (int)x2, (int)y2 );
+        // }
+        // g.dispose();
 
         return dst;
     }

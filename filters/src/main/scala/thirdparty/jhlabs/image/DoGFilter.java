@@ -38,10 +38,10 @@ public class DoGFilter extends AbstractImageFilter {
 
 	/**
 	 * Set the radius of the kernel, and hence the amount of blur. The bigger the radius, the longer this filter will take.
-	 * @param radius the radius of the blur in pixels.
+	 * @param radius1 the radius of the blur in pixels.
      * @min-value 0
      * @max-value 100+
-     * @see #getRadius
+     * @see #getRadius1
 	 */
 	public void setRadius1(float radius1) {
 		this.radius1 = radius1;
@@ -50,7 +50,7 @@ public class DoGFilter extends AbstractImageFilter {
 	/**
 	 * Get the radius of the kernel.
 	 * @return the radius
-     * @see #setRadius
+     * @see #setRadius1
 	 */
 	public float getRadius1() {
 		return radius1;
@@ -58,10 +58,10 @@ public class DoGFilter extends AbstractImageFilter {
 
 	/**
 	 * Set the radius of the kernel, and hence the amount of blur. The bigger the radius, the longer this filter will take.
-	 * @param radius the radius of the blur in pixels.
+	 * @param radius2 the radius of the blur in pixels.
      * @min-value 0
      * @max-value 100+
-     * @see #getRadius
+     * @see #getRadius2
 	 */
 	public void setRadius2(float radius2) {
 		this.radius2 = radius2;
@@ -70,7 +70,7 @@ public class DoGFilter extends AbstractImageFilter {
 	/**
 	 * Get the radius of the kernel.
 	 * @return the radius
-     * @see #setRadius
+     * @see #setRadius2
 	 */
 	public float getRadius2() {
 		return radius2;
@@ -97,15 +97,16 @@ public class DoGFilter extends AbstractImageFilter {
         int height = src.height();
         Image image1 = new BoxBlurFilter( radius1, radius1, 3 ).filter( src, null );
         Image image2 = new BoxBlurFilter( radius2, radius2, 3 ).filter( src, null );
-        Graphics2D g2d = image2.createGraphics();
-        g2d.setComposite( new SubtractComposite( 1.0f ) );
-        g2d.drawImage( image1, 0, 0, null );
-        g2d.dispose();
+        //TODO
+//        Graphics2D g2d = image2.createGraphics();
+//        g2d.setComposite( new SubtractComposite( 1.0f ) );
+//        g2d.drawImage( image1, 0, 0, null );
+//        g2d.dispose();
         if ( normalize && radius1 != radius2 ) {
-            int[] pixels = null;
+            int[] pixels = new int[width];
             int max = 0;
             for ( int y = 0; y < height; y++ ) {
-                pixels = getRGB( image2, 0, y, width, 1, pixels );
+                pixels = image2.raster().getRGB(0, y, width, 1, pixels );
                 for ( int x = 0; x < width; x++ ) {
                     int rgb = pixels[x];
                     int r = (rgb >> 16) & 0xff;
@@ -121,7 +122,7 @@ public class DoGFilter extends AbstractImageFilter {
             }
 
             for ( int y = 0; y < height; y++ ) {
-                pixels = getRGB( image2, 0, y, width, 1, pixels );
+                pixels = image2.raster().getRGB(0, y, width, 1, pixels );
                 for ( int x = 0; x < width; x++ ) {
                     int rgb = pixels[x];
                     int r = (rgb >> 16) & 0xff;
@@ -132,7 +133,7 @@ public class DoGFilter extends AbstractImageFilter {
                     b = b * 255 / max;
                     pixels[x] = (rgb & 0xff000000) | (r << 16) | (g << 8) | b;
                 }
-                setRGB( image2, 0, y, width, 1, pixels );
+                image2.raster().setRGB(0, y, width, 1, pixels );
             }
 
         }
