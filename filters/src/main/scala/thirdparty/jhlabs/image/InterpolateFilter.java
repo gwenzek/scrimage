@@ -16,13 +16,14 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which interpolates betwen two images. You can set the interpolation factor outside the range 0 to 1
  * to extrapolate images.
  */
-public class InterpolateFilter extends AbstractImageOp {
+public class InterpolateFilter extends AbstractImageFilter {
 
 	private Image destination;
 	private float interpolation;

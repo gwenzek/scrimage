@@ -108,8 +108,8 @@ public class GaussianFilter extends ConvolveFilter {
      * @param edgeAction what to do at the edges
      */
     public static void convolveAndTranspose(Kernel kernel, int[] inPixels, int[] outPixels, int width, int height, boolean alpha, boolean premultiply, boolean unpremultiply, int edgeAction) {
-        float[] matrix = kernel.data();
-        int cols = kernel.width();
+        float[] matrix = kernel.data;
+        int cols = kernel.width;
         int cols2 = cols / 2;
 
         for (int y = 0; y < height; y++) {

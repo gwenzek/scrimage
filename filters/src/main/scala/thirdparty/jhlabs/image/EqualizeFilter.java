@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+
 
 /**
  * A filter to perform auto-equalization on an image.
@@ -53,7 +53,7 @@ public class EqualizeFilter extends WholeImageFilter {
 				i++;
 			}
 		lut = null;
-		
+
 		return inPixels;
 	}
 

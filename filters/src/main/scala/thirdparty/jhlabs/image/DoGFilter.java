@@ -16,7 +16,9 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+
+
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
 import thirdparty.jhlabs.composite.*;
 
@@ -24,7 +26,7 @@ import thirdparty.jhlabs.composite.*;
  * Edge detection by difference of Gaussians.
  * @author Jerry Huxtable
  */
-public class DoGFilter extends AbstractImageOp {
+public class DoGFilter extends AbstractImageFilter {
 
 	private float radius1 = 1;
 	private float radius2 = 2;

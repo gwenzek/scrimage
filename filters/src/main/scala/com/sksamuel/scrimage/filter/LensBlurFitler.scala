@@ -15,11 +15,11 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
 class LensBlurFilter(radius: Float, bloom: Float, bloomThreshold: Float, sides: Int, angle: Float)
-    extends BufferedOpFilter {
+    extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.LensBlurFilter()
   op.setSides(sides)
   op.setBloomThreshold(bloomThreshold)

@@ -1,9 +1,9 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class ShearFilter(xAngle: Double, yAngle: Double) extends BufferedOpFilter {
+class ShearFilter(xAngle: Double, yAngle: Double) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.ShearFilter()
   op.setXAngle(xAngle.toFloat)
   op.setYAngle(yAngle.toFloat)

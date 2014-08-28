@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class ThresholdFilter(threshold: Int, white: Int, black: Int) extends BufferedOpFilter {
+class ThresholdFilter(threshold: Int, white: Int, black: Int) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.ThresholdFilter(threshold)
   op.setBlack(black)
   op.setWhite(white)

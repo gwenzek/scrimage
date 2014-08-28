@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class OffsetFilter(x: Int, y: Int) extends BufferedOpFilter {
+class OffsetFilter(x: Int, y: Int) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.OffsetFilter()
   op.setWrap(true)
   op.setXOffset(x)

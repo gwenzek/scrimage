@@ -15,11 +15,11 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 import com.sksamuel.scrimage.filter.EdgeAction.{ WrapEdges, ClampEdges, ZeroEdges }
 
 /** @author Stephen Samuel */
-class UnsharpFilter(amount: Float, threshold: Int, edgeAction: EdgeAction) extends BufferedOpFilter {
+class UnsharpFilter(amount: Float, threshold: Int, edgeAction: EdgeAction) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.UnsharpFilter()
   op.setAmount(amount)
   op.setThreshold(threshold)

@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-object LensFlareFilter extends BufferedOpFilter {
+object LensFlareFilter extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.FlareFilter()
   op.setRadius(70f)
   op.setRayAmount(2.2f)

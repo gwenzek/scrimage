@@ -16,12 +16,13 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
 
 /**
  * A Filter to pixellate images.
  */
-public class ColorHalftoneFilter extends AbstractImageOp {
+public class ColorHalftoneFilter extends AbstractImageFilter {
 
 	private float dotRadius = 2;
     private float cyanScreenAngle = (float)Math.toRadians( 108 );

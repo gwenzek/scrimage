@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class DiffuseFilter(scale: Float) extends BufferedOpFilter {
+class DiffuseFilter(scale: Float) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.DiffuseFilter()
   op.setScale(scale)
 }

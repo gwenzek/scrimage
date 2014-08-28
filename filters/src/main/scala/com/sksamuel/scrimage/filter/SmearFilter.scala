@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 import com.sksamuel.scrimage.filter.SmearType.{ Circles, Crosses, Lines, Squares }
 
 /** @author Stephen Samuel */
@@ -27,7 +27,7 @@ object SmearType {
   case object Squares extends SmearType
 }
 
-class SmearFilter(smearType: SmearType, angle: Float, density: Float, scatter: Float, distance: Int, mix: Float) extends BufferedOpFilter {
+class SmearFilter(smearType: SmearType, angle: Float, density: Float, scatter: Float, distance: Int, mix: Float) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.SmearFilter()
   op.setDensity(density)
   op.setAngle(angle)

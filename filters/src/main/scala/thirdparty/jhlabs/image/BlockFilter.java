@@ -16,12 +16,14 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.Raster;
 
 /**
  * A Filter to pixellate images.
  */
-public class BlockFilter extends AbstractImageOp {
+public class BlockFilter extends AbstractImageFilter {
 
 	private int blockSize = 2;
 
@@ -62,8 +64,7 @@ public class BlockFilter extends AbstractImageOp {
     public Image filter( Image src, Image dst ) {
         int width = src.width();
         int height = src.height();
-		int type = src.getType();
-		Raster srcRaster = src.raster;
+		Raster srcRaster = src.raster();
 
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );

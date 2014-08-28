@@ -15,11 +15,11 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 import java.awt.Color
 
 /** @author Stephen Samuel */
-class TritoneFilter(shadows: Int, midtones: Int, highlights: Int) extends BufferedOpFilter {
+class TritoneFilter(shadows: Int, midtones: Int, highlights: Int) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.TritoneFilter()
   op.setShadowColor(shadows)
   op.setMidColor(midtones)

@@ -18,7 +18,7 @@ package thirdparty.jhlabs.image;
 
 import thirdparty.jhlabs.math.Noise;
 
-import java.awt.*;
+
 
 /**
  * A filter which distorts an image by rippling it in the X or Y directions.

@@ -16,8 +16,10 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.Raster;
+import com.sksamuel.scrimage.geom.Rectangle;
 
 /**
  * A page curl effect.
@@ -77,9 +79,8 @@ public class CurlFilter extends TransformFilter {
 
 		public Sampler( Image image ) {
 			int width = image.width();
-			int height = image.getHeight();
-			int type = image.getType();
-			inPixels = ImageUtils.getRGB( image, 0, 0, width, height, null );
+			int height = image.height();
+			inPixels = image.raster().getRGB(0, 0, width, height);
 		}
 
 		public int sample( float x, float y ) {
@@ -127,19 +128,17 @@ public class CurlFilter extends TransformFilter {
         int height = src.height();
 		this.width = src.width();
 		this.height = src.height();
-		int type = src.getType();
 
 		originalSpace = new Rectangle(0, 0, width, height);
 		transformedSpace = new Rectangle(0, 0, width, height);
 		transformSpace(transformedSpace);
 
         if ( dst == null ) {
-            ColorModel dstCM = src.getColorModel();
-			dst = new Image(dstCM, dstCM.createCompatibleRaster(transformedSpace.width, transformedSpace.height), dstCM.isAlphaPremultiplied(), null);
+            dst = new Image((Raster) src.raster().mimic());
 		}
-		Raster dstRaster = dst.raster;
+		Raster dstRaster = dst.raster();
 
-		int[] inPixels = getRGB( src, 0, 0, width, height, null );
+		int[] inPixels = src.raster().getRGB(0, 0, width, height);
 
 		if ( interpolation == NEAREST_NEIGHBOUR )
 			return filterPixelsNN( dst, width, height, inPixels, transformedSpace );
@@ -148,14 +147,14 @@ public class CurlFilter extends TransformFilter {
 		int srcHeight = height;
 		int srcWidth1 = width-1;
 		int srcHeight1 = height-1;
-		int outWidth = transformedSpace.width;
-		int outHeight = transformedSpace.height;
+		int outWidth = transformedSpace.width();
+		int outHeight = transformedSpace.height();
 		int outX, outY;
 		int index = 0;
 		int[] outPixels = new int[outWidth];
 
-		outX = transformedSpace.x;
-		outY = transformedSpace.y;
+		outX = transformedSpace.x();
+		outY = transformedSpace.y();
 		float[] out = new float[4];
 
 		for (int y = 0; y < outHeight; y++) {
@@ -195,7 +194,7 @@ public class CurlFilter extends TransformFilter {
 				else
 					outPixels[x] = rgb;
 			}
-			setRGB( dst, 0, y, transformedSpace.width, 1, outPixels );
+			dstRaster.setRGB(0, y, transformedSpace.width(), 1, outPixels );
 		}
 		return dst;
 	}

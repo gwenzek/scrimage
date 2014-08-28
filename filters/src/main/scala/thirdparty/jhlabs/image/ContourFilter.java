@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+
 
 /**
  * A filter which draws contours on an image at given brightness levels.
@@ -27,18 +27,18 @@ public class ContourFilter extends WholeImageFilter {
 	private float scale = 1;
 	private float offset = 0;
 	private int contourColor = 0xff000000;
-	
+
 	public ContourFilter() {
 	}
 
 	public void setLevels( float levels ) {
 		this.levels = levels;
 	}
-	
+
 	public float getLevels() {
 		return levels;
 	}
-	
+
 	/**
      * Specifies the scale of the contours.
      * @param scale the scale of the contours.
@@ -49,7 +49,7 @@ public class ContourFilter extends WholeImageFilter {
 	public void setScale( float scale ) {
 		this.scale = scale;
 	}
-	
+
 	/**
      * Returns the scale of the contours.
      * @return the scale of the contours.
@@ -58,23 +58,23 @@ public class ContourFilter extends WholeImageFilter {
 	public float getScale() {
 		return scale;
 	}
-	
+
 	public void setOffset( float offset ) {
 		this.offset = offset;
 	}
-	
+
 	public float getOffset() {
 		return offset;
 	}
-	
+
 	public void setContourColor( int contourColor ) {
 		this.contourColor = contourColor;
 	}
-	
+
 	public int getContourColor() {
 		return contourColor;
 	}
-	
+
 	protected int[] filterPixels( int width, int height, int[] inPixels, Rectangle transformedSpace ) {
 		int index = 0;
 		short[][] r = new short[3][width];
@@ -103,7 +103,7 @@ public class ContourFilter extends WholeImageFilter {
 				int w = x-1;
 				int e = x+1;
 				int v = 0;
-				
+
 				if ( yIn && xIn ) {
 					short nwb = r[0][w];
 					short neb = r[0][x];
@@ -135,7 +135,7 @@ public class ContourFilter extends WholeImageFilter {
 			r[1] = r[2];
 			r[2] = t;
 		}
-	
+
 		return outPixels;
 	}
 

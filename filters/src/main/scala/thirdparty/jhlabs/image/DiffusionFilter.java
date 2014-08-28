@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+
 
 /**
  * A filter which uses Floyd-Steinberg error diffusion dithering to halftone an image.
@@ -41,7 +41,7 @@ public class DiffusionFilter extends WholeImageFilter {
 	public DiffusionFilter() {
 		setMatrix(diffusionMatrix);
 	}
-	
+
 	/**
 	 * Set whether to use a serpentine pattern for return or not. This can reduce 'avalanche' artifacts in the output.
 	 * @param serpentine true to use serpentine pattern
@@ -50,7 +50,7 @@ public class DiffusionFilter extends WholeImageFilter {
 	public void setSerpentine(boolean serpentine) {
 		this.serpentine = serpentine;
 	}
-	
+
 	/**
 	 * Return the serpentine setting.
 	 * @return the current setting
@@ -59,7 +59,7 @@ public class DiffusionFilter extends WholeImageFilter {
 	public boolean getSerpentine() {
 		return serpentine;
 	}
-	
+
 	/**
 	 * Set whether to use a color dither.
 	 * @param colorDither true to use a color dither

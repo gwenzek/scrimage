@@ -1,9 +1,9 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class RGBFilter(r: Double = 0, g: Double = 0, b: Double = 0) extends BufferedOpFilter {
+class RGBFilter(r: Double = 0, g: Double = 0, b: Double = 0) extends StaticImageFilter {
   require(r <= 1)
   require(g <= 1)
   require(b <= 1)

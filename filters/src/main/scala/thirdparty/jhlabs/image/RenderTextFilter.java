@@ -16,14 +16,16 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+
 import java.awt.geom.*;
+
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which renders text onto an image.
  */
-public class RenderTextFilter extends AbstractImageOp {
+public class RenderTextFilter extends AbstractImageFilter {
 
 	private String text;
 	private Font font;

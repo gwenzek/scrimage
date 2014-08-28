@@ -16,9 +16,8 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+import com.sksamuel.scrimage.ARGBRaster;
 import com.sksamuel.scrimage.Image;
-import thirdparty.jhlabs.composite.*;
 
 /**
  * A filter which produces the effect of light rays shining out of an image.
@@ -130,7 +129,7 @@ public class RaysFilter extends MotionBlurOp {
 		int[] pixels = new int[width];
 		int[] srcPixels = new int[width];
 
-        Image rays = new Image(width, height, Image.TYPE_INT_ARGB);
+        Image rays = new Image(ARGBRaster.apply(width, height));
 
 		int threshold3 = (int)(threshold*3*255);
 		for ( int y = 0; y < height; y++ ) {
@@ -182,14 +181,15 @@ public class RaysFilter extends MotionBlurOp {
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
 
-		Graphics2D g = dst.createGraphics();
-		if ( !raysOnly ) {
-			g.setComposite( AlphaComposite.SrcOver );
-			g.drawRenderedImage( src, null );
-		}
-		g.setComposite( MiscComposite.getInstance( MiscComposite.ADD, opacity ) );
-		g.drawRenderedImage( rays, null );
-		g.dispose();
+        //TODO
+//		Graphics2D g = dst.createGraphics();
+//		if ( !raysOnly ) {
+//			g.setComposite( AlphaComposite.SrcOver );
+//			g.drawRenderedImage( src, null );
+//		}
+//		g.setComposite( MiscComposite.getInstance( MiscComposite.ADD, opacity ) );
+//		g.drawRenderedImage( rays, null );
+//		g.dispose();
 
         return dst;
     }

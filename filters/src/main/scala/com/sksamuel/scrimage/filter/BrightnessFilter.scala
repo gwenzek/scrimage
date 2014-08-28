@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class BrightnessFilter(brightness: Double) extends BufferedOpFilter {
+class BrightnessFilter(brightness: Double) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.ContrastFilter
   op.setBrightness(brightness.toFloat)
   op.setContrast(1.0f)

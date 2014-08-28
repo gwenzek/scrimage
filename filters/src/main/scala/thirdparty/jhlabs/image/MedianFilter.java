@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+
 
 /**
  * A filter which performs a 3x3 median operation. Useful for removing dust and noise.
@@ -28,7 +28,7 @@ public class MedianFilter extends WholeImageFilter {
 
 	private int median(int[] array) {
 		int max, maxIndex;
-		
+
 		for (int i = 0; i < 4; i++) {
 			max = 0;
 			maxIndex = 0;
@@ -50,7 +50,7 @@ public class MedianFilter extends WholeImageFilter {
 
 	private int rgbMedian(int[] r, int[] g, int[] b) {
 		int sum, index = 0, min = Integer.MAX_VALUE;
-		
+
 		for (int i = 0; i < 9; i++) {
 			sum = 0;
 			for (int j = 0; j < 9; j++) {

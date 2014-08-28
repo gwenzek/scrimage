@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class MotionBlurFilter(angle: Double, distance: Double, rotation: Double, zoom: Double) extends BufferedOpFilter {
+class MotionBlurFilter(angle: Double, distance: Double, rotation: Double, zoom: Double) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.MotionBlurFilter()
   op.setAngle(angle.toFloat)
   op.setDistance(distance.toFloat)

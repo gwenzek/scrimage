@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Double */
-class HSBFilter(hue: Double, saturation: Double, brightness: Double) extends BufferedOpFilter {
+class HSBFilter(hue: Double, saturation: Double, brightness: Double) extends StaticImageFilter {
   require(hue <= 1)
   require(brightness <= 1)
   require(saturation <= 1)

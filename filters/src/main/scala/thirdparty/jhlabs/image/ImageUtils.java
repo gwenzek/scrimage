@@ -16,6 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
+import com.sksamuel.scrimage.ARGBRaster;
 import com.sksamuel.scrimage.Image;
 import com.sksamuel.scrimage.Raster;
 import com.sksamuel.scrimage.geom.*;
@@ -54,10 +55,10 @@ public abstract class ImageUtils {
      * @return the converted image
 	 */
 	public static Image convertImageToARGB( Image image ) {
-		if ( image.raster instanceof ARGBRaster )
+		if ( image.raster() instanceof ARGBRaster)
 			return image;
 		else
-            return new Image(ARGBRaster.apply(image.width, image.height, image.raster().extract()));
+            return new Image(ARGBRaster.apply(image.width(), image.height(), image.raster().read()));
 	}
 
 	/**
@@ -118,7 +119,7 @@ public abstract class ImageUtils {
 		int [] pixels = null;
 
 		for (y1 = height-1; y1 >= 0; y1--) {
-			pixels = getRGB( p, 0, y1, width, 1, pixels );
+			pixels = p.raster().getRGB(0, y1, width, 1, pixels);
 			for (int x = 0; x < minX; x++) {
 				if ((pixels[x] & 0xff000000) != 0) {
 					minX = x;
@@ -140,7 +141,7 @@ public abstract class ImageUtils {
 		}
 		pixels = null;
 		for (int y = 0; y < y1; y++) {
-			pixels = getRGB( p, 0, y, width, 1, pixels );
+			pixels = p.raster().getRGB(0, y, width, 1, pixels);
 			for (int x = 0; x < minX; x++) {
 				if ((pixels[x] & 0xff000000) != 0) {
 					minX = x;
@@ -173,8 +174,8 @@ public abstract class ImageUtils {
      * @param sel the mask raster
 	 */
 	public static void composeThroughMask(Raster src, Raster dst, Raster sel) {
-		int x = src.getMinX();
-		int y = src.getMinY();
+		int x = 0;
+		int y = 0;
 		int w = src.width();
 		int h = src.height();
 
@@ -183,9 +184,9 @@ public abstract class ImageUtils {
 		int dstRGB[] = null;
 
 		for ( int i = 0; i < h; i++ ) {
-			srcRGB = src.getPixels(x, y, w, 1, srcRGB);
-			selRGB = sel.getPixels(x, y, w, 1, selRGB);
-			dstRGB = dst.getPixels(x, y, w, 1, dstRGB);
+			srcRGB = src.getRGB(x, y, w, 1, srcRGB);
+			selRGB = sel.getRGB(x, y, w, 1, selRGB);
+			dstRGB = dst.getRGB(x, y, w, 1, dstRGB);
 
 			int k = x;
 			for ( int j = 0; j < w; j++ ) {
@@ -208,7 +209,7 @@ public abstract class ImageUtils {
 				k += 4;
 			}
 
-			dst.setPixels(x, y, w, 1, dstRGB);
+			dst.setRGB(x, y, w, 1, dstRGB);
 			y++;
 		}
 	}

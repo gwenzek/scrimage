@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+import com.sksamuel.scrimage.geom.Rectangle;
 
 public class ShearFilter extends TransformFilter {
 
@@ -62,17 +62,18 @@ public class ShearFilter extends TransformFilter {
 		shy = (float)Math.sin(yangle);
 	}
 	
-	protected void transformSpace(Rectangle r) {
+	protected Rectangle transformSpace(Rectangle r) {
 		float tangent = (float)Math.tan(xangle);
-		xoffset = -r.height * tangent;
+		xoffset = -r.height() * tangent;
 		if (tangent < 0.0)
 			tangent = -tangent;
-		r.width = (int)(r.height * tangent + r.width + 0.999999f);
+		int w = (int)(r.height() * tangent + r.width() + 0.999999f);
 		tangent = (float)Math.tan(yangle);
-		yoffset = -r.width * tangent;
+		yoffset = -r.width() * tangent;
 		if (tangent < 0.0)
 			tangent = -tangent;
-		r.height = (int)(r.width * tangent + r.height + 0.999999f);
+		int h = (int)(r.width() * tangent + r.height() + 0.999999f);
+        return new Rectangle(r.x(), r.y(), w, h);
 	}
 
 /*

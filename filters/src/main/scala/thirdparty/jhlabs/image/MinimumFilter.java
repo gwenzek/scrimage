@@ -16,16 +16,16 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+
 
 /**
  * A filter which replcaes each pixel by the mimimum of itself and its eight neightbours.
  */
 public class MinimumFilter extends WholeImageFilter {
-	
+
 	public MinimumFilter() {
 	}
-	
+
 	protected int[] filterPixels( int width, int height, int[] inPixels, Rectangle transformedSpace ) {
 		int index = 0;
 		int[] outPixels = new int[width * height];

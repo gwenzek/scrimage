@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+
 
 /**
  * A class to emboss an image.
@@ -35,19 +35,19 @@ public class EmbossFilter extends WholeImageFilter {
 	public void setAzimuth(float azimuth) {
 		this.azimuth = azimuth;
 	}
-	
+
 	public float getAzimuth() {
 		return azimuth;
 	}
-	
+
 	public void setElevation(float elevation) {
 		this.elevation = elevation;
 	}
-	
+
 	public float getElevation() {
 		return elevation;
 	}
-	
+
 	public void setBumpHeight(float bumpHeight) {
 		this.width45 = 3 * bumpHeight;
 	}
@@ -59,18 +59,18 @@ public class EmbossFilter extends WholeImageFilter {
 	public void setEmboss(boolean emboss) {
 		this.emboss = emboss;
 	}
-	
+
 	public boolean getEmboss() {
 		return emboss;
 	}
-	
+
 	protected int[] filterPixels( int width, int height, int[] inPixels, Rectangle transformedSpace ) {
 		int index = 0;
 		int[] outPixels = new int[width * height];
 
 		int[] bumpPixels;
 		int bumpMapWidth, bumpMapHeight;
-		
+
 		bumpMapWidth = width;
 		bumpMapHeight = height;
 		bumpPixels = new int[bumpMapWidth * bumpMapHeight];
@@ -91,7 +91,7 @@ public class EmbossFilter extends WholeImageFilter {
 		background = Lz;
 
 		int bumpIndex = 0;
-		
+
 		for (int y = 0; y < height; y++, bumpIndex += bumpMapWidth) {
 			int s1 = bumpIndex;
 			int s2 = s1 + bumpMapWidth;

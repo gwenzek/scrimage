@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 import com.sksamuel.scrimage.filter.RippleType.{ Noise, Triangle, Sawtooth, Sine }
 
 /** @author Stephen Samuel */
@@ -28,7 +28,7 @@ object RippleType {
 }
 
 class RippleFilter(rippleType: RippleType, xAmplitude: Float, yAmplitude: Float, xWavelength: Float, yWavelength: Float)
-    extends BufferedOpFilter {
+    extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.RippleFilter()
   op.setXAmplitude(xAmplitude)
   op.setYAmplitude(yAmplitude)

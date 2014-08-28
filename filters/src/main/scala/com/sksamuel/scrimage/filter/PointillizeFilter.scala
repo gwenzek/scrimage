@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 import com.sksamuel.scrimage.filter.PointillizeGridType._
 
 /** @author Stephen Samuel */
@@ -26,7 +26,7 @@ class PointillizeFilter(angle: Float = 0.0f,
                         fadeEdges: Boolean,
                         fuzziness: Float,
                         gridType: PointillizeGridType)
-    extends BufferedOpFilter {
+    extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.PointillizeFilter
   op.setAngle(angle)
   op.setScale(scale)

@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class CrystallizeFilter(scale: Double, edgeThickness: Double, edgeColor: Int, randomness: Double) extends BufferedOpFilter {
+class CrystallizeFilter(scale: Double, edgeThickness: Double, edgeColor: Int, randomness: Double) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.CrystallizeFilter
   op.setEdgeColor(edgeColor)
   op.setEdgeThickness(edgeThickness.toFloat)

@@ -15,12 +15,11 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
-import java.awt.image.BufferedImageOp
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class PixelateFilter(blockSize: Int) extends BufferedOpFilter {
-  val op: BufferedImageOp = new thirdparty.jhlabs.image.BlockFilter(blockSize)
+class PixelateFilter(blockSize: Int) extends StaticImageFilter {
+  val op = new thirdparty.jhlabs.image.BlockFilter(blockSize)
 }
 object PixelateFilter {
   def apply(): PixelateFilter = apply(2)

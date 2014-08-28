@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class NoiseFilter(amount: Int, density: Double) extends BufferedOpFilter {
+class NoiseFilter(amount: Int, density: Double) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.NoiseFilter()
   op.setDensity(density.toFloat)
   op.setAmount(amount)

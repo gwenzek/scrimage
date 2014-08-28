@@ -16,7 +16,7 @@
 
 // package thirdparty.jhlabs.image;
 
-// import java.awt.*;
+//
 // import com.sksamuel.scrimage.Image;
 
 // public class ImageCombiningFilter {

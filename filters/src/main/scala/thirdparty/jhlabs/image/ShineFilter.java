@@ -16,11 +16,11 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+import com.sksamuel.scrimage.ARGBRaster;
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
-import thirdparty.jhlabs.composite.*;
 
-public class ShineFilter extends AbstractImageOp {
+public class ShineFilter extends AbstractImageFilter {
 
 	private float radius = 5;
 	private float angle = (float)Math.PI*7/4;
@@ -116,28 +116,30 @@ public class ShineFilter extends AbstractImageOp {
 		float xOffset = distance*(float)Math.cos(angle);
 		float yOffset = -distance*(float)Math.sin(angle);
 
-        Image matte = new Image(width, height, Image.TYPE_INT_ARGB);
+        Image matte = new Image(ARGBRaster.apply(width, height));
         ErodeAlphaFilter s = new ErodeAlphaFilter( bevel * 10, 0.75f, 0.1f );
         matte = s.filter( src, null );
 
-        Image shineLayer = new Image(width, height, Image.TYPE_INT_ARGB);
-		Graphics2D g = shineLayer.createGraphics();
-		g.setColor( new Color( shineColor ) );
-        g.fillRect( 0, 0, width, height );
-        g.setComposite( AlphaComposite.DstIn );
-        g.drawRenderedImage( matte, null );
-        g.setComposite( AlphaComposite.DstOut );
-        g.translate( xOffset, yOffset );
-        g.drawRenderedImage( matte, null );
-		g.dispose();
-        shineLayer = new GaussianFilter( radius ).filter( shineLayer, null );
-        shineLayer = new RescaleFilter( 3*brightness ).filter( shineLayer, shineLayer );
+        Image shineLayer = new Image(ARGBRaster.apply(width, height));
 
-		g = dst.createGraphics();
-        g.drawRenderedImage( src, null );
-        g.setComposite( new AddComposite( 1.0f ) );
-        g.drawRenderedImage( shineLayer, null );
-		g.dispose();
+        //TODO
+//		Graphics2D g = shineLayer.createGraphics();
+//		g.setColor( new Color( shineColor ) );
+//        g.fillRect( 0, 0, width, height );
+//        g.setComposite( AlphaComposite.DstIn );
+//        g.drawRenderedImage( matte, null );
+//        g.setComposite( AlphaComposite.DstOut );
+//        g.translate( xOffset, yOffset );
+//        g.drawRenderedImage( matte, null );
+//		g.dispose();
+//        shineLayer = new GaussianFilter( radius ).filter( shineLayer, null );
+//        shineLayer = new RescaleFilter( 3*brightness ).filter( shineLayer, shineLayer );
+//
+//		g = dst.createGraphics();
+//        g.drawRenderedImage( src, null );
+//        g.setComposite( new AddComposite( 1.0f ) );
+//        g.drawRenderedImage( shineLayer, null );
+//		g.dispose();
 
         return dst;
 	}

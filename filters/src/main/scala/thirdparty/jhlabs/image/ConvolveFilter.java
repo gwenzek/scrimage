@@ -16,14 +16,14 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
-import thirdparty.jhlabs.image.Kernel;
 
 /**
  * A filter which applies a convolution kernel to an image.
  * @author Jerry Huxtable
  */
-public class ConvolveFilter extends AbstractImageOp {
+public class ConvolveFilter extends AbstractImageFilter {
 
     /**
      * Treat pixels off the edge as zero.
@@ -174,7 +174,7 @@ public class ConvolveFilter extends AbstractImageOp {
 
         int[] inPixels = new int[width*height];
         int[] outPixels = new int[width*height];
-        getRGB( src, 0, 0, width, height, inPixels );
+        src.raster().getRGB(0, 0, width, height, inPixels);
 
         if ( premultiplyAlpha )
 			ImageMath.premultiply( inPixels, 0, inPixels.length );
@@ -182,7 +182,7 @@ public class ConvolveFilter extends AbstractImageOp {
         if ( premultiplyAlpha )
 			ImageMath.unpremultiply( outPixels, 0, outPixels.length );
 
-        setRGB( dst, 0, 0, width, height, outPixels );
+        dst.raster().setRGB(0, 0, width, height, outPixels);
         return dst;
     }
 
@@ -232,7 +232,7 @@ public class ConvolveFilter extends AbstractImageOp {
 		int index = 0;
 		float[] matrix = kernel.data;
 		int rows = kernel.height;
-		int cols = kernel.width();
+		int cols = kernel.width;
 		int rows2 = rows/2;
 		int cols2 = cols/2;
 
@@ -295,7 +295,7 @@ public class ConvolveFilter extends AbstractImageOp {
 	public static void convolveH(Kernel kernel, int[] inPixels, int[] outPixels, int width, int height, boolean alpha, int edgeAction) {
 		int index = 0;
 		float[] matrix = kernel.data;
-		int cols = kernel.width();
+		int cols = kernel.width;
 		int cols2 = cols/2;
 
 		for (int y = 0; y < height; y++) {

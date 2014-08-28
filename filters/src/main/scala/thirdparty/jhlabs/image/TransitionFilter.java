@@ -16,7 +16,9 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+
+
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
 import java.lang.reflect.*;
 import java.beans.*;
@@ -25,7 +27,7 @@ import java.beans.*;
  * A filter which uses another filter to perform a transition.
  * e.g. to create a blur transition, you could write: new TransitionFilter( new BoxBlurFilter(), "radius", 0, 100 );
  */
-public class TransitionFilter extends AbstractImageOp {
+public class TransitionFilter extends AbstractImageFilter {
 
 	private float transition = 0;
 	private Image destination;

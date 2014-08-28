@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class OilFilter(range: Int, levels: Int) extends BufferedOpFilter {
+class OilFilter(range: Int, levels: Int) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.OilFilter()
   op.setRange(range)
   op.setLevels(levels)

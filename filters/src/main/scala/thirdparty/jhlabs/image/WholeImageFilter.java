@@ -16,14 +16,16 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.Raster;
+import com.sksamuel.scrimage.geom.Rectangle;
 
 /**
  * A filter which acts as a superclass for filters which need to have the whole image in memory
  * to do their stuff.
  */
-public abstract class WholeImageFilter extends AbstractImageOp {
+public abstract class WholeImageFilter extends AbstractImageFilter {
 
 	/**
      * The output image bounds.
@@ -44,22 +46,20 @@ public abstract class WholeImageFilter extends AbstractImageOp {
     public Image filter( Image src, Image dst ) {
         int width = src.width();
         int height = src.height();
-		int type = src.getType();
-		Raster srcRaster = src.raster;
+		Raster srcRaster = src.raster();
 
 		originalSpace = new Rectangle(0, 0, width, height);
 		transformedSpace = new Rectangle(0, 0, width, height);
 		transformSpace(transformedSpace);
 
         if ( dst == null ) {
-            ColorModel dstCM = src.getColorModel();
-			dst = new Image(dstCM, dstCM.createCompatibleRaster(transformedSpace.width, transformedSpace.height), dstCM.isAlphaPremultiplied(), null);
+            dst = new Image((Raster) src.raster().empty(transformedSpace.width(), transformedSpace.height()));
 		}
-		Raster dstRaster = dst.raster;
+		Raster dstRaster = dst.raster();
 
-		int[] inPixels = getRGB( src, 0, 0, width, height, null );
+		int[] inPixels = src.raster().getRGB( 0, 0, width, height);
 		inPixels = filterPixels( width, height, inPixels, transformedSpace );
-		setRGB( dst, 0, 0, transformedSpace.width, transformedSpace.height, inPixels );
+		dst.raster().setRGB(0, 0, transformedSpace.width(), transformedSpace.height(), inPixels );
 
         return dst;
     }

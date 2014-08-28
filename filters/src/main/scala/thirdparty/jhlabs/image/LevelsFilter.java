@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+import com.sksamuel.scrimage.geom.Rectangle;
 
 /**
  * A filter which allows levels adjustment on an image.

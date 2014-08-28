@@ -19,7 +19,7 @@ package thirdparty.jhlabs.image;
 import com.sksamuel.scrimage.Image;
 import thirdparty.jhlabs.math.*;
 import thirdparty.jhlabs.vecmath.*;
-import java.awt.*;
+
 import java.util.*;
 
 /**

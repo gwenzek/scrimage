@@ -16,12 +16,13 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which uses a another image as a ask to produce a halftoning effect.
  */
-public class HalftoneFilter extends AbstractImageOp {
+public class HalftoneFilter extends AbstractImageFilter {
 
 	private float softness = 0.1f;
 	private boolean invert;
@@ -105,7 +106,7 @@ public class HalftoneFilter extends AbstractImageOp {
 			return dst;
 
         int maskWidth = mask.width();
-        int maskHeight = mask.getHeight();
+        int maskHeight = mask.height();
 
         float s = 255*softness;
 
@@ -113,8 +114,8 @@ public class HalftoneFilter extends AbstractImageOp {
 		int[] maskPixels = new int[maskWidth];
 
         for ( int y = 0; y < height; y++ ) {
-			getRGB( src, 0, y, width, 1, inPixels );
-			getRGB( mask, 0, y % maskHeight, maskWidth, 1, maskPixels );
+			src.raster().getRGB(0, y, width, 1, inPixels );
+			mask.raster().getRGB(0, y % maskHeight, maskWidth, 1, maskPixels );
 
 			for ( int x = 0; x < width; x++ ) {
 				int maskRGB = maskPixels[x % maskWidth];
@@ -141,7 +142,7 @@ public class HalftoneFilter extends AbstractImageOp {
                 }
             }
 
-			setRGB( dst, 0, y, width, 1, inPixels );
+			dst.raster().setRGB(0, y, width, 1, inPixels );
         }
 
         return dst;

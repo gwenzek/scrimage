@@ -16,7 +16,7 @@
 
 // package thirdparty.jhlabs.image;
 
-// import java.awt.*;
+//
 // import java.awt.geom.*;
 // import com.sksamuel.scrimage.Image;
 

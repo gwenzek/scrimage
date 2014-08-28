@@ -15,9 +15,9 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-object EdgeFilter extends BufferedOpFilter {
+object EdgeFilter extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.EdgeFilter()
 }

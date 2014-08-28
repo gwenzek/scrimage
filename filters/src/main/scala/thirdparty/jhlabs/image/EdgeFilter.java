@@ -16,13 +16,13 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+
 
 /**
  * An edge-detection filter.
  */
 public class EdgeFilter extends WholeImageFilter {
-	
+
 	public final static float R2 = (float)Math.sqrt(2);
 
 	public final static float[] ROBERTS_V = {

@@ -16,14 +16,17 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
-import java.awt.geom.*;
+import com.sksamuel.scrimage.ARGBRaster;
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.Raster;
+import com.sksamuel.scrimage.geom.Point2D;
+import com.sksamuel.scrimage.geom.Rectangle;
 
 /**
  * A filter which draws a drop shadow based on the alpha channel of the image.
  */
-public class ShadowFilter extends AbstractImageOp {
+public class ShadowFilter extends AbstractImageFilter {
 
 	private float radius = 5;
 	private float angle = (float)Math.PI*6/4;
@@ -180,31 +183,27 @@ public class ShadowFilter extends AbstractImageOp {
 		return shadowOnly;
 	}
 
-    public Rectangle2D getBounds2D( Image src ) {
-        Rectangle r = new Rectangle(0, 0, src.width, src.height);
+    public Rectangle getBounds2D( Image src ) {
+
 		if ( addMargins ) {
 			float xOffset = distance*(float)Math.cos(angle);
 			float yOffset = -distance*(float)Math.sin(angle);
-			r.width += (int)(Math.abs(xOffset)+2*radius);
-			r.height += (int)(Math.abs(yOffset)+2*radius);
-		}
-        return r;
+			int w  =(int)(Math.abs(xOffset)+2*radius);
+			int h = (int)(Math.abs(yOffset)+2*radius);
+            return new Rectangle(0, 0, src.width() + w , src.height() + h);
+		} else
+            return new Rectangle(0, 0, src.width(), src.height());
     }
 
-    public Point2D getPoint2D( Point2D srcPt, Point2D dstPt ) {
-        if ( dstPt == null )
-            dstPt = new Point2D.Double();
-
+    public Point2D getPoint2D( Point2D srcPt) {
 		if ( addMargins ) {
-            float xOffset = distance*(float)Math.cos(angle);
-            float yOffset = -distance*(float)Math.sin(angle);
+            float xOffset = distance * (float)Math.cos(angle);
+            float yOffset = -distance * (float)Math.sin(angle);
 			float topShadow = Math.max( 0, radius-yOffset );
 			float leftShadow = Math.max( 0, radius-xOffset );
-            dstPt.setLocation( srcPt.getX()+leftShadow, srcPt.getY()+topShadow );
+            return new Point2D( (int) (srcPt.x()+leftShadow), (int) (srcPt.y()+topShadow) );
 		} else
-            dstPt.setLocation( srcPt.getX(), srcPt.getY() );
-
-        return dstPt;
+            return new Point2D( srcPt.x(), srcPt.y() );
     }
 
     public Image filter( Image src, Image dst ) {
@@ -216,8 +215,7 @@ public class ShadowFilter extends AbstractImageOp {
 
         if ( dst == null ) {
             if ( addMargins ) {
-				ColorModel cm = src.getColorModel();
-				dst = new Image(cm, cm.createCompatibleRaster(src.width()+ (int) (Math.abs(xOffset) + radius), src.height()+ (int) (Math.abs(yOffset) + radius)), cm.isAlphaPremultiplied(), null);
+				dst = new Image((Raster) src.raster().empty(src.width()+ (int) (Math.abs(xOffset) + radius), src.height()+ (int) (Math.abs(yOffset) + radius)) );
 			} else
 				dst = createCompatibleDestImage( src, null );
 		}
@@ -233,24 +231,25 @@ public class ShadowFilter extends AbstractImageOp {
             { 0, 0, 0, shadowB },
             { 0, 0, 0, opacity }
         };
-        Image shadow = new Image(width, height, Image.TYPE_INT_ARGB);
-        new BandCombineOp( extractAlpha, null ).filter( src.raster, shadow.raster );
-        shadow = new GaussianFilter( radius ).filter( shadow, null );
-
-		Graphics2D g = dst.createGraphics();
-		g.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, opacity ) );
-		if ( addMargins ) {
-			float radius2 = radius/2;
-			float topShadow = Math.max( 0, radius-yOffset );
-			float leftShadow = Math.max( 0, radius-xOffset );
-			g.translate( leftShadow, topShadow );
-		}
-		g.drawRenderedImage( shadow, AffineTransform.getTranslateInstance( xOffset, yOffset ) );
-		if ( !shadowOnly ) {
-			g.setComposite( AlphaComposite.SrcOver );
-			g.drawRenderedImage( src, null );
-		}
-		g.dispose();
+        Image shadow = new Image(ARGBRaster.apply(width, height));
+        //TODO
+//        new BandCombineOp( extractAlpha, null ).filter( src.raster, shadow.raster );
+//        shadow = new GaussianFilter( radius ).filter( shadow, null );
+//
+//		Graphics2D g = dst.createGraphics();
+//		g.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, opacity ) );
+//		if ( addMargins ) {
+//			float radius2 = radius/2;
+//			float topShadow = Math.max( 0, radius-yOffset );
+//			float leftShadow = Math.max( 0, radius-xOffset );
+//			g.translate( leftShadow, topShadow );
+//		}
+//		g.drawRenderedImage( shadow, AffineTransform.getTranslateInstance( xOffset, yOffset ) );
+//		if ( !shadowOnly ) {
+//			g.setComposite( AlphaComposite.SrcOver );
+//			g.drawRenderedImage( src, null );
+//		}
+//		g.dispose();
 
         return dst;
 	}

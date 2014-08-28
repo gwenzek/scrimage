@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class SwimFilter(amount: Double, stretch: Double) extends BufferedOpFilter {
+class SwimFilter(amount: Double, stretch: Double) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.SwimFilter()
   op.setAmount(amount.toFloat)
   op.setStretch(stretch.toFloat)

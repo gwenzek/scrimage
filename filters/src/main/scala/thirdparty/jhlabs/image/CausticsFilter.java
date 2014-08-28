@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+
 import java.util.*;
 import thirdparty.jhlabs.math.*;
 
@@ -110,7 +110,7 @@ public class CausticsFilter extends WholeImageFilter {
 	public void setAmount(float amount) {
 		this.amount = amount;
 	}
-	
+
 	/**
 	 * Get the amount of effect.
 	 * @return the amount
@@ -119,7 +119,7 @@ public class CausticsFilter extends WholeImageFilter {
 	public float getAmount() {
 		return amount;
 	}
-	
+
 	/**
 	 * Set the dispersion.
 	 * @param dispersion the dispersion
@@ -130,7 +130,7 @@ public class CausticsFilter extends WholeImageFilter {
 	public void setDispersion(float dispersion) {
 		this.dispersion = dispersion;
 	}
-	
+
 	/**
 	 * Get the dispersion.
 	 * @return the dispersion
@@ -139,7 +139,7 @@ public class CausticsFilter extends WholeImageFilter {
 	public float getDispersion() {
 		return dispersion;
 	}
-	
+
 	/**
 	 * Set the time. Use this to animate the effect.
 	 * @param time the time
@@ -148,7 +148,7 @@ public class CausticsFilter extends WholeImageFilter {
 	public void setTime(float time) {
 		this.time = time;
 	}
-	
+
 	/**
 	 * Set the time.
 	 * @return the time
@@ -157,7 +157,7 @@ public class CausticsFilter extends WholeImageFilter {
 	public float getTime() {
 		return time;
 	}
-	
+
 	/**
 	 * Set the number of samples per pixel. More samples means better quality, but slower rendering.
 	 * @param samples the number of samples
@@ -166,7 +166,7 @@ public class CausticsFilter extends WholeImageFilter {
 	public void setSamples(int samples) {
 		this.samples = samples;
 	}
-	
+
 	/**
 	 * Get the number of samples per pixel.
 	 * @return the number of samples
@@ -175,7 +175,7 @@ public class CausticsFilter extends WholeImageFilter {
 	public int getSamples() {
 		return samples;
 	}
-	
+
 	/**
 	 * Set the background color.
 	 * @param c the color
@@ -212,7 +212,7 @@ public class CausticsFilter extends WholeImageFilter {
 				pixels[index++] = bgColor;
 			}
 		}
-		
+
 		int v = brightness/samples;
 		if (v == 0)
 			v = 1;
@@ -304,7 +304,7 @@ public class CausticsFilter extends WholeImageFilter {
 			b = 255;
 		return 0xff000000 | (r << 16) | (g << 8) | b;
 	}
-	
+
 	private static int add(int rgb, float brightness, int c) {
 		int r = (rgb >> 16) & 0xff;
 		int g = (rgb >> 8) & 0xff;
@@ -323,18 +323,18 @@ public class CausticsFilter extends WholeImageFilter {
 			b = 255;
 		return 0xff000000 | (r << 16) | (g << 8) | b;
 	}
-	
+
 	private static float turbulence2(float x, float y, float time, float octaves) {
 		float value = 0.0f;
 		float remainder;
 		float lacunarity = 2.0f;
 		float f = 1.0f;
 		int i;
-		
+
 		// to prevent "cascading" effects
 		x += 371;
 		y += 529;
-		
+
 		for (i = 0; i < (int)octaves; i++) {
 			value += Noise.noise3(x, y, time) / f;
 			x *= lacunarity;
@@ -355,9 +355,9 @@ public class CausticsFilter extends WholeImageFilter {
 		float f = turbulence == 0.0 ? Noise.noise3(xt, y, tt) : turbulence2(xt, y, tt, turbulence);
 		return f;
 	}
-	
+
 	public String toString() {
 		return "Texture/Caustics...";
 	}
-	
+
 }

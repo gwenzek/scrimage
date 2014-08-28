@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class SparkleFilter(x: Int, y: Int, rays: Int, radius: Int, amount: Int) extends BufferedOpFilter {
+class SparkleFilter(x: Int, y: Int, rays: Int, radius: Int, amount: Int) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.SparkleFilter()
   op.setRays(rays)
   op.setRadius(radius)

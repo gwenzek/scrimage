@@ -101,6 +101,12 @@ trait Raster { self: ColorModel =>
     this
   }
 
+  def getRGB(x0: Int, y0: Int, w: Int, h: Int): Array[Int] =
+    getRGB(x0, y0, w, h, Array.ofDim[Int](w * h), 0, w)
+
+  def getRGB(x0: Int, y0: Int, w: Int, h: Int, colors: Array[Int]): Array[Int] =
+    getRGB(x0, y0, w, h, colors, 0, w)
+
   def getRGB(x0: Int, y0: Int, w: Int, h: Int, colors: Array[Int], off: Int, scansize: Int): Array[Int] = {
     var i = 0
     for (x <- x0 until x0 + w; y <- y0 until y0 + h) {
@@ -109,6 +115,9 @@ trait Raster { self: ColorModel =>
     }
     colors
   }
+
+  def setRGB(x0: Int, y0: Int, w: Int, h: Int, colors: Array[Int]): Raster =
+    setRGB(x0, y0, w, h, colors, 0, w)
 
   def setRGB(x0: Int, y0: Int, w: Int, h: Int, colors: Array[Int], off: Int, scansize: Int): Raster = {
     var i = 0

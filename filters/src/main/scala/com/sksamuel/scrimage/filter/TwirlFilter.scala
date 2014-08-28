@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class TwirlFilter(angle: Double, radius: Int, centerX: Float, centerY: Float) extends BufferedOpFilter {
+class TwirlFilter(angle: Double, radius: Int, centerX: Float, centerY: Float) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.TwirlFilter()
   op.setCentreX(centerX)
   op.setCentreY(centerY)

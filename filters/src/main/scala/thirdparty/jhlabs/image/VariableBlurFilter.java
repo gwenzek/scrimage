@@ -16,7 +16,9 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+
+
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
 import java.awt.geom.*;
 
@@ -24,7 +26,7 @@ import java.awt.geom.*;
  * A filter which performs a box blur with a different blur radius at each pixel. The radius can either be specified by
  * providing a blur mask image or by overriding the blurRadiusAt method.
  */
-public class VariableBlurFilter extends AbstractImageOp {
+public class VariableBlurFilter extends AbstractImageFilter {
 
 	private int hRadius = 1;
 	private int vRadius = 1;

@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class RaysFilter(opacity: Float, threshold: Float, strength: Float) extends BufferedOpFilter {
+class RaysFilter(opacity: Float, threshold: Float, strength: Float) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.RaysFilter()
   op.setOpacity(opacity)
   op.setThreshold(threshold)

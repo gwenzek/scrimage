@@ -16,12 +16,13 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
 
 /**
  * A filter which performs a "smart blur". i.e. a blur which blurs smotth parts of the image while preserving edges.
  */
-public class SmartBlurFilter extends AbstractImageOp {
+public class SmartBlurFilter extends AbstractImageFilter {
 
 	private int hRadius = 5;
 	private int vRadius = 5;
@@ -38,7 +39,7 @@ public class SmartBlurFilter extends AbstractImageOp {
         int[] outPixels = new int[width*height];
         getRGB( src, 0, 0, width, height, inPixels );
 
-		Kernel kernel = GaussianFilter.makeKernel(hRadius);
+		thirdparty.jhlabs.image.Kernel kernel = GaussianFilter.makeKernel(hRadius);
 		thresholdBlur( kernel, inPixels, outPixels, width, height, true );
 		thresholdBlur( kernel, outPixels, inPixels, height, width, true );
 
@@ -52,7 +53,7 @@ public class SmartBlurFilter extends AbstractImageOp {
 	private void thresholdBlur(Kernel kernel, int[] inPixels, int[] outPixels, int width, int height, boolean alpha) {
 		int index = 0;
 		float[] matrix = kernel.data;
-		int cols = kernel.width();
+		int cols = kernel.width;
 		int cols2 = cols/2;
 
 		for (int y = 0; y < height; y++) {

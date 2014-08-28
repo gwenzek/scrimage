@@ -16,41 +16,34 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.Raster;
 
 /**
  * An abstract superclass for point filters. The interface is the same as the old RGBImageFilter.
  */
-public abstract class PointFilter extends AbstractImageOp {
+public abstract class PointFilter extends AbstractImageFilter {
 
 	protected boolean canFilterIndexColorModel = false;
 
     public Image filter( Image src, Image dst ) {
         int width = src.width();
         int height = src.height();
-		int type = src.getType();
-		Raster srcRaster = src.raster;
+		Raster srcRaster = src.raster();
 
         if ( dst == null )
             dst = createCompatibleDestImage( src, null );
-		Raster dstRaster = dst.raster;
+		Raster dstRaster = dst.raster();
 
         setDimensions( width, height);
 
 		int[] inPixels = new int[width];
         for ( int y = 0; y < height; y++ ) {
-			// We try to avoid calling getRGB on images as it causes them to become unmanaged, causing horrible performance problems.
-			if ( type == Image.TYPE_INT_ARGB ) {
-				srcRaster.getDataElements( 0, y, width, 1, inPixels );
-				for ( int x = 0; x < width; x++ )
-					inPixels[x] = filterRGB( x, y, inPixels[x] );
-				dstRaster.setDataElements( 0, y, width, 1, inPixels );
-			} else {
-				src.raster().getRGB( 0, y, width, 1, inPixels, 0, width );
-				for ( int x = 0; x < width; x++ )
-					inPixels[x] = filterRGB( x, y, inPixels[x] );
-				dst.raster().setRGB( 0, y, width, 1, inPixels, 0, width );
-			}
+            src.raster().getRGB( 0, y, width, 1, inPixels, 0, width );
+            for ( int x = 0; x < width; x++ )
+                inPixels[x] = filterRGB( x, y, inPixels[x] );
+            dst.raster().setRGB( 0, y, width, 1, inPixels, 0, width );
         }
 
         return dst;

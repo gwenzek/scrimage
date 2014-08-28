@@ -1,9 +1,9 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class QuantizeFilter(colors: Int, dither: Boolean) extends BufferedOpFilter {
+class QuantizeFilter(colors: Int, dither: Boolean) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.QuantizeFilter
   op.setNumColors(colors)
   op.setDither(dither)

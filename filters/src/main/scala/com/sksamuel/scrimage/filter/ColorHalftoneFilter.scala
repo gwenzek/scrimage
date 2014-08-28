@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class ColorHalftoneFilter(radius: Double) extends BufferedOpFilter {
+class ColorHalftoneFilter(radius: Double) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.ColorHalftoneFilter()
   op.setdotRadius(radius.toFloat)
 }

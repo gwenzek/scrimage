@@ -16,8 +16,9 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
 import java.util.*;
+
+import com.sksamuel.scrimage.geom.Rectangle;
 import thirdparty.jhlabs.math.*;
 
 /**
@@ -514,8 +515,8 @@ public class CellularFilter extends WholeImageFilter implements Function2D, Clon
 		return outPixels;
 	}
 
-	public Object clone() {
-		CellularFilter f = (CellularFilter)super.clone();
+	public Object clone() throws java.lang.CloneNotSupportedException {
+		CellularFilter f = (CellularFilter) super.clone();
 		f.coefficients = (float[])coefficients.clone();
 		f.results = (Point[])results.clone();
 		f.random = new Random();

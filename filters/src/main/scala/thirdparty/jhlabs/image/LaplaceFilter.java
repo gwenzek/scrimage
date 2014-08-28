@@ -16,13 +16,14 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
 
 /**
  * Edge detection via the Laplacian operator.
  * @author Jerry Huxtable
  */
-public class LaplaceFilter extends AbstractImageOp {
+public class LaplaceFilter extends AbstractImageFilter {
 
     private void brightness( int[] row ) {
         for ( int i = 0; i < row.length; i++ ) {

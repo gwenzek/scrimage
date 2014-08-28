@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class GlowFilter(amount: Float) extends BufferedOpFilter {
+class GlowFilter(amount: Float) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.GlowFilter()
   op.setAmount(amount)
 }

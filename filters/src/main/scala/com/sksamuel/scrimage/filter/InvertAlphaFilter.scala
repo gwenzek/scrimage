@@ -15,9 +15,9 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-object InvertAlphaFilter extends BufferedOpFilter {
+object InvertAlphaFilter extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.InvertAlphaFilter()
 }

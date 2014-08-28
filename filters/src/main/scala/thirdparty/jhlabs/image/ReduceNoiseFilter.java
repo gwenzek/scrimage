@@ -16,7 +16,7 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+import com.sksamuel.scrimage.geom.Rectangle;
 
 /**
  * A filter which performs reduces noise by looking at each pixel's 8 neighbours, and if it's a minimum or maximum,

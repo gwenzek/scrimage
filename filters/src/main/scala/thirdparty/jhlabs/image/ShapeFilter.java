@@ -16,14 +16,14 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
-
 // original code Copyright (C) Jerry Huxtable 1998
 //
 // customizations (C) Michele Puccini 19/12/2001
 // - conversion from float to int math
 // - complete rewrite of applyMap()
 // - implemented merge to dest function
+
+import com.sksamuel.scrimage.geom.Rectangle;
 
 public class ShapeFilter extends WholeImageFilter {
 

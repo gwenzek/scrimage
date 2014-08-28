@@ -15,9 +15,9 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-object MaximumFilter extends BufferedOpFilter {
+object MaximumFilter extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.MaximumFilter()
 }

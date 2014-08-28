@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-object SolarizeFilter extends BufferedOpFilter {
+object SolarizeFilter extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.SolarizeFilter()
 }
 

@@ -17,6 +17,7 @@ package com.sksamuel.scrimage
 
 import java.awt.image.BufferedImageOp
 import java.awt.Graphics2D
+import com.sksamuel.scrimage.geom._
 
 /** @author Stephen Samuel */
 trait Filter {
@@ -27,6 +28,7 @@ trait Filter {
   *
   * Filters that wish to provide an awt BufferedImageOp need to simply extend this class.
   */
+@deprecated("java awt is to be removed", since = "28/08/2014")
 abstract class BufferedOpFilter extends Filter {
   val op: BufferedImageOp
   def apply(image: Image) {
@@ -35,6 +37,24 @@ abstract class BufferedOpFilter extends Filter {
     g2.dispose()
     image.updateFromAWT()
   }
+}
+
+/** A convenience class which implements those methods of BufferedImageOp which are rarely changed.
+  */
+abstract class AbstractImageFilter extends Filter {
+  def createCompatibleDestImage(src: Image) = new Image(src.raster.mimic)
+  def createCompatibleDestImage(src: Image, colorModel: Raster.RasterType) =
+    new Image(Raster(src.width, src.height, colorModel))
+
+  def getBounds2D(src: Image) = Rectangle(0, 0, src.width, src.height)
+
+  def filter(src: Image, dst: Image): Image
+  def apply(image: Image) = filter(image, null)
+}
+
+abstract class StaticImageFilter extends Filter {
+  val op: AbstractImageFilter
+  def apply(image: Image) = op.apply(image)
 }
 
 class PipelineFilter(filters: Filter*) extends Filter {

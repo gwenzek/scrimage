@@ -16,6 +16,8 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
+import com.sksamuel.scrimage.ARGBRaster;
+import com.sksamuel.scrimage.AbstractImageFilter;
 import thirdparty.jhlabs.math.FFT;
 
 import com.sksamuel.scrimage.Image;
@@ -23,7 +25,7 @@ import com.sksamuel.scrimage.Image;
 /**
  * A filter which use FFTs to simulate lens blur on an image.
  */
-public class LensBlurFilter extends AbstractImageOp {
+public class LensBlurFilter extends AbstractImageFilter {
 
     private float radius = 10;
     private float bloom = 2;
@@ -127,7 +129,7 @@ public class LensBlurFilter extends AbstractImageOp {
         tileHeight = iradius < 32 ? Math.min(128, height + 2 * iradius) : Math.min(256, height + 2 * iradius);
 
         if (dst == null)
-            dst = new Image(width, height, Image.TYPE_INT_ARGB);
+            dst = new Image(ARGBRaster.apply(width, height));
 
         while (rows < tileHeight) {
             rows *= 2;

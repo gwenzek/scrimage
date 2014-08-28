@@ -16,11 +16,13 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import java.awt.*;
+
+
+import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
 import java.util.*;
 
-public class ScratchFilter extends AbstractImageOp {
+public class ScratchFilter extends AbstractImageFilter {
     private float density = 0.1f;
     private float angle;
     private float angleVariation = 1.0f;

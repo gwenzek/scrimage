@@ -15,10 +15,10 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.BufferedOpFilter
+import com.sksamuel.scrimage.StaticImageFilter
 
 /** @author Stephen Samuel */
-class GammaFilter(gamma: Double) extends BufferedOpFilter {
+class GammaFilter(gamma: Double) extends StaticImageFilter {
   val op = new thirdparty.jhlabs.image.GammaFilter()
   op.setGamma(gamma.toFloat)
 }
