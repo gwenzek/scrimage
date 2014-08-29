@@ -82,14 +82,14 @@ public class ChromaKeyFilter extends AbstractImageFilter {
             dst = createCompatibleDestImage( src);
 		Raster dstRaster = dst.raster();
 
-		float[] hsb1 = null;
-		float[] hsb2 = null;
+		float[] hsb1 = new float[4];
+		float[] hsb2 = new float[4];
 		int rgb2 = color;
 		int r2 = (rgb2 >> 16) & 0xff;
 		int g2 = (rgb2 >> 8) & 0xff;
 		int b2 = rgb2 & 0xff;
 		hsb2 = Color.RGBtoHSB(r2, b2, g2, hsb2);
-		int[] inPixels = null;
+		int[] inPixels = new int[width];
 		for ( int y = 0; y < height; y++ ) {
 			inPixels = srcRaster.getRGB(0, y, width, 1, inPixels );
 			for ( int x = 0; x < width; x++ ) {

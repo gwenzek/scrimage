@@ -139,7 +139,7 @@ public abstract class ImageUtils {
 			if ( anySelected )
 				break;
 		}
-		pixels = null;
+		pixels = new int[width];
 		for (int y = 0; y < y1; y++) {
 			pixels = p.raster().getRGB(0, y, width, 1, pixels);
 			for (int x = 0; x < minX; x++) {
@@ -179,9 +179,9 @@ public abstract class ImageUtils {
 		int w = src.width();
 		int h = src.height();
 
-		int srcRGB[] = null;
-		int selRGB[] = null;
-		int dstRGB[] = null;
+		int srcRGB[] = new int[w];
+		int selRGB[] = new int[w];
+		int dstRGB[] = new int[w];
 
 		for ( int i = 0; i < h; i++ ) {
 			srcRGB = src.getRGB(x, y, w, 1, srcRGB);
