@@ -28,9 +28,9 @@ class VignetteFilter(start: Double, end: Double, blur: Double, color: Color = Co
   require(blur >= 0)
   require(blur <= 1)
 
-  def apply(image: Image) {
+  def apply(image: Image) = {
 
-    val blend = image.empty.toMutable
+    val blend = image.empty
     val g2 = blend.awt.getGraphics.asInstanceOf[Graphics2D]
     val radius = image.radius * end
     val p = new RadialGradientPaint(new Point2D.Float(blend.center._1, blend.center._2),
@@ -43,11 +43,12 @@ class VignetteFilter(start: Double, end: Double, blur: Double, color: Color = Co
 
     blend.filter(GaussianBlurFilter((image.radius * blur).toInt))
 
-    val g3 = image.awt.getGraphics.asInstanceOf[Graphics2D]
+    val buffered = image.toBufferedImage
+    val g3 = buffered.getGraphics.asInstanceOf[Graphics2D]
     g3.setComposite(new BlendComposite(BlendingMode.MULTIPLY, 1.0f))
     g3.drawImage(blend.awt, 0, 0, null)
     g3.dispose()
-    image.updateFromAWT()
+    Image(buffered)
   }
 }
 

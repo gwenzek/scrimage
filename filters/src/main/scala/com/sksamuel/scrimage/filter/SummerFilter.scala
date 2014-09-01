@@ -24,14 +24,15 @@ class SummerFilter(vignette: Boolean) extends Filter {
 
   val summer = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filter/summer1.jpg"))
 
-  def apply(image: Image) {
-    val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
+  def apply(image: Image) = {
+    val buffered = image.toBufferedImage
+    val g2 = buffered.getGraphics.asInstanceOf[Graphics2D]
     g2.setComposite(BlendComposite.getInstance(BlendComposite.BlendingMode.INVERSE_COLOR_BURN, 0.5f))
     g2.drawImage(summer.scaleTo(image.width, image.height).awt, 0, 0, null)
     g2.dispose()
     if (vignette)
       VignetteFilter(0.92f, 0.98f, 0.3).apply(image)
-    image.updateFromAWT()
+    Image(buffered)
   }
 }
 

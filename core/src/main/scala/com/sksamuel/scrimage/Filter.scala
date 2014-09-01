@@ -21,7 +21,7 @@ import com.sksamuel.scrimage.geom._
 
 /** @author Stephen Samuel */
 trait Filter {
-  def apply(image: Image)
+  def apply(src: Image): Image
 }
 
 /** Extension of Filter that applies its filters using a standard java BufferedImageOp.
@@ -31,11 +31,11 @@ trait Filter {
 @deprecated("java awt is to be removed", since = "28/08/2014")
 abstract class BufferedOpFilter extends Filter {
   val op: BufferedImageOp
-  def apply(image: Image) {
+  def apply(image: Image): Image = {
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.drawImage(image.awt, op, 0, 0)
     g2.dispose()
-    image.updateFromAWT()
+    Image(image.awt)
   }
 }
 
@@ -49,14 +49,15 @@ abstract class AbstractImageFilter extends Filter {
   def getBounds2D(src: Image) = Rectangle(0, 0, src.width, src.height)
 
   def filter(src: Image, dst: Image): Image
-  def apply(image: Image) = filter(image, image)
+
+  def apply(src: Image): Image = filter(src, null)
 }
 
 abstract class StaticImageFilter extends Filter {
   val op: AbstractImageFilter
-  def apply(image: Image) = op.apply(image)
+  def apply(src: Image) = op.apply(src)
 }
 
 class PipelineFilter(filters: Filter*) extends Filter {
-  def apply(image: Image): Unit = filters.foreach(_.apply(image))
+  def apply(image: Image): Image = filters.foldLeft(image.filled())((img, f) => f.apply(img))
 }

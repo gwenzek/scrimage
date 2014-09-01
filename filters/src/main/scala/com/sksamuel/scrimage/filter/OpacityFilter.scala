@@ -31,9 +31,7 @@ class OpacityFilter(amount: Double) extends Filter {
     a | _r << 16 | _g << 8 | _b
   }
 
-  def apply(image: Image) {
-    image.mapInPlace((x, y, p) => filter(x, y, p))
-  }
+  def apply(image: Image) = image.map((x, y, p) => filter(x, y, p))
 }
 
 object OpacityFilter {

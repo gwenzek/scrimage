@@ -20,14 +20,15 @@ import java.awt.{ Color, Graphics2D }
 
 /** @author Stephen Samuel */
 class BorderFilter(width: Int, color: Color = Color.BLACK) extends Filter {
-  def apply(image: Image) {
-    val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
+  def apply(image: Image) = {
+    val buffered = image.toBufferedImage
+    val g2 = buffered.getGraphics.asInstanceOf[Graphics2D]
     g2.setColor(color)
     g2.fillRect(0, 0, width, image.height) // left
     g2.fillRect(image.width - width, 0, width, image.height) // right
     g2.fillRect(0, 0, image.width, width) // top
     g2.fillRect(0, image.height - width, image.width, width) // bottom
-    image.updateFromAWT()
+    Image(buffered)
   }
 }
 object BorderFilter {

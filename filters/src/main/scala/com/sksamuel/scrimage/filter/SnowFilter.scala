@@ -25,11 +25,12 @@ object SnowFilter extends Filter {
 
   val snow = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filter/snow1.jpg"))
 
-  def apply(image: Image) {
-    val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
+  def apply(image: Image) = {
+    val buffered = image.toBufferedImage
+    val g2 = buffered.getGraphics.asInstanceOf[Graphics2D]
     g2.setComposite(new BlendComposite(BlendingMode.SCREEN, 1.0f))
     g2.drawImage(snow.scaleTo(image.width, image.height).awt, 0, 0, null)
     g2.dispose()
-    image.updateFromAWT()
+    Image(buffered)
   }
 }

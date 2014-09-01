@@ -114,19 +114,23 @@ public class LensBlurFilter extends AbstractImageFilter {
 
 
     public Image filter(Image src, Image dst) {
-        int width = src.width();
-        int height = src.height();
+        final int width = src.width();
+        final int height = src.height();
         int rows = 1, cols = 1;
         int log2rows = 0, log2cols = 0;
-        int iradius = (int) Math.ceil(radius);
-        int tileWidth = 128;
-        int tileHeight = tileWidth;
+        final int iradius = (int) Math.ceil(radius);
 
-        int adjustedWidth = (int) (width + iradius * 2);
-        int adjustedHeight = (int) (height + iradius * 2);
+        //FIXME
+//        int tileWidth = 128;
+//        int tileHeight = tileWidth;
+//        int adjustedWidth = (int) (width + iradius * 2);
+//        int adjustedHeight = (int) (height + iradius * 2);
+//        tileWidth = iradius < 32 ? Math.min(128, adjustedWidth) : Math.min(256, adjustedWidth);
+//        tileHeight = iradius < 32 ? Math.min(128, adjustedHeight) : Math.min(256, adjustedHeight);
 
-        tileWidth = iradius < 32 ? Math.min(128, width + 2 * iradius) : Math.min(256, width + 2 * iradius);
-        tileHeight = iradius < 32 ? Math.min(128, height + 2 * iradius) : Math.min(256, height + 2 * iradius);
+        final int preferredTileSize = iradius < 32 ? 128 : 256;
+        int tileWidth = Math.min(preferredTileSize, width + iradius * 2);
+        int tileHeight = Math.min(preferredTileSize, height + iradius * 2);
 
         if (dst == null)
             dst = new Image(ARGBRaster.apply(width, height));
@@ -139,11 +143,11 @@ public class LensBlurFilter extends AbstractImageFilter {
             cols *= 2;
             log2cols++;
         }
-        int w = cols;
-        int h = rows;
+        final int w = cols;
+        final int h = rows;
 
         tileWidth = w;
-        tileHeight = h;//FIXME-tileWidth, w, and cols are always all the same
+        tileHeight = h;//FIXME: tileWidth, w, and cols are always all the same
 
         FFT fft = new FFT(Math.max(log2rows, log2cols));
 
@@ -216,29 +220,39 @@ public class LensBlurFilter extends AbstractImageFilter {
                     tw = width - tx;
                 if (ty + th > height)
                     th = height - ty;
-                src.raster().getRGB(tx, ty, tw, th, rgb, fy * w + fx, w);
 
+                System.out.println("Reading Tile: (" + tx +" -> " + (tx+tw) + ", " + ty + " -> "  + (ty + th) + "), stores it at: (" + fx + ", " + fy + ")");
+
+                //get the rectangle (tx, ty, tw, th) and stores it at fy * w + fx
+                src.raster().getRGB(tx, ty, tw, th, rgb, fy * w + fx, w);
+                System.out.println("Top Left pixel: " + rgb[fy * w + fx]);
                 // Create a float array from the pixels. Any pixels off the edge of the source image get duplicated from the edge.
                 i = 0;
                 for (int y = 0; y < h; y++) {
                     int imageY = y + tileY;
                     int j;
-                    if (imageY < 0)
+                    if (imageY < 0) {
                         j = fy;
-                    else if (imageY > height)
+                    }
+                    else if (imageY > height) {
                         j = fy + th - 1;
-                    else
+                    }
+                    else {
                         j = y;
+                    }
                     j *= w;
                     for (int x = 0; x < w; x++) {
                         int imageX = x + tileX;
                         int k;
-                        if (imageX < 0)
+                        if (imageX < 0) {
                             k = fx;
-                        else if (imageX > width)
+                        }
+                        else if (imageX > width) {
                             k = fx + tw - 1;
-                        else
+                        }
+                        else {
                             k = x;
+                        }
                         k += j;
 
                         ar[0][i] = ((rgb[k] >> 24) & 0xff);
@@ -247,14 +261,17 @@ public class LensBlurFilter extends AbstractImageFilter {
                         float b = (rgb[k] & 0xff);
 
                         // Bloom...
-                        if (r > bloomThreshold)
+                        if (r > bloomThreshold) {
                             r *= bloom;
+                        }
 //							r = bloomThreshold + (r-bloomThreshold) * bloom;
-                        if (g > bloomThreshold)
+                        if (g > bloomThreshold) {
                             g *= bloom;
+                        }
 //							g = bloomThreshold + (g-bloomThreshold) * bloom;
-                        if (b > bloomThreshold)
+                        if (b > bloomThreshold) {
                             b *= bloom;
+                        }
 //							b = bloomThreshold + (b-bloomThreshold) * bloom;
 
                         ar[1][i] = r;
@@ -262,7 +279,6 @@ public class LensBlurFilter extends AbstractImageFilter {
                         gb[1][i] = b;
 
                         i++;
-                        k++;
                     }
                 }
 
@@ -304,18 +320,21 @@ public class LensBlurFilter extends AbstractImageFilter {
                     int yi = ym * cols;
                     for (int x = 0; x < w; x++) {
                         int xm = yi + (x ^ col_flip);
-                        int a = (int) ar[0][xm];
+                        int a = (int) (ar[0][xm] + 0.5);
                         int r = (int) ar[1][xm];
                         int g = (int) gb[0][xm];
                         int b = (int) gb[1][xm];
 
                         // Clamp high pixels due to blooming
-                        if (r > 255)
+                        if (r > 255) {
                             r = 255;
-                        if (g > 255)
+                        }
+                        if (g > 255) {
                             g = 255;
-                        if (b > 255)
+                        }
+                        if (b > 255) {
                             b = 255;
+                        }
                         int argb = (a << 24) | (r << 16) | (g << 8) | b;
                         rgb[index++] = argb;
                     }
@@ -326,10 +345,13 @@ public class LensBlurFilter extends AbstractImageFilter {
                 ty = tileY + iradius;
                 tw = tileWidth - 2 * iradius;
                 th = tileHeight - 2 * iradius;
-                if (tx + tw > width)
+                if (tx + tw > width) {
                     tw = width - tx;
-                if (ty + th > height)
+                }
+                if (ty + th > height) {
                     th = height - ty;
+                }
+                System.out.println("Writing Tile: (" + tx +" -> " + (tx+tw) + ", " + ty + " -> "  + (ty + th) + "), reading from  (" + iradius + ", " + iradius + ")");
                 dst.raster().setRGB(tx, ty, tw, th, rgb, iradius * w + iradius, w);
             }
         }

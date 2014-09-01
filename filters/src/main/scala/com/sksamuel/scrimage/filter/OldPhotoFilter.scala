@@ -11,18 +11,22 @@ object OldPhotoFilter extends Filter {
 
   val film = Image(getClass.getResourceAsStream("/com/sksamuel/scrimage/filter/film1.jpg"))
 
-  def apply(image: Image) {
+  def apply(image: Image) = {
+
+    val buffered = image.toBufferedImage
 
     val daisy = new DaisyFilter()
-    val filtered = daisy.filter(image.awt)
+    val filtered = daisy.filter(buffered)
 
-    val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
+    val g2 = buffered.getGraphics.asInstanceOf[Graphics2D]
     g2.drawImage(filtered, 0, 0, null)
     g2.dispose()
 
     g2.setComposite(BlendComposite.getInstance(BlendComposite.BlendingMode.INVERSE_COLOR_DODGE, 0.30f))
     g2.drawImage(film.scaleTo(image.width, image.height).awt, 0, 0, null)
     g2.dispose()
+
+    Image(buffered)
   }
 }
 

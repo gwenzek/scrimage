@@ -22,12 +22,13 @@ import thirdparty.misc.ThistleFilter
 
 /** @author Stephen Samuel */
 object VintageFilter extends Filter {
-  def apply(image: Image) {
+  def apply(image: Image) = {
     val thistle = new ThistleFilter()
     val filtered = thistle.filter(image.awt)
-    // val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
-    // g2.drawImage(filtered, 0, 0, null)
-    // g2.dispose()
-    image.raster.write(Image(filtered).raster.extract)
+//    val buffered = image.toBufferedImage
+//    val g2 = buffered.getGraphics.asInstanceOf[Graphics2D]
+//    g2.drawImage(filtered, 0, 0, null)
+//    g2.dispose()
+    Image(filtered)
   }
 }

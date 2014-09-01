@@ -4,7 +4,7 @@ import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
 import com.sksamuel.scrimage.Image
 
 /** @author Stephen Samuel */
-class GuassianBlurFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
+class GaussianBlurFilterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {
 
   val original = Image(getClass.getResourceAsStream("/bird_small.png"))
 

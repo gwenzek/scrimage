@@ -20,12 +20,13 @@ import java.awt.{ Color, Graphics2D }
 
 /** @author Stephen Samuel */
 class ColorizeFilter(color: Color) extends Filter {
-  def apply(image: Image) {
-    val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
+  def apply(image: Image): Image = {
+    val buffered = image.toBufferedImage
+    val g2 = buffered.getGraphics.asInstanceOf[Graphics2D]
     g2.setColor(color)
     g2.fillRect(0, 0, image.width, image.height)
     g2.dispose()
-    image.updateFromAWT()
+    Image(buffered)
   }
 }
 

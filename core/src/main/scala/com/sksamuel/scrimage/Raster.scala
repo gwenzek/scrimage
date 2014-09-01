@@ -108,10 +108,8 @@ trait Raster { self: ColorModel =>
     getRGB(x0, y0, w, h, colors, 0, w)
 
   def getRGB(x0: Int, y0: Int, w: Int, h: Int, colors: Array[Int], off: Int, scansize: Int): Array[Int] = {
-    var i = 0
     for (x <- x0 until x0 + w; y <- y0 until y0 + h) {
       colors(off + (y - y0) * scansize + (x - x0)) = pixel(x, y)
-      i += 1
     }
     colors
   }
@@ -120,10 +118,8 @@ trait Raster { self: ColorModel =>
     setRGB(x0, y0, w, h, colors, 0, w)
 
   def setRGB(x0: Int, y0: Int, w: Int, h: Int, colors: Array[Int], off: Int, scansize: Int): Raster = {
-    var i = 0
     for (x <- x0 until x0 + w; y <- y0 until y0 + h) {
       writeARGB(offset(x, y), model)(colors(off + (y - y0) * scansize + (x - x0)))
-      i += 1
     }
     this
   }

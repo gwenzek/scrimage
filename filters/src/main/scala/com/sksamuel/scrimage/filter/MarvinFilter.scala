@@ -26,15 +26,15 @@ import thirdparty.marvin.image.{ MarvinImageMask, MarvinAttributes, MarvinImage,
   */
 abstract class MarvinFilter extends Filter {
   val plugin: MarvinAbstractImagePlugin
-  def apply(image: Image) {
-
-    val input = new MarvinImage(image.awt)
+  def apply(image: Image) = {
+    val buffered = image.toBufferedImage
+    val input = new MarvinImage(buffered)
     val output = input.clone()
 
     plugin.process(input, output, new MarvinAttributes(), MarvinImageMask.NULL_MASK, false)
 
     input.setIntColorArray(output.getIntColorArray)
     input.update()
-    image.updateFromAWT()
+    Image(buffered)
   }
 }
