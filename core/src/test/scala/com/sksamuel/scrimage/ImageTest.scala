@@ -30,7 +30,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
 
   test("copy returns a new backing image") {
     val copy = image.copy
-    assert(copy.awt.hashCode != image.awt.hashCode)
+    assert(copy.toBufferedImage.hashCode != image.toBufferedImage.hashCode)
   }
 
   test("when scaling by pixels then the output image has the given dimensions") {

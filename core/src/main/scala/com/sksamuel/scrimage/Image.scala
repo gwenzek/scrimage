@@ -20,6 +20,7 @@ import java.awt._
 import java.awt.image.{BufferedImage, DataBufferInt}
 import java.io.{ByteArrayInputStream, File, InputStream}
 import javax.imageio.ImageIO
+import javax.imageio.metadata.IIOMetadata
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
@@ -29,7 +30,6 @@ import org.apache.commons.io.{FileUtils, IOUtils}
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.List
-import scala.concurrent.ExecutionContext
 
 /** An Image represents an abstraction over a set of pixels that allow operations such
   * as resize, scale, rotate, flip, trim, pad, cover, fit. An image does not
@@ -38,7 +38,8 @@ import scala.concurrent.ExecutionContext
   *
   * @author Stephen Samuel
   */
-class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike {
+class Image(val raster: Raster) extends ImageLike with WritableImageLike {
+  type Self = Image
   require(raster != null, "Raster cannot be null")
 
   val width: Int = raster.width
@@ -81,6 +82,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   }
 
   override def empty: Image = Image.empty(width, height)
+
   override def copy: Image = new Image(raster.copy)
 
   override def map(f: (Int, Int, Int) => Int): Image = {
@@ -107,14 +109,6 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     if (this.width <= width && this.height <= height) this
     else bound(width, height)
   }
-
-  /** Removes the given amount of pixels from each edge; like a crop operation.
-    *
-    * @param amount the number of pixels to trim from each edge
-    *
-    * @return a new Image with the dimensions width-trim*2, height-trim*2
-    */
-  def trim(amount: Int): Image = trim(amount, amount, amount, amount)
 
   /** Removes the given amount of pixels from each edge; like a crop operation.
     *
@@ -235,26 +229,6 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     new Image(raster)
   }
 
-  /** Extract a patch, centered at a subpixel point.
-    */
-  def subpixelSubimageCenteredAtPoint(x: Double,
-                                      y: Double,
-                                      xRadius: Double,
-                                      yRadius: Double): Image = {
-    val xWidth = 2 * xRadius
-    val yWidth = 2 * yRadius
-
-    // The dimensions of the extracted patch must be integral.
-    require(xWidth == xWidth.round)
-    require(yWidth == yWidth.round)
-
-    subpixelSubimage(
-      x - xRadius,
-      y - yRadius,
-      xWidth.round.toInt,
-      yWidth.round.toInt)
-  }
-
   /** Returns all the patches of a given size in the image, assuming pixel
     * alignment (no subpixel extraction).
     *
@@ -299,7 +273,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     */
   def filter(filters: Filter*): Image = filters.foldLeft(this)((image, filter) => image.filter(filter))
 
-  def removeTransparency(color: java.awt.Color): Image = {
+  def removeTransparency(color: Color): Image = {
     def rmTransparency(c: RGBColor): RGBColor = {
       val r = (c.red * c.alpha + color.getRed * color.getAlpha * (255 - c.alpha) / 255) / 255
       val g = (c.green * c.alpha + color.getGreen * color.getAlpha * (255 - c.alpha) / 255) / 255
@@ -340,7 +314,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     */
   def rotateLeft = {
     val rotated = raster.empty(height, width)
-    for(x <- 0 until width; y <- 0 until height; c <- 0 until raster.n_channel){
+    for (x <- 0 until width; y <- 0 until height; c <- 0 until raster.n_channel) {
       rotated.writeChannel(y, width - 1 - x, c)(raster.readChannel(x, y, c))
     }
     new Image(rotated)
@@ -349,7 +323,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   /** Returns a copy of this image rotated 90 degrees clockwise. */
   def rotateRight = {
     val rotated = raster.empty(height, width)
-    for(x <- 0 until width; y <- 0 until height; c <- 0 until raster.n_channel){
+    for (x <- 0 until width; y <- 0 until height; c <- 0 until raster.n_channel) {
       rotated.writeChannel(height - 1 - y, x, c)(raster.readChannel(x, y, c))
     }
     new Image(rotated)
@@ -628,32 +602,11 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
       case _ => false
     }
 
-  /** Creates a MutableImage instance backed by this images raster.
-    *
-    * Note, any changes to the mutable image write back to this Image.
-    * If you want a mutable copy then you must first copy this image
-    * before invoking this operation.
-    *
-    * @return
-    */
-  @deprecated
   def toMutable: MutableImage = new MutableImage(raster)
 
-  /** Creates an AsyncImage instance backed by this image.
-    *
-    * The returned AsyncImage will contain the same backing array
-    * as this image.
-    *
-    * To return back to an image instance use asyncImage.toImage
-    *
-    * @return an AsyncImage wrapping this image.
-    */
-  def toAsync(implicit executionContext: ExecutionContext): AsyncImage = AsyncImage(this)
+  def toImage: Image = this
 
-  /** Clears all image data to the given color
-    */
-  @deprecated("use filled", "1.4")
-  def clear(color: Color): Image = filled(color)
+  override def withMeta(metadata: IIOMetadata): ImageLikeWithMeta[Image] = ImageWithMeta(this, metadata)
 }
 
 object Image {
@@ -678,9 +631,9 @@ object Image {
     * @param bytes the bytes from the format stream
     * @return a new Image
     */
-  def apply(bytes: Array[Byte]): Image = apply(new ByteArrayInputStream(bytes))
+  def apply(bytes: Array[Byte]): ImageLike = apply(new ByteArrayInputStream(bytes))
 
-  def apply(in: InputStream): Image = {
+  def apply(in: InputStream): ImageLike = {
     require(in != null)
     require(in.available > 0)
 
@@ -692,11 +645,10 @@ object Image {
     } catch {
       case e: Exception =>
         import scala.collection.JavaConverters._
-        ImageIO.getImageReaders(new ByteArrayInputStream(bytes)).asScala.foldLeft(None: Option[Image]) {
+        ImageIO.getImageReaders(new ByteArrayInputStream(bytes)).asScala.foldLeft(None: Option[ImageLike]) {
           (valueOpt, reader) =>
             // only bother to read if it hasn't already successfully been read
             valueOpt orElse {
-
               try {
                 reader.setInput(new ByteArrayInputStream(bytes), true, true)
                 val params = reader.getDefaultReadParam
@@ -708,8 +660,9 @@ object Image {
                     params.setDestinationType(imageTypeSpecifier)
                   }
                 }
+                val metadata = reader.getStreamMetadata
                 val bufferedImage = reader.read(0, params)
-                Some(apply(bufferedImage))
+                Some( apply(bufferedImage).withMeta(metadata) )
               } catch {
                 case e: Exception => None
               }
@@ -718,7 +671,7 @@ object Image {
     }
   }
 
-  def apply(file: File): Image = {
+  def apply(file: File): ImageLike = {
     require(file != null)
     val in = FileUtils.openInputStream(file)
     apply(in)
@@ -752,7 +705,7 @@ object Image {
     *
     * @return a new Image object.
     */
-  def apply(image: Image): Image = image.copy
+  def apply(image: ImageLike): ImageLike = image.copy
 
   /** Return a new Image with the given width and height, with all pixels set to the supplied colour.
     *

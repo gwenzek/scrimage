@@ -16,79 +16,42 @@
 
 package com.sksamuel.scrimage
 
+import java.io.{File, InputStream}
+
 import scala.concurrent._
-import com.sksamuel.scrimage.Position.Center
-import com.sksamuel.scrimage.ScaleMethod.Bicubic
-import java.io.{ InputStream, File }
-import com.sksamuel.scrimage.io.{ ImageWriter, AsyncImageWriter }
+import scala.concurrent.duration._
+import scala.util.Try
+
 
 /** @author Stephen Samuel */
-class AsyncImage(image: Image)(implicit executionContext: ExecutionContext) extends ImageLike[Future[AsyncImage]] {
+class AsyncImage(val image: Future[Image])(implicit executionContext: ExecutionContext) extends ImageFunctor[Image] with Future[Image] {
+  type Self = AsyncImage
+  def fmap(f: Image => Image) = new AsyncImage(image.map(f))(executionContext)
 
-  override def clear(color: Color = X11Colorlist.White) = image.clear(color)
-  override def empty = image.empty
-  override def copy = image.copy
-  override def pixels: Array[Int] = image.pixels
+  def isCompleted: Boolean = image.isCompleted
 
-  override def map(f: (Int, Int, Int) => Int): Future[AsyncImage] = Future {
-    AsyncImage(image.map(f))
+  def value: Option[Try[Image]] = image.value
+
+  @scala.throws[Exception](classOf[Exception])
+  def result(atMost: Duration)(implicit permit: CanAwait): Image = image.result(atMost)(permit)
+
+  @scala.throws[InterruptedException](classOf[InterruptedException])
+  @scala.throws[TimeoutException](classOf[TimeoutException])
+  def ready(atMost: Duration)(implicit permit: CanAwait): this.type = {
+    image.ready(atMost)(permit)
+    this
   }
 
-  override def foreach(f: (Int, Int, Int) => Unit) {
-    image.foreach(f)
-  }
+  def onComplete[U](f: (Try[Image]) => U)(implicit executor: ExecutionContext): Unit = image.onComplete(f)(executor)
 
-  def fit(targetWidth: Int,
-          targetHeight: Int,
-          color: Color = X11Colorlist.White,
-          scaleMethod: ScaleMethod = Bicubic,
-          position: Position = Position.Center): Future[AsyncImage] = Future {
-    AsyncImage(image.fit(targetWidth, targetHeight, color, scaleMethod, position))
-  }
+  def apply[B](f: (Image) => B): B = Await.result(image.map(f), AsyncImage.MAX_WAIT)
 
-  def pixel(x: Int, y: Int): Int = image.pixel(x, y)
-
-  def padTo(targetWidth: Int,
-            targetHeight: Int,
-            color: Color = X11Colorlist.White): Future[AsyncImage] = Future {
-    AsyncImage(image.padTo(targetWidth, targetHeight, color))
-  }
-
-  def resizeTo(targetWidth: Int,
-               targetHeight: Int,
-               position: Position = Center,
-               background: Color = X11Colorlist.White): Future[AsyncImage] = Future {
-    AsyncImage(image.resizeTo(targetWidth, targetHeight, position))
-  }
-
-  def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Future[AsyncImage] = Future {
-    AsyncImage(image.scaleTo(targetWidth, targetHeight, scaleMethod))
-  }
-
-  /** Creates a copy of this image with the given filter applied.
-    * The original (this) image is unchanged.
-    *
-    * @param filter the filter to apply. See com.sksamuel.scrimage.Filter.
-    *
-    * @return A new image with the given filter applied.
-    */
-  def filter(filter: Filter): Future[AsyncImage] = Future {
-    AsyncImage(image.filter(filter))
-  }
-
-  /** Returns the underlying image.
-    *
-    * @return the image that was wrapped when creating this async.
-    */
-  def toImage: Image = image
-
-  def writer[T <: ImageWriter](format: Format[T]): AsyncImageWriter[T] = new AsyncImageWriter[T](format.writer(image))
-
-  def height: Int = image.height
-  def width: Int = image.width
+  def toImage: Image = Await.result(image, AsyncImage.MAX_WAIT)
 }
 
 object AsyncImage {
+
+  private val MAX_WAIT = 10.minutes
 
   def apply(bytes: Array[Byte])(implicit executionContext: ExecutionContext): Future[AsyncImage] = Future {
     Image(bytes).toAsync
@@ -99,5 +62,9 @@ object AsyncImage {
   def apply(file: File)(implicit executionContext: ExecutionContext): Future[AsyncImage] = Future {
     Image(file).toAsync
   }
-  def apply(image: Image)(implicit executionContext: ExecutionContext) = new AsyncImage(image)
+  def apply(image: Image)(implicit executionContext: ExecutionContext) = new AsyncImage(Future(image))
+  def apply(image: AsyncImage)(implicit executionContext: ExecutionContext) = image
+  def apply(image: ImageLikeWithMeta[Image])(implicit executionContext: ExecutionContext): ImageLikeWithMeta[AsyncImage] =
+    ImageWithMeta(new AsyncImage(Future(image.toImage)), image.metadata)
+  def apply(image: ImageLike)(implicit executionContext: ExecutionContext) = new AsyncImage(Future(image.toImage))
 }

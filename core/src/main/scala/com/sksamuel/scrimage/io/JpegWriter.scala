@@ -20,11 +20,11 @@ import java.io.OutputStream
 import javax.imageio.stream.MemoryCacheImageOutputStream
 import javax.imageio.{IIOImage, ImageIO, ImageWriteParam}
 
-import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage._
 import org.apache.commons.io.IOUtils
 
 /** @author Stephen Samuel */
-class JpegWriter(image: Image, compression: Int, progressive: Boolean) extends ImageWriter {
+class JpegWriter(image: ImageLike, compression: Int, progressive: Boolean) extends ImageWriter {
 
   def withCompression(compression: Int): JpegWriter = {
     require(compression >= 0)
@@ -47,11 +47,15 @@ class JpegWriter(image: Image, compression: Int, progressive: Boolean) extends I
     // jpegs cannot write out transparency. The java version will break
     // see http://stackoverflow.com/questions/464825/converting-transparent-gif-png-to-jpeg-using-java
     // so have to remove alpha
-    val noAlpha = image.removeTransparency(java.awt.Color.WHITE)
+    val noAlpha = image.removeTransparency(X11Colorlist.White)
 
     val output = new MemoryCacheImageOutputStream(out)
     writer.setOutput(output)
-    writer.write(null, new IIOImage(noAlpha.toBufferedImage, null, null), params)
+    val metadata = image match {
+      case i: ImageLikeWithMeta[_] => i.metadata
+      case _ => null
+    }
+    writer.write(metadata, new IIOImage(noAlpha.toBufferedImage, null, metadata), params)
     writer.dispose()
     output.close()
     IOUtils.closeQuietly(out)

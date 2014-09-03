@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.io
 
-import org.scalatest.{ OneInstancePerTest, BeforeAndAfter, FunSuite }
-import com.sksamuel.scrimage.{ Image, Format }
+import com.sksamuel.scrimage.{Format, Image}
+import org.scalatest.{BeforeAndAfter, FunSuite, OneInstancePerTest}
 
 /** @author Stephen Samuel */
 class JpegWriterTest extends FunSuite with BeforeAndAfter with OneInstancePerTest {

@@ -16,17 +16,21 @@
 
 package com.sksamuel.scrimage
 
-import java.io.{ File, OutputStream }
+import java.io.{File, OutputStream}
+import javax.imageio.metadata.IIOMetadata
 
 import com.sksamuel.scrimage.Format.PNG
 import com.sksamuel.scrimage.PixelTools._
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import com.sksamuel.scrimage.io.ImageWriter
-import org.apache.commons.io.{ FileUtils, IOUtils }
+import org.apache.commons.io.{FileUtils, IOUtils}
+
+import scala.concurrent.ExecutionContext
 
 /** @author Stephen Samuel */
-trait ImageLike[R] {
+trait ImageLike extends WritableImageLike { self =>
+  type Self <: ImageLike{type Self = self.Self}
 
   lazy val points: Seq[(Int, Int)] = for (x <- 0 until width; y <- 0 until height) yield (x, y)
   lazy val center: (Int, Int) = (width / 2, height / 2)
@@ -40,7 +44,7 @@ trait ImageLike[R] {
   /** Clears all image data to the given color
     */
   @deprecated("use filled", "1.4")
-  def clear(color: Color = X11Colorlist.White): Image
+  def clear(color: Color) = filled(color)
   def width: Int
   def height: Int
 
@@ -94,6 +98,56 @@ trait ImageLike[R] {
     pixels.map(p => Array(red(p), green(p), blue(p)))
   }
 
+  /** Returns a new image that is scaled to fit the specified bounds while retaining the same aspect ratio
+    * as the original image. The dimensions of the returned image will be the same as the result of the
+    * scaling operation. That is, no extra padding will be added to match the bounded width and height. For an
+    * operation that will scale an image as well as add padding to fit the dimensions perfectly, then use fit()
+    *
+    * Requesting a bound of 200,200 on an image of 300,600 will result in a scale to 100,200.
+    * Eg, the original image will be scaled down to fit the bounds.
+    *
+    * Requesting a bound of 150,200 on an image of 150,150 will result in the same image being returned.
+    * Eg, the original image cannot be scaled up any further without exceeding the bounds.
+    *
+    * Requesting a bound of 300,300 on an image of 100,150 will result in a scale to 200,300.
+    *
+    * Requesting a bound of 100,1000 on an image of 50,50 will result in a scale to 100,100.
+    *
+    * @param boundedWidth the maximum width
+    * @param boundedHeight the maximum height
+    *
+    * @return A new image that is the result of the binding.
+    */
+  def bound(boundedWidth: Int, boundedHeight: Int): Self
+
+  /** Returns a copy of the canvas with the given dimensions where the
+    * original image has been scaled to completely cover the new dimensions
+    * whilst retaining the original aspect ratio.
+    *
+    * If the new dimensions have a different aspect ratio than the old image
+    * then the image will be cropped so that it still covers the new area
+    * without leaving any background.
+    *
+    * @param targetWidth the target width
+    * @param targetHeight the target height
+    * @param scaleMethod the type of scaling method to use. Defaults to Bicubic
+    * @param position where to position the image inside the new canvas
+    *
+    * @return a new Image with the original image scaled to cover the new dimensions
+    */
+  def cover(targetWidth: Int,
+            targetHeight: Int,
+            scaleMethod: ScaleMethod = Bicubic,
+            position: Position = Center): Self
+
+  /** Return a new Image of the same size, with all pixels set to the supplied colour.
+    *
+    * @param color the color to set all pixels to
+    *
+    * @return the new Image
+    */
+  def filled(color: Color = Color.White): Self
+
   /** Returns the pixel at the given coordinates as a integer in RGB format.
     *
     * @param p the pixel as an integer tuple
@@ -121,6 +175,43 @@ trait ImageLike[R] {
     ) yield pixel(x1, y1)
   }
 
+  /** Returns a new Image that is a subimage or region of the original image.
+    *
+    * @param x the start x coordinate
+    * @param y the start y coordinate
+    * @param w the width of the subimage
+    * @param h the height of the subimage
+    * @return a new Image that is the subimage
+    */
+  def subimage(x: Int, y: Int, w: Int, h: Int): Self
+
+  /** Uses linear interpolation to get a sub-pixel.
+    *
+    * Legal values for `x` and `y` are in [0, width) and [0, height),
+    * respectively.
+    */
+  def subpixel(x: Double, y: Double): Int
+
+  /** Extracts a subimage, but using subpixel interpolation.
+    */
+  def subpixelSubimage(x: Double, y: Double, subWidth: Int, subHeight: Int): Self
+
+  /** Extract a patch, centered at a subpixel point.
+    */
+  def subpixelSubimageCenteredAtPoint(x: Double,
+                                      y: Double,
+                                      xRadius: Double,
+                                      yRadius: Double): Self = {
+    val xWidth = 2 * xRadius
+    val yWidth = 2 * yRadius
+
+    // The dimensions of the extracted patch must be integral.
+    require(xWidth == xWidth.round)
+    require(yWidth == yWidth.round)
+
+    subpixelSubimage(x - xRadius, y - yRadius, xWidth.round.toInt, yWidth.round.toInt)
+  }
+
   /** Creates a new image which is the result of this image
     * padded with the given number of pixels on each edge.
     *
@@ -132,7 +223,7 @@ trait ImageLike[R] {
     *
     * @return A new image that is the result of the padding
     */
-  def pad(size: Int, color: Color = X11Colorlist.White): R = {
+  def pad(size: Int, color: Color = X11Colorlist.White): Self = {
     padTo(width + size * 2, height + size * 2, color)
   }
 
@@ -152,13 +243,13 @@ trait ImageLike[R] {
     *
     * @return A new image that is the result of the padding
     */
-  def padTo(targetWidth: Int, targetHeight: Int, color: Color = X11Colorlist.White): R
+  def padTo(targetWidth: Int, targetHeight: Int, color: Color = X11Colorlist.White): Self
 
   /** Creates an empty Image with the same dimensions of this image.
     *
     * @return a new Image that is a clone of this image but with uninitialized data
     */
-  def empty: Image
+  def empty: Self
 
   /** Returns the number of pixels in the image.
     *
@@ -185,7 +276,7 @@ trait ImageLike[R] {
     *
     * @return A copy of this image.
     */
-  def copy: Image
+  def copy: Self
 
   /** Maps the pixels of this image into another image by applying the given function to each point.
     *
@@ -195,7 +286,7 @@ trait ImageLike[R] {
     * @param f the function to transform pixel x,y with existing value p into new pixel value p' (p prime)
     * @return
     */
-  def map(f: (Int, Int, Int) => Int): R
+  def map(f: (Int, Int, Int) => Int): Self
 
   /** Creates a copy of this image with the given filter applied.
     * The original (this) image is unchanged.
@@ -204,19 +295,40 @@ trait ImageLike[R] {
     *
     * @return A new image with the given filter applied.
     */
-  def filter(filter: Filter): R
+  def filter(filter: Filter): Self
 
-  def fit(targetWidth: Int, targetHeight: Int, color: Color, scaleMethod: ScaleMethod, position: Position): R
+  def fit(targetWidth: Int, targetHeight: Int,
+          color: Color = X11Colorlist.White,
+          scaleMethod: ScaleMethod = Bicubic,
+          position: Position = Center): Self
 
-  def fitToHeight(targetHeight: Int, color: Color = X11Colorlist.White,
-                  scaleMethod: ScaleMethod = Bicubic, position: Position = Center): R =
+  def fitToHeight(targetHeight: Int,
+                  color: Color = X11Colorlist.White,
+                  scaleMethod: ScaleMethod = Bicubic,
+                  position: Position = Center): Self =
     fit((targetHeight / height.toDouble * height).toInt, targetHeight, color, scaleMethod, position)
 
-  def fitToWidth(targetWidth: Int, color: Color = X11Colorlist.White,
-                 scaleMethod: ScaleMethod = Bicubic, position: Position = Center): R =
+  def fitToWidth(targetWidth: Int,
+                 color: Color = X11Colorlist.White,
+                 scaleMethod: ScaleMethod = Bicubic,
+                 position: Position = Center): Self =
     fit(targetWidth, (targetWidth / width.toDouble * height).toInt, color, scaleMethod, position)
 
-  def resizeTo(targetWidth: Int, targetHeight: Int, position: Position, background: Color = X11Colorlist.White): R
+  /** Flips this image horizontally.
+    *
+    * @return The result of flipping this image horizontally.
+    */
+  def flipX: Self
+
+  /** Flips this image vertically.
+    *
+    * @return The result of flipping this image vertically.
+    */
+  def flipY: Self
+
+  def removeTransparency(color: Color): Self
+
+  def resizeTo(targetWidth: Int, targetHeight: Int, position: Position = Center, background: Color = X11Colorlist.White): Self
 
   /** Resize will resize the canvas, it will not scale the image.
     * This is like a "canvas resize" in Photoshop.
@@ -227,7 +339,7 @@ trait ImageLike[R] {
     *
     * @return a new Image that is the result of resizing the canvas.
     */
-  def resize(scaleFactor: Double, position: Position = Center, background: Color = X11Colorlist.White): R =
+  def resize(scaleFactor: Double, position: Position = Center, background: Color = X11Colorlist.White): Self =
     resizeTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, position, background)
 
   /** Resize will resize the canvas, it will not scale the image.
@@ -237,7 +349,7 @@ trait ImageLike[R] {
     *
     * @return a new Image that is the result of resizing the canvas.
     */
-  def resizeToHeight(targetHeight: Int, position: Position = Center, background: Color = X11Colorlist.White): R =
+  def resizeToHeight(targetHeight: Int, position: Position = Center, background: Color = X11Colorlist.White): Self =
     resizeTo((targetHeight / height.toDouble * height).toInt, targetHeight, position, background)
 
   /** Resize will resize the canvas, it will not scale the image.
@@ -247,8 +359,17 @@ trait ImageLike[R] {
     *
     * @return a new Image that is the result of resizing the canvas.
     */
-  def resizeToWidth(targetWidth: Int, position: Position = Center, background: Color = X11Colorlist.White): R =
+  def resizeToWidth(targetWidth: Int, position: Position = Center, background: Color = X11Colorlist.White): Self =
     resizeTo(targetWidth, (targetWidth / width.toDouble * height).toInt, position, background)
+
+  /** Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
+    *
+    * @return
+    */
+  def rotateLeft : Self
+
+  /** Returns a copy of this image rotated 90 degrees clockwise. */
+  def rotateRight : Self
 
   /** Scale will resize the canvas and scale the image to match.
     * This is like a "image resize" in Photoshop.
@@ -259,7 +380,7 @@ trait ImageLike[R] {
     *
     * @return a new Image that is the result of scaling this image
     */
-  def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): R
+  def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Self
 
   /** Scale will resize the canvas and scale the image to match.
     * This is like a "image resize" in Photoshop.
@@ -276,7 +397,7 @@ trait ImageLike[R] {
     *
     * @return a new Image that is the result of scaling this image
     */
-  def scaleToWidth(targetWidth: Int, scaleMethod: ScaleMethod = Bicubic): R =
+  def scaleToWidth(targetWidth: Int, scaleMethod: ScaleMethod = Bicubic): Self =
     scaleTo(targetWidth, (targetWidth / width.toDouble * height).toInt, scaleMethod)
 
   /** Scale will resize the canvas and scale the image to match.
@@ -294,7 +415,7 @@ trait ImageLike[R] {
     *
     * @return a new Image that is the result of scaling this image
     */
-  def scaleToHeight(targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): R =
+  def scaleToHeight(targetHeight: Int, scaleMethod: ScaleMethod = Bicubic): Self =
     scaleTo((targetHeight / height.toDouble * width).toInt, targetHeight, scaleMethod)
 
   /** Scale will resize the canvas and the image.
@@ -305,9 +426,40 @@ trait ImageLike[R] {
     *
     * @return a new Image that is the result of scaling this image
     */
-  def scale(scaleFactor: Double, scaleMethod: ScaleMethod = Bicubic): R =
+  def scale(scaleFactor: Double, scaleMethod: ScaleMethod = Bicubic): Self =
     scaleTo((width * scaleFactor).toInt, (height * scaleFactor).toInt, scaleMethod)
 
+  /** Removes the given amount of pixels from each edge; like a crop operation.
+    *
+    * @param amount the number of pixels to trim from each edge
+    *
+    * @return a new Image with the dimensions width-trim*2, height-trim*2
+    */
+  def trim(amount: Int): Self = trim(amount, amount, amount, amount)
+
+  /** Removes the given amount of pixels from each edge; like a crop operation.
+    *
+    * @param left the number of pixels to trim from the left
+    * @param top the number of pixels to trim from the top
+    * @param right the number of pixels to trim from the right
+    * @param bottom the number of pixels to trim from the bottom
+    *
+    * @return a new Image with the dimensions width-trim*2, height-trim*2
+    */
+  def trim(left: Int, top: Int, right: Int, bottom: Int): Self
+
+  /** Crops an image by removing cols and rows that are composed only of a single
+    * given color.
+    *
+    * Eg, if an image had a 20 pixel border of white at the top, and this method was
+    * invoked with Color.White then the image returned would have that 20 pixel border
+    * removed.
+    *
+    * @param color the color to match
+    * @return
+    */
+  def autocrop(color: Color): Self
+  
   def pixels: Array[Int]
 
   /** Returns true if a pixel with the given color exists.
@@ -318,9 +470,36 @@ trait ImageLike[R] {
   def exists(color: Color) = pixels.exists(argb => Color(argb) == color)
 
   override def equals(obj: Any): Boolean = obj match {
-    case other: ImageLike[_] => other.pixels.sameElements(pixels)
+    case other: ImageLike => other.pixels.sameElements(pixels)
     case _ => false
   }
+
+  def toImage: Image
+  def toBufferedImage: java.awt.image.BufferedImage
+
+  /** Creates a MutableImage instance backed by this images raster.
+    *
+    * Note, any changes to the mutable image write back to this Image.
+    * If you want a mutable copy then you must first copy this image
+    * before invoking this operation.
+    *
+    * @return
+    */
+  @deprecated
+  def toMutable: MutableImage
+
+  /** Creates an AsyncImage instance backed by this image.
+    *
+    * The returned AsyncImage will contain the same backing array
+    * as this image.
+    *
+    * To return back to an image instance use asyncImage.toImage
+    *
+    * @return an AsyncImage wrapping this image.
+    */
+  def toAsync(implicit executionContext: ExecutionContext): AsyncImage = AsyncImage(this)
+
+  def withMeta(metadata: IIOMetadata): ImageLikeWithMeta[Self] = ???
 }
 
 trait WritableImageLike {
@@ -351,4 +530,83 @@ trait WritableImageLike {
     writer(format).write(out)
   }
 
+}
+
+trait EndoFunctor[A]{
+  type Self <: EndoFunctor[A]
+  def fmap(f: A => A): Self
+  def apply[B](f: A=> B): B
+}
+
+trait ImageFunctor[T <: ImageLike{type Self = T}] extends ImageLike with EndoFunctor[T]{ self =>
+  type Self <: ImageFunctor[T]{type Self = self.Self}
+
+  def autocrop(color: Color) = fmap(_.autocrop(color))
+  def bound(boundedWidth: Int, boundedHeight: Int) = fmap(_.bound(boundedWidth, boundedHeight))
+  def cover(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod, position: Position) =
+    fmap(_.cover(targetWidth, targetHeight, scaleMethod, position))
+  def copy = fmap(_.copy)
+  def empty = fmap(_.empty)
+
+  def filled(color: Color) = fmap(_.filled(color))
+  def filter(filter: Filter) = fmap(_.filter(filter))
+
+  def fit(targetWidth: Int, targetHeight: Int, color: Color, scaleMethod: ScaleMethod, position: Position) =
+    fmap( _.fit(targetWidth, targetHeight, color, scaleMethod, position))
+
+  def flipX = fmap(_.flipX)
+  def flipY = fmap(_.flipY)
+
+  def map(f: (Int, Int, Int) => Int) = fmap(_.map(f))
+
+  def padTo(targetWidth: Int, targetHeight: Int, color: Color) =
+    fmap(_.padTo(targetWidth, targetHeight))
+
+  def scaleTo(targetWidth: Int, targetHeight: Int, scaleMethod: ScaleMethod) =
+    fmap(_.scaleTo(targetWidth, targetHeight, scaleMethod))
+
+  def resizeTo(targetWidth: Int, targetHeight: Int, position: Position, background: Color) =
+    fmap(_.resizeTo(targetWidth, targetHeight, position))
+  def removeTransparency(color: Color) = fmap(_.removeTransparency(color))
+  def rotateLeft = fmap(_.rotateLeft)
+  def rotateRight = fmap(_.rotateRight)
+
+  def subimage(x: Int, y: Int, w: Int, h: Int) = fmap(_.subimage(x, y, w, h))
+  def subpixelSubimage(x: Double, y: Double, subWidth: Int, subHeight: Int) =
+    fmap(_.subpixelSubimage(x, y, subWidth, subHeight))
+
+  def trim(left: Int, top: Int, right: Int, bottom: Int) = fmap(_.trim(left, top, right, bottom))
+
+  def height = apply(_.height)
+  def width = apply(_.width)
+  def pixels = apply(_.pixels)
+  def pixel(x: Int, y: Int) = apply(_.pixel(x, y))
+  def subpixel(x: Double, y: Double): Int = apply(_.subpixel(x, y))
+
+  def toBufferedImage = apply(_.toBufferedImage)
+  def toMutable = apply(_.toMutable)
+
+  def writer[U <: ImageWriter](format: Format[U]): U = apply(_.writer[U](format))
+}
+
+
+class ImageLikeWithMeta[T <: ImageLike{type Self = T}](val image: T, val metadata: IIOMetadata) extends ImageFunctor[T] {
+  type Self = ImageLikeWithMeta[T]
+  def fmap(f: T => T) = new ImageLikeWithMeta[T](f(image), metadata)
+  def apply[B](f: T => B) = f(image)
+  def toImage: Image = image.toImage
+}
+
+//class ImageWithMeta(override val image: Image, override val metadata: IIOMetadata) extends ImageLikeWithMeta[Image](image, metadata)
+
+//class AsyncWithMeta(override val image: AsyncImage, override val metadata: IIOMetadata) extends ImageLikeWithMeta[AsyncImage](image, metadata)
+
+
+object ImageWithMeta{
+//  def apply(image: Image, metadata: IIOMetadata) = new ImageWithMeta(image, metadata)
+//  def apply(image: AsyncImage, metadata: IIOMetadata) = new AsyncWithMeta(image, metadata)
+//  def apply(image: ImageLike, metadata: IIOMetadata): ImageLikeWithMeta[Image] = apply(image.toImage, metadata)
+  def apply(image: Image, metadata: IIOMetadata) = new ImageLikeWithMeta[Image](image, metadata)
+  def apply(image: AsyncImage, metadata: IIOMetadata) = new ImageLikeWithMeta[AsyncImage](image, metadata)
+  def apply(image: ImageLike, metadata: IIOMetadata): ImageLikeWithMeta[Image] = apply(image.toImage, metadata)
 }
