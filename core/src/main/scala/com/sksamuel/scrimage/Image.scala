@@ -26,7 +26,7 @@ import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.scaling.ResampleOpScala
-import org.apache.commons.io.{FileUtils, IOUtils}
+import org.apache.commons.io.FileUtils
 import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.List
@@ -637,38 +637,32 @@ object Image {
     require(in != null)
     require(in.available > 0)
 
-    val bytes = IOUtils.toByteArray(in) // lets buffer in case we have to repeat
-    IOUtils.closeQuietly(in)
-
-    try {
-      apply(ImageIO.read(new ByteArrayInputStream(bytes)))
-    } catch {
-      case e: Exception =>
-        import scala.collection.JavaConverters._
-        ImageIO.getImageReaders(new ByteArrayInputStream(bytes)).asScala.foldLeft(None: Option[ImageLike]) {
-          (valueOpt, reader) =>
-            // only bother to read if it hasn't already successfully been read
-            valueOpt orElse {
-              try {
-                reader.setInput(new ByteArrayInputStream(bytes), true, true)
-                val params = reader.getDefaultReadParam
-                val imageTypes = reader.getImageTypes(0)
-                while (imageTypes.hasNext) {
-                  val imageTypeSpecifier = imageTypes.next()
-                  val bufferedImageType = imageTypeSpecifier.getBufferedImageType
-                  if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
-                    params.setDestinationType(imageTypeSpecifier)
-                  }
-                }
-                val metadata = reader.getStreamMetadata
-                val bufferedImage = reader.read(0, params)
-                Some( apply(bufferedImage).withMeta(metadata) )
-              } catch {
-                case e: Exception => None
+    val iis = ImageIO.createImageInputStream(in)
+    import scala.collection.JavaConverters._
+    ImageIO.getImageReaders(iis).asScala.foldLeft(None: Option[ImageLike]) {
+      (valueOpt, reader) =>
+        // only bother to read if it hasn't already successfully been read
+        valueOpt orElse {
+          try {
+            reader.setInput(iis, true, true)
+            val params = reader.getDefaultReadParam
+            val imageTypes = reader.getImageTypes(0)
+            while (imageTypes.hasNext) {
+              val imageTypeSpecifier = imageTypes.next()
+              val bufferedImageType = imageTypeSpecifier.getBufferedImageType
+              if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
+                params.setDestinationType(imageTypeSpecifier)
               }
             }
-        }.getOrElse(throw new RuntimeException("Unparsable image"))
-    }
+            val metadata = reader.getImageMetadata(0)
+            val bufferedImage = reader.read(0, params)
+            if (metadata != null) Some(apply(bufferedImage).withMeta(metadata))
+            else Some(apply(bufferedImage))
+          } catch {
+            case e: Exception => None
+          }
+        }
+    }.getOrElse(throw new RuntimeException("Unparsable image"))
   }
 
   def apply(file: File): ImageLike = {
@@ -706,6 +700,8 @@ object Image {
     * @return a new Image object.
     */
   def apply(image: ImageLike): ImageLike = image.copy
+
+  def fromPath(path: String): ImageLike = apply(getClass.getResourceAsStream(path))
 
   /** Return a new Image with the given width and height, with all pixels set to the supplied colour.
     *
