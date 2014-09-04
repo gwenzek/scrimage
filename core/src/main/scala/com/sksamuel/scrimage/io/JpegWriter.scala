@@ -18,7 +18,7 @@ package com.sksamuel.scrimage.io
 
 import java.io.OutputStream
 import javax.imageio.stream.MemoryCacheImageOutputStream
-import javax.imageio.{IIOImage, ImageIO, ImageWriteParam}
+import javax.imageio.{ IIOImage, ImageIO, ImageWriteParam }
 
 import com.sksamuel.scrimage._
 import org.apache.commons.io.IOUtils

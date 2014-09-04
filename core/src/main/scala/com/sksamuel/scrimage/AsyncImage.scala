@@ -16,12 +16,11 @@
 
 package com.sksamuel.scrimage
 
-import java.io.{File, InputStream}
+import java.io.{ File, InputStream }
 
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.util.Try
-
 
 /** @author Stephen Samuel */
 class AsyncImage(val image: Future[Image])(implicit executionContext: ExecutionContext) extends ImageFunctor[Image] with Future[Image] {

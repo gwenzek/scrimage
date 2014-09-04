@@ -124,7 +124,7 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
       Image(in)
     }
 
-    assert(image.hashCode === bird.hashCode)
+    assert(image.toImage.hashCode === bird.toImage.hashCode)
     assert(image === bird)
 
     val otherImage =

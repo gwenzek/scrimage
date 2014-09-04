@@ -16,7 +16,7 @@
 
 package com.sksamuel.scrimage
 
-import java.io.{File, OutputStream}
+import java.io.{ File, OutputStream }
 import javax.imageio.metadata.IIOMetadata
 
 import com.sksamuel.scrimage.Format.PNG
@@ -24,13 +24,13 @@ import com.sksamuel.scrimage.PixelTools._
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import com.sksamuel.scrimage.io.ImageWriter
-import org.apache.commons.io.{FileUtils, IOUtils}
+import org.apache.commons.io.{ FileUtils, IOUtils }
 
 import scala.concurrent.ExecutionContext
 
 /** @author Stephen Samuel */
 trait ImageLike extends WritableImageLike { self =>
-  type Self <: ImageLike{type Self = self.Self}
+  type Self <: ImageLike { type Self = self.Self }
 
   lazy val points: Seq[(Int, Int)] = for (x <- 0 until width; y <- 0 until height) yield (x, y)
   lazy val center: (Int, Int) = (width / 2, height / 2)
@@ -366,10 +366,10 @@ trait ImageLike extends WritableImageLike { self =>
     *
     * @return
     */
-  def rotateLeft : Self
+  def rotateLeft: Self
 
   /** Returns a copy of this image rotated 90 degrees clockwise. */
-  def rotateRight : Self
+  def rotateRight: Self
 
   /** Scale will resize the canvas and scale the image to match.
     * This is like a "image resize" in Photoshop.
@@ -459,7 +459,7 @@ trait ImageLike extends WritableImageLike { self =>
     * @return
     */
   def autocrop(color: Color): Self
-  
+
   def pixels: Array[Int]
 
   /** Returns true if a pixel with the given color exists.
@@ -469,13 +469,13 @@ trait ImageLike extends WritableImageLike { self =>
     */
   def exists(color: Color) = pixels.exists(argb => Color(argb) == color)
 
-  override def equals(obj: Any): Boolean = obj match {
-    case other: ImageLike => other.pixels.sameElements(pixels)
-    case _ => false
-  }
-
   def toImage: Image
   def toBufferedImage: java.awt.image.BufferedImage
+
+  override def equals(that: Any) = that match {
+    case other: ImageLike => this.toImage.imageState == other.toImage.imageState
+    case _ => false
+  }
 
   /** Creates a MutableImage instance backed by this images raster.
     *
@@ -532,14 +532,14 @@ trait WritableImageLike {
 
 }
 
-trait EndoFunctor[A]{
+trait EndoFunctor[A] {
   type Self <: EndoFunctor[A]
   def fmap(f: A => A): Self
-  def apply[B](f: A=> B): B
+  def apply[B](f: A => B): B
 }
 
-trait ImageFunctor[T <: ImageLike{type Self = T}] extends ImageLike with EndoFunctor[T]{ self =>
-  type Self <: ImageFunctor[T]{type Self = self.Self}
+trait ImageFunctor[T <: ImageLike { type Self = T }] extends ImageLike with EndoFunctor[T] { self =>
+  type Self <: ImageFunctor[T] { type Self = self.Self }
 
   def autocrop(color: Color) = fmap(_.autocrop(color))
   def bound(boundedWidth: Int, boundedHeight: Int) = fmap(_.bound(boundedWidth, boundedHeight))
@@ -552,7 +552,7 @@ trait ImageFunctor[T <: ImageLike{type Self = T}] extends ImageLike with EndoFun
   def filter(filter: Filter) = fmap(_.filter(filter))
 
   def fit(targetWidth: Int, targetHeight: Int, color: Color, scaleMethod: ScaleMethod, position: Position) =
-    fmap( _.fit(targetWidth, targetHeight, color, scaleMethod, position))
+    fmap(_.fit(targetWidth, targetHeight, color, scaleMethod, position))
 
   def flipX = fmap(_.flipX)
   def flipY = fmap(_.flipY)
@@ -589,8 +589,7 @@ trait ImageFunctor[T <: ImageLike{type Self = T}] extends ImageLike with EndoFun
   def writer[U <: ImageWriter](format: Format[U]): U = apply(_.writer[U](format))
 }
 
-
-class ImageLikeWithMeta[T <: ImageLike{type Self = T}](val image: T, val metadata: IIOMetadata) extends ImageFunctor[T] {
+class ImageLikeWithMeta[T <: ImageLike { type Self = T }](val image: T, val metadata: IIOMetadata) extends ImageFunctor[T] {
   type Self = ImageLikeWithMeta[T]
   def fmap(f: T => T) = new ImageLikeWithMeta[T](f(image), metadata)
   def apply[B](f: T => B) = f(image)
@@ -601,11 +600,10 @@ class ImageLikeWithMeta[T <: ImageLike{type Self = T}](val image: T, val metadat
 
 //class AsyncWithMeta(override val image: AsyncImage, override val metadata: IIOMetadata) extends ImageLikeWithMeta[AsyncImage](image, metadata)
 
-
-object ImageWithMeta{
-//  def apply(image: Image, metadata: IIOMetadata) = new ImageWithMeta(image, metadata)
-//  def apply(image: AsyncImage, metadata: IIOMetadata) = new AsyncWithMeta(image, metadata)
-//  def apply(image: ImageLike, metadata: IIOMetadata): ImageLikeWithMeta[Image] = apply(image.toImage, metadata)
+object ImageWithMeta {
+  //  def apply(image: Image, metadata: IIOMetadata) = new ImageWithMeta(image, metadata)
+  //  def apply(image: AsyncImage, metadata: IIOMetadata) = new AsyncWithMeta(image, metadata)
+  //  def apply(image: ImageLike, metadata: IIOMetadata): ImageLikeWithMeta[Image] = apply(image.toImage, metadata)
   def apply(image: Image, metadata: IIOMetadata) = new ImageLikeWithMeta[Image](image, metadata)
   def apply(image: AsyncImage, metadata: IIOMetadata) = new ImageLikeWithMeta[AsyncImage](image, metadata)
   def apply(image: ImageLike, metadata: IIOMetadata): ImageLikeWithMeta[Image] = apply(image.toImage, metadata)

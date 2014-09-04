@@ -1,9 +1,9 @@
 package com.sksamuel.scrimage.scaling
 
-import com.sksamuel.scrimage.{Image, Raster}
+import com.sksamuel.scrimage.{ Image, Raster }
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 object ResampleOpScala {
 

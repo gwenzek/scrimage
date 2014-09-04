@@ -17,8 +17,8 @@
 package com.sksamuel.scrimage
 
 import java.awt._
-import java.awt.image.{BufferedImage, DataBufferInt}
-import java.io.{ByteArrayInputStream, File, InputStream}
+import java.awt.image.{ BufferedImage, DataBufferInt }
+import java.io.{ ByteArrayInputStream, File, InputStream }
 import javax.imageio.ImageIO
 import javax.imageio.metadata.IIOMetadata
 
@@ -27,7 +27,7 @@ import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.scaling.ResampleOpScala
 import org.apache.commons.io.FileUtils
-import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
+import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
 
 import scala.List
 
@@ -66,7 +66,7 @@ class Image(val raster: Raster) extends ImageLike with WritableImageLike {
 
   @deprecated("java.awt is to be removed", "22 Jul 2014")
   lazy val awt: BufferedImage = {
-    import java.awt.image.{ColorModel, DataBufferInt}
+    import java.awt.image.{ ColorModel, DataBufferInt }
     val cm = ColorModel.getRGBdefault
     val sm = cm.createCompatibleSampleModel(width, height)
     val db = new DataBufferInt(raster.extract.map(_.toInt), width * height)
@@ -596,11 +596,11 @@ class Image(val raster: Raster) extends ImageLike with WritableImageLike {
   // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala
   override def hashCode = imageState.hashCode
 
-  override def equals(other: Any): Boolean =
-    other match {
-      case that: Image => imageState == that.imageState
-      case _ => false
-    }
+  //  override def equals(other: Any): Boolean =
+  //    other match {
+  //      case that: Image => imageState == that.imageState
+  //      case _ => false
+  //    }
 
   def toMutable: MutableImage = new MutableImage(raster)
 
