@@ -16,7 +16,7 @@
 
 package com.sksamuel.scrimage
 
-import java.io.{ File, InputStream }
+import java.io.{File, InputStream}
 
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -63,7 +63,7 @@ object AsyncImage {
   }
   def apply(image: Image)(implicit executionContext: ExecutionContext) = new AsyncImage(Future(image))
   def apply(image: AsyncImage)(implicit executionContext: ExecutionContext) = image
-  def apply(image: ImageLikeWithMeta[Image])(implicit executionContext: ExecutionContext): ImageLikeWithMeta[AsyncImage] =
+  def apply(image: ImageLike with Metadated)(implicit executionContext: ExecutionContext): AsyncWithMeta =
     ImageWithMeta(new AsyncImage(Future(image.toImage)), image.metadata)
   def apply(image: ImageLike)(implicit executionContext: ExecutionContext) = new AsyncImage(Future(image.toImage))
 }

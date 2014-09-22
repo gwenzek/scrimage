@@ -16,7 +16,7 @@
 
 package com.sksamuel.scrimage
 
-import java.io.{ File, OutputStream }
+import java.io.{File, OutputStream}
 import javax.imageio.metadata.IIOMetadata
 
 import com.sksamuel.scrimage.Format.PNG
@@ -24,9 +24,9 @@ import com.sksamuel.scrimage.PixelTools._
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod.Bicubic
 import com.sksamuel.scrimage.io.ImageWriter
-import org.apache.commons.io.{ FileUtils, IOUtils }
+import org.apache.commons.io.{FileUtils, IOUtils}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 /** @author Stephen Samuel */
 trait ImageLike extends WritableImageLike { self =>
@@ -297,6 +297,14 @@ trait ImageLike extends WritableImageLike { self =>
     */
   def filter(filter: Filter): Self
 
+  /** Apply a sequence of filters in sequence.
+    * This is sugar for image.filter(filter1).filter(filter2)....
+    *
+    * @param filters the sequence filters to apply
+    * @return the result of applying each filter in turn
+    */
+  def filter(filters: Filter*): ImageLike = filters.foldLeft(this)((image, filter) => image.filter(filter)): ImageLike
+
   def fit(targetWidth: Int, targetHeight: Int,
           color: Color = X11Colorlist.White,
           scaleMethod: ScaleMethod = Bicubic,
@@ -499,7 +507,12 @@ trait ImageLike extends WritableImageLike { self =>
     */
   def toAsync(implicit executionContext: ExecutionContext): AsyncImage = AsyncImage(this)
 
-  def withMeta(metadata: IIOMetadata): ImageLikeWithMeta[Self] = ???
+  def withMeta(metadata: IIOMetadata): Self with Metadated = ???
+
+  def getMeta: Option[IIOMetadata] = this match {
+    case i : Metadated => Some(i.metadata)
+    case _ => None
+  }
 }
 
 trait WritableImageLike {
@@ -589,22 +602,26 @@ trait ImageFunctor[T <: ImageLike { type Self = T }] extends ImageLike with Endo
   def writer[U <: ImageWriter](format: Format[U]): U = apply(_.writer[U](format))
 }
 
-class ImageLikeWithMeta[T <: ImageLike { type Self = T }](val image: T, val metadata: IIOMetadata) extends ImageFunctor[T] {
-  type Self = ImageLikeWithMeta[T]
-  def fmap(f: T => T) = new ImageLikeWithMeta[T](f(image), metadata)
-  def apply[B](f: T => B) = f(image)
-  def toImage: Image = image.toImage
+trait Metadated {
+  type Self
+  def metadata: IIOMetadata
+  def enrich(meta: IIOMetadata): Self with Metadated
 }
 
-//class ImageWithMeta(override val image: Image, override val metadata: IIOMetadata) extends ImageLikeWithMeta[Image](image, metadata)
+class ImageWithMeta(override val raster: Raster, val metadata: IIOMetadata) extends Image(raster) with Metadated {
+  def enrich(meta: IIOMetadata) = new ImageWithMeta(raster.copy, meta)
 
-//class AsyncWithMeta(override val image: AsyncImage, override val metadata: IIOMetadata) extends ImageLikeWithMeta[AsyncImage](image, metadata)
+  override def copy = new ImageWithMeta(raster.copy, metadata)
+  override def copy(raster: Raster) = new ImageWithMeta(raster, metadata)
+}
+
+class AsyncWithMeta(override val image: Future[Image], val metadata: IIOMetadata)(implicit executionContext: ExecutionContext)
+      extends AsyncImage(image)(executionContext) with Metadated {
+  def enrich(meta: IIOMetadata) = new AsyncWithMeta(image, meta)
+}
 
 object ImageWithMeta {
-  //  def apply(image: Image, metadata: IIOMetadata) = new ImageWithMeta(image, metadata)
-  //  def apply(image: AsyncImage, metadata: IIOMetadata) = new AsyncWithMeta(image, metadata)
-  //  def apply(image: ImageLike, metadata: IIOMetadata): ImageLikeWithMeta[Image] = apply(image.toImage, metadata)
-  def apply(image: Image, metadata: IIOMetadata) = new ImageLikeWithMeta[Image](image, metadata)
-  def apply(image: AsyncImage, metadata: IIOMetadata) = new ImageLikeWithMeta[AsyncImage](image, metadata)
-  def apply(image: ImageLike, metadata: IIOMetadata): ImageLikeWithMeta[Image] = apply(image.toImage, metadata)
+  def apply(image: Image, metadata: IIOMetadata) = new ImageWithMeta(image.raster, metadata)
+  def apply(image: AsyncImage, metadata: IIOMetadata)(implicit executionContext: ExecutionContext) =
+    new AsyncWithMeta(image, metadata)
 }

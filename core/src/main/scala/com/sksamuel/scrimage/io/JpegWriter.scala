@@ -17,8 +17,9 @@
 package com.sksamuel.scrimage.io
 
 import java.io.OutputStream
+import javax.imageio.metadata.IIOMetadata
 import javax.imageio.stream.MemoryCacheImageOutputStream
-import javax.imageio.{ IIOImage, ImageIO, ImageWriteParam }
+import javax.imageio.{IIOImage, ImageIO, ImageWriteParam}
 
 import com.sksamuel.scrimage._
 import org.apache.commons.io.IOUtils
@@ -51,8 +52,8 @@ class JpegWriter(image: ImageLike, compression: Int, progressive: Boolean) exten
 
     val output = new MemoryCacheImageOutputStream(out)
     writer.setOutput(output)
-    val metadata = image match {
-      case i: ImageLikeWithMeta[_] => i.metadata
+    val metadata: IIOMetadata = image match {
+      case i: Metadated => i.metadata
       case _ => null
     }
     writer.write(metadata, new IIOImage(noAlpha.toBufferedImage, null, metadata), params)

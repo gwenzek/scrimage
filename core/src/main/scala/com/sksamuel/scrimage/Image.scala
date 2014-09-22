@@ -17,8 +17,8 @@
 package com.sksamuel.scrimage
 
 import java.awt._
-import java.awt.image.{ BufferedImage, DataBufferInt }
-import java.io.{ ByteArrayInputStream, File, InputStream }
+import java.awt.image.{BufferedImage, DataBufferInt}
+import java.io.{ByteArrayInputStream, File, InputStream}
 import javax.imageio.ImageIO
 import javax.imageio.metadata.IIOMetadata
 
@@ -27,7 +27,7 @@ import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.scaling.ResampleOpScala
 import org.apache.commons.io.FileUtils
-import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
+import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
 
 import scala.List
 
@@ -66,7 +66,7 @@ class Image(val raster: Raster) extends ImageLike with WritableImageLike {
 
   @deprecated("java.awt is to be removed", "22 Jul 2014")
   lazy val awt: BufferedImage = {
-    import java.awt.image.{ ColorModel, DataBufferInt }
+    import java.awt.image.{ColorModel, DataBufferInt}
     val cm = ColorModel.getRGBdefault
     val sm = cm.createCompatibleSampleModel(width, height)
     val db = new DataBufferInt(raster.extract.map(_.toInt), width * height)
@@ -81,9 +81,11 @@ class Image(val raster: Raster) extends ImageLike with WritableImageLike {
     raster.write(Image(awt).raster.read)
   }
 
-  override def empty: Image = Image.empty(width, height)
+  def empty: Image = Image.empty(width, height)
 
-  override def copy: Image = new Image(raster.copy)
+  def copy: Image = new Image(raster.copy)
+
+  def copy(raster: Raster): Image = new Image(raster.copy)
 
   override def map(f: (Int, Int, Int) => Int): Image = {
     val target = copy
@@ -265,14 +267,6 @@ class Image(val raster: Raster) extends ImageLike with WritableImageLike {
     target
   }
 
-  /** Apply a sequence of filters in sequence.
-    * This is sugar for image.filter(filter1).filter(filter2)....
-    *
-    * @param filters the sequence filters to apply
-    * @return the result of applying each filter in turn
-    */
-  def filter(filters: Filter*): Image = filters.foldLeft(this)((image, filter) => image.filter(filter))
-
   def removeTransparency(color: Color): Image = {
     def rmTransparency(c: RGBColor): RGBColor = {
       val r = (c.red * c.alpha + color.getRed * color.getAlpha * (255 - c.alpha) / 255) / 255
@@ -280,8 +274,8 @@ class Image(val raster: Raster) extends ImageLike with WritableImageLike {
       val b = (c.blue * c.alpha + color.getBlue * color.getAlpha * (255 - c.alpha) / 255) / 255
       RGBColor(r, g, b)
     }
-    val rgbColors = raster.read.map(_.toRGB).map(rmTransparency)
-    new Image(Raster(width, height, rgbColors, Raster.RGB))
+    val rgbColors = raster.read.map(c => rmTransparency(c.toRGB))
+    copy(Raster(width, height, rgbColors, Raster.RGB))
   }
 
   /** Flips this image horizontally.
@@ -289,11 +283,11 @@ class Image(val raster: Raster) extends ImageLike with WritableImageLike {
     * @return The result of flipping this image horizontally.
     */
   def flipX: Image = {
-    val copy = raster.copy
+    val copied = raster.copy
     for (x <- 0 until width; y <- 0 until height) {
-      copy.write(x, y, raster.read(width - 1 - x, y))
+      copied.write(x, y, raster.read(width - 1 - x, y))
     }
-    new Image(copy)
+    copy(copied)
   }
 
   /** Flips this image vertically.
@@ -301,32 +295,32 @@ class Image(val raster: Raster) extends ImageLike with WritableImageLike {
     * @return The result of flipping this image vertically.
     */
   def flipY: Image = {
-    val copy = raster.copy
+    val copied = raster.copy
     for (x <- 0 until width; y <- 0 until height) {
-      copy.write(x, y, raster.read(x, height - 1 - y))
+      copied.write(x, y, raster.read(x, height - 1 - y))
     }
-    new Image(copy)
+    copy(copied)
   }
 
   /** Returns a copy of this image rotated 90 degrees anti-clockwise (counter clockwise to US English speakers).
     *
     * @return
     */
-  def rotateLeft = {
+  def rotateLeft: Image = {
     val rotated = raster.empty(height, width)
     for (x <- 0 until width; y <- 0 until height; c <- 0 until raster.n_channel) {
       rotated.writeChannel(y, width - 1 - x, c)(raster.readChannel(x, y, c))
     }
-    new Image(rotated)
+    copy(rotated)
   }
 
   /** Returns a copy of this image rotated 90 degrees clockwise. */
-  def rotateRight = {
+  def rotateRight: Image = {
     val rotated = raster.empty(height, width)
     for (x <- 0 until width; y <- 0 until height; c <- 0 until raster.n_channel) {
       rotated.writeChannel(height - 1 - y, x, c)(raster.readChannel(x, y, c))
     }
-    new Image(rotated)
+    copy(rotated)
   }
 
   /** Returns a copy of this image with the given dimensions
@@ -606,7 +600,7 @@ class Image(val raster: Raster) extends ImageLike with WritableImageLike {
 
   def toImage: Image = this
 
-  override def withMeta(metadata: IIOMetadata): ImageLikeWithMeta[Image] = ImageWithMeta(this, metadata)
+  override def withMeta(metadata: IIOMetadata): ImageWithMeta = ImageWithMeta(this, metadata)
 }
 
 object Image {
@@ -701,7 +695,7 @@ object Image {
     */
   def apply(image: ImageLike): ImageLike = image.copy
 
-  def fromPath(path: String): ImageLike = apply(getClass.getResourceAsStream(path))
+  def fromPath(path: String): ImageLike = apply(new java.io.File(path))
 
   /** Return a new Image with the given width and height, with all pixels set to the supplied colour.
     *
