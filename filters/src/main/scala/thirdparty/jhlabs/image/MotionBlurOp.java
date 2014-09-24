@@ -17,10 +17,11 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
-import java.awt.geom.*;
-
 import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+
+import java.awt.*;
+import java.awt.geom.Point2D;
 
 /**
  * A filter which produces motion blur the faster, but lower-quality way.
@@ -194,7 +195,7 @@ public class MotionBlurOp extends AbstractImageFilter {
 
     public Image filter( Image src, Image dst ) {
         if ( dst == null )
-            dst = createCompatibleDestImage( src);
+            dst = createCompatibleDestImage(src);
         Image tsrc = src;
         float cx = (float)src.width()* centreX;
         float cy = (float)src.height()* centreY;
@@ -211,40 +212,40 @@ public class MotionBlurOp extends AbstractImageFilter {
 		scale /= maxDistance;
 		rotate /= maxDistance;
 
-         //TODO
-//        if ( steps == 0 ) {
-//            Graphics2D g = dst.createGraphics();
-//            g.drawRenderedImage( src, null );
-//            g.dispose();
-//            return dst;
-//        }
-//
-//        Image tmp = createCompatibleDestImage( src, null );
-//        for ( int i = 0; i < steps; i++ ) {
-//            Graphics2D g = tmp.createGraphics();
-//            g.drawImage( tsrc, null, null );
-//			g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-//			g.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR );
-//			g.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.5f ) );
-//
-//            g.translate( cx+translateX, cy+translateY );
-//            g.scale( 1.0001+scale, 1.0001+scale );  // The .0001 works round a bug on Windows where drawImage throws an ArrayIndexOutofBoundException
-//            if ( rotation != 0 )
-//                g.rotate( rotate );
-//            g.translate( -cx, -cy );
-//
-//            g.drawImage( dst, null, null );
-//            g.dispose();
-//            Image ti = dst;
-//            dst = tmp;
-//            tmp = ti;
-//            tsrc = dst;
-//
-//            translateX *= 2;
-//            translateY *= 2;
-//            scale *= 2;
-//            rotate *= 2;
-//        }
+        if ( steps == 0 ) {
+            int l = src.width() * src.height() * src.raster().n_channel();
+            System.arraycopy(src.raster().model(), 0, dst.raster().model(), 0, l);
+            return dst;
+        }
+
+        //TODO remove awt
+        Image tmp = createCompatibleDestImage(src);
+        for ( int i = 0; i < steps; i++ ) {
+            Graphics2D g = tmp.awt().createGraphics();
+            g.drawImage(tsrc.awt(), null, null);
+			g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+			g.setRenderingHint( RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR );
+			g.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.5f ) );
+
+            g.translate( cx+translateX, cy+translateY );
+            g.scale( 1.0001+scale, 1.0001+scale );  // The .0001 works round a bug on Windows where drawImage throws an ArrayIndexOutofBoundException
+            if ( rotation != 0 )
+                g.rotate( rotate );
+            g.translate( -cx, -cy );
+
+            g.drawImage(dst.awt(), null, null);
+            g.dispose();
+            Image ti = dst;
+            dst = tmp;
+            tmp = ti;
+            tsrc = dst;
+
+            translateX *= 2;
+            translateY *= 2;
+            scale *= 2;
+            rotate *= 2;
+        }
+        dst.updateFromAWT();
         return dst;
     }
 

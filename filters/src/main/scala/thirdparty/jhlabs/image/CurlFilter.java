@@ -130,8 +130,7 @@ public class CurlFilter extends TransformFilter {
 		this.height = src.height();
 
 		originalSpace = new Rectangle(0, 0, width, height);
-		transformedSpace = new Rectangle(0, 0, width, height);
-		transformSpace(transformedSpace);
+		transformedSpace = transformSpace(new Rectangle(0, 0, width, height));
 
         if ( dst == null ) {
             dst = new Image((Raster) src.raster().mimic());

@@ -179,22 +179,22 @@ public class RippleFilter extends TransformFilter {
         float ny = (float) x / yWavelength;
         float fx, fy;
         switch (waveType) {
+            case SAWTOOTH:
+            fx = ImageMath.mod(nx, 1);
+            fy = ImageMath.mod(ny, 1);
+            break;
+            case TRIANGLE:
+            fx = ImageMath.triangle(nx);
+            fy = ImageMath.triangle(ny);
+            break;
+            case NOISE:
+            fx = Noise.noise1(nx);
+            fy = Noise.noise1(ny);
+            break;
             case SINE:
             default:
                 fx = (float) Math.sin(nx);
                 fy = (float) Math.sin(ny);
-                break;
-            case SAWTOOTH:
-                fx = ImageMath.mod(nx, 1);
-                fy = ImageMath.mod(ny, 1);
-                break;
-            case TRIANGLE:
-                fx = ImageMath.triangle(nx);
-                fy = ImageMath.triangle(ny);
-                break;
-            case NOISE:
-                fx = Noise.noise1(nx);
-                fy = Noise.noise1(ny);
                 break;
         }
         out[0] = x + xAmplitude * fx;

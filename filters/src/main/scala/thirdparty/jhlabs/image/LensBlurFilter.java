@@ -18,9 +18,8 @@ package thirdparty.jhlabs.image;
 
 import com.sksamuel.scrimage.ARGBRaster;
 import com.sksamuel.scrimage.AbstractImageFilter;
-import thirdparty.jhlabs.math.FFT;
-
 import com.sksamuel.scrimage.Image;
+import thirdparty.jhlabs.math.FFT;
 
 /**
  * A filter which use FFTs to simulate lens blur on an image.
@@ -221,11 +220,11 @@ public class LensBlurFilter extends AbstractImageFilter {
                 if (ty + th > height)
                     th = height - ty;
 
-                System.out.println("Reading Tile: (" + tx +" -> " + (tx+tw) + ", " + ty + " -> "  + (ty + th) + "), stores it at: (" + fx + ", " + fy + ")");
+//                System.out.println("Reading Tile: (" + tx +" -> " + (tx+tw) + ", " + ty + " -> "  + (ty + th) + "), stores it at: (" + fx + ", " + fy + ")");
 
                 //get the rectangle (tx, ty, tw, th) and stores it at fy * w + fx
                 src.raster().getRGB(tx, ty, tw, th, rgb, fy * w + fx, w);
-                System.out.println("Top Left pixel: " + rgb[fy * w + fx]);
+//                System.out.println("Top Left pixel: " + rgb[fy * w + fx]);
                 // Create a float array from the pixels. Any pixels off the edge of the source image get duplicated from the edge.
                 i = 0;
                 for (int y = 0; y < h; y++) {
@@ -351,7 +350,7 @@ public class LensBlurFilter extends AbstractImageFilter {
                 if (ty + th > height) {
                     th = height - ty;
                 }
-                System.out.println("Writing Tile: (" + tx +" -> " + (tx+tw) + ", " + ty + " -> "  + (ty + th) + "), reading from  (" + iradius + ", " + iradius + ")");
+//                System.out.println("Writing Tile: (" + tx +" -> " + (tx+tw) + ", " + ty + " -> "  + (ty + th) + "), reading from  (" + iradius + ", " + iradius + ")");
                 dst.raster().setRGB(tx, ty, tw, th, rgb, iradius * w + iradius, w);
             }
         }

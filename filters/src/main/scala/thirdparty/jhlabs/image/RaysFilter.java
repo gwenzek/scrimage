@@ -154,7 +154,7 @@ public class RaysFilter extends MotionBlurOp {
 			rays.raster().setRGB(0, y, width, 1, pixels );
 		}
 
-		rays = super.filter( rays, null );
+        rays = super.filter( rays, null );
 
 		for ( int y = 0; y < height; y++ ) {
 			rays.raster().getRGB(0, y, width, 1, pixels );
@@ -184,14 +184,14 @@ public class RaysFilter extends MotionBlurOp {
         if ( dst == null )
             dst = createCompatibleDestImage( src );
 
-        //TODO
+        //TODO: remove awt
 		Graphics2D g = dst.awt().createGraphics();
 		if ( !raysOnly ) {
 			g.setComposite( AlphaComposite.SrcOver );
 			g.drawRenderedImage( src.awt(), null );
 		}
 		g.setComposite( MiscComposite.getInstance(MiscComposite.ADD, opacity) );
-		g.drawRenderedImage( rays.awt(), null );
+		g.drawRenderedImage(rays.awt(), null);
 		g.dispose();
         dst.updateFromAWT();
         return dst;
