@@ -15,8 +15,9 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ Image, Filter }
 import java.awt.Graphics2D
+
+import com.sksamuel.scrimage.{Filter, Image}
 import thirdparty.romainguy.BlendComposite
 
 /** @author Stephen Samuel */
@@ -30,9 +31,10 @@ class SummerFilter(vignette: Boolean) extends Filter {
     g2.setComposite(BlendComposite.getInstance(BlendComposite.BlendingMode.INVERSE_COLOR_BURN, 0.5f))
     g2.drawImage(summer.scaleTo(image.width, image.height).awt, 0, 0, null)
     g2.dispose()
-    if (vignette)
-      VignetteFilter(0.92f, 0.98f, 0.3).apply(image)
-    Image(buffered)
+    val summered = Image(buffered)
+
+    if (vignette) summered.filter(VignetteFilter(0.92f, 0.98f, 0.3))
+    else summered
   }
 }
 
