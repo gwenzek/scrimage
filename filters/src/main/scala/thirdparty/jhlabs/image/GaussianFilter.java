@@ -17,7 +17,6 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import com.sksamuel.scrimage.Image;
-import thirdparty.jhlabs.image.Kernel;
 
 /**
  * A filter which applies Gaussian blur to an image. This is a subclass of ConvolveFilter
@@ -83,12 +82,13 @@ public class GaussianFilter extends ConvolveFilter {
         if (dst == null)
             dst = createCompatibleDestImage(src);
 
-        int[] inPixels = new int[width * height];
+        int[] inPixels = src.raster().getRGB(0, 0, width, height);
         int[] outPixels = new int[width * height];
-        src.raster().getRGB(0, 0, width, height, inPixels, 0, width);
 
         if (radius > 0) {
+//            convolveAndTranspose(kernel, inPixels, outPixels, width, height, alpha, alpha && premultiplyAlpha, false, CLAMP_EDGES);
             convolveAndTranspose(kernel, inPixels, outPixels, width, height, alpha, alpha && premultiplyAlpha, false, CLAMP_EDGES);
+//            convolveAndTranspose(kernel, outPixels, inPixels, height, width, alpha, false, alpha && premultiplyAlpha, CLAMP_EDGES);
             convolveAndTranspose(kernel, outPixels, inPixels, height, width, alpha, false, alpha && premultiplyAlpha, CLAMP_EDGES);
         }
 
