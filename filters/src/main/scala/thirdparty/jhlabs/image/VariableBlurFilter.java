@@ -17,19 +17,18 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
-
 import com.sksamuel.scrimage.ARGBRaster;
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 import com.sksamuel.scrimage.geom.Rectangle;
 
-import java.awt.geom.*;
+import java.awt.geom.Point2D;
 
 /**
  * A filter which performs a box blur with a different blur radius at each pixel. The radius can either be specified by
  * providing a blur mask image or by overriding the blurRadiusAt method.
  */
-public class VariableBlurFilter extends AbstractImageFilter {
+public class VariableBlurFilter extends JavaAbstractImageFilter {
 
 	private int hRadius = 1;
 	private int vRadius = 1;

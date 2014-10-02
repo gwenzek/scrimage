@@ -16,14 +16,14 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 import com.sksamuel.scrimage.Raster;
 
 /**
  * A Filter to pixellate images.
  */
-public class BlockFilter extends AbstractImageFilter {
+public class BlockFilter extends JavaAbstractImageFilter {
 
 	private int blockSize = 2;
 

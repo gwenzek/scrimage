@@ -30,6 +30,16 @@ trait Raster { self: ColorModel =>
   /** The number of channels used by this Raster (herited from the ColorModel)  */
   val n_channel: Int
 
+  /** The number of real channels (without alpha) used by this Raster (herited from the ColorModel)  */
+  val n_real_channel: Int = {
+    if(has_alpha) n_channel - 1
+    else n_channel
+  }
+
+  val has_alpha: Boolean
+
+  val alpha_channel: Int
+
   /** The max value you should write in this Raster (herited from the ColorModel) */
   val maxChannelValue: Int
 
@@ -51,16 +61,25 @@ trait Raster { self: ColorModel =>
     */
   def write(x: Int, y: Int, color: Color) = writeColor(offset(x, y), model)(color)
 
+  def writeARGB(x: Int, y: Int, argb: Int): Unit = writeARGB(offset(x, y), model)(argb)
+
   /** Returns the level of the channel c of the pixel (x, y). */
   def readChannel(x: Int, y: Int, c: Int): Int = readChannel(offset(x, y, c), model)
 
+  /** Have undefined behavior if raster doesn't have alpha channel */
+  def readAlpha(x: Int, y: Int): Int = readChannel(offset(x, y, alpha_channel), model)
+
+  /** Have undefined behavior if raster doesn't have alpha channel */
+  def writeAlpha(x: Int, y: Int, a: Int) = writeChannel(offset(x, y, alpha_channel), model)(a)
+
+
   /** Returns the level at the given offset.
-    * Used for fast access successives channels  (herited from the ColorModel).
+    * Used for fast access successives channels (inherited from the ColorModel).
     */
   @inline def readChannel(off: Int, model: Array[ChannelType] = model): Int
 
   /** Sets the level of the channel c of the pixel (x, y). */
-  def writeChannel(x: Int, y: Int, c: Int)(level: Int): Unit = writeChannel(offset(x, y, c), model)(level)
+  def writeChannel(x: Int, y: Int, c: Int, level: Int): Unit = writeChannel(offset(x, y, c), model)(level)
 
   /** Set the level at the given offset.
     * Used for fast access successives channels (herited from the ColorModel).

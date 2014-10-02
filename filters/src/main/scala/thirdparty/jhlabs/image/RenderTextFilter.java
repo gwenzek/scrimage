@@ -17,8 +17,8 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -26,7 +26,7 @@ import java.awt.geom.AffineTransform;
 /**
  * A filter which renders text onto an image.
  */
-public class RenderTextFilter extends AbstractImageFilter {
+public class RenderTextFilter extends JavaAbstractImageFilter {
 
 	private String text;
 	private Font font;

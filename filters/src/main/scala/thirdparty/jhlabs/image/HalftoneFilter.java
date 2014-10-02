@@ -16,13 +16,13 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 
 /**
  * A filter which uses a another image as a ask to produce a halftoning effect.
  */
-public class HalftoneFilter extends AbstractImageFilter {
+public class HalftoneFilter extends JavaAbstractImageFilter {
 
 	private float softness = 0.1f;
 	private boolean invert;

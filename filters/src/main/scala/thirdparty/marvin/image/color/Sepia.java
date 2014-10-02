@@ -35,25 +35,24 @@ public class Sepia extends MarvinAbstractImagePlugin {
 
         boolean[][] l_arrMask = mask.getMaskArray();
 
-        for (int x = 0; x < imageIn.getWidth(); x++) {
-            for (int y = 0; y < imageIn.getHeight(); y++) {
-                if (l_arrMask != null && !l_arrMask[x][y]) {
-                    continue;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (l_arrMask == null || l_arrMask[x][y]) {
+                    //Capture RGB of pixel...
+                    r = imageIn.getIntComponent0(x, y);
+                    g = imageIn.getIntComponent1(x, y);
+                    b = imageIn.getIntComponent2(x, y);
+
+                    //Define a color as average level of channels...
+                    corfinal = (r + g + b) / 3;
+                    r = g = b = corfinal;
+
+                    r = truncate(r + (depth * 2));
+                    g = truncate(g + depth);
+
+                    //Define a nova cor do ponto...
+                    imageOut.setIntColor(x, y, imageIn.getAlphaComponent(x, y), r, g, b);
                 }
-                //Captura o RGB do ponto...
-                r = imageIn.getIntComponent0(x, y);
-                g = imageIn.getIntComponent1(x, y);
-                b = imageIn.getIntComponent2(x, y);
-
-                //Define a cor como a m�dia aritm�tica do pixel...
-                corfinal = (r + g + b) / 3;
-                r = g = b = corfinal;
-
-                r = truncate(r + (depth * 2));
-                g = truncate(g + depth);
-
-                //Define a nova cor do ponto...
-                imageOut.setIntColor(x, y, imageIn.getAlphaComponent(x, y), r, g, b);
             }
         }
     }

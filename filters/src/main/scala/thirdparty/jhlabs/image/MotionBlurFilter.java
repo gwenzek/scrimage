@@ -16,14 +16,16 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
-import java.awt.geom.*;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
+
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 
 /**
  * A filter which produces motion blur the slow, but higher-quality way.
  */
-public class MotionBlurFilter extends AbstractImageFilter {
+public class MotionBlurFilter extends JavaAbstractImageFilter {
 
 	private float angle = 0.0f;
 	private float falloff = 1.0f;

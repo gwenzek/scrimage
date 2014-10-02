@@ -18,6 +18,10 @@ trait ColorModel {
   /** The number of channels used by this ColorModel */
   val n_channel: Int
 
+  val has_alpha: Boolean
+
+  val alpha_channel: Int
+
   /** The maximum value that should be written in a channel*/
   val maxChannelValue: Int
 
@@ -65,6 +69,9 @@ trait ByteColorModel extends ColorModel {
 /** Stores 4 component in 4 bytes in the order: Red, Green, Blue, Alpha (cf PNG standards). */
 trait RGBAColorModel extends ByteColorModel {
   final val n_channel = 4
+  final val has_alpha = true
+  final val alpha_channel = 3
+
   final def readARGB(off: Int, pixel: Array[ChannelType]) = (
     readChannel(off + 3, pixel) << 24 |
     readChannel(off + 0, pixel) << 16 |
@@ -96,6 +103,9 @@ trait RGBAColorModel extends ByteColorModel {
 /** Stores 3 component in 3 bytes in the order: Red, Green, Blue (cf PNG standards). */
 trait RGBColorModel extends ByteColorModel {
   final val n_channel = 3
+  final val has_alpha = false
+  final val alpha_channel = -1
+
   final def readARGB(off: Int, pixel: Array[ChannelType]) = (
     0xff000000 |
     readChannel(off + 0, pixel) << 16 |
@@ -124,11 +134,17 @@ trait RGBColorModel extends ByteColorModel {
 /** Stores the grayscale level in one byte. */
 trait GrayColorModel extends ByteColorModel {
   final val n_channel = 1
+  final val has_alpha = false
+  final val alpha_channel = -1
+
   final def readARGB(off: Int, pixel: Array[ChannelType]) = readChannel(off, pixel) * 0x00010101 | 0xff000000
   final def writeARGB(off: Int, pixel: Array[ChannelType])(argb: Int) = {
     writeColor(off, pixel)(Color(argb))
   }
-  final def readColor(off: Int, pixel: Array[ChannelType]) = Color(readARGB(off, pixel))
+  final def readColor(off: Int, pixel: Array[ChannelType]) = {
+    val gray = readChannel(off, pixel)
+    Color(gray, gray, gray)
+  }
   final def writeColor(off: Int, pixel: Array[ChannelType])(color: Color) = {
     val c = color.toRGB
     pixel(off) = (c.red * 0.2989f + c.green * 0.5870f + c.blue * 0.1140f).toByte
@@ -138,12 +154,18 @@ trait GrayColorModel extends ByteColorModel {
 /** Stores the grayscale and alpha levels in two bytes (cf PNG standards). */
 trait GrayAlphaColorModel extends ByteColorModel {
   final val n_channel = 2
+  final val has_alpha = true
+  final val alpha_channel = 1
+
   final def readARGB(off: Int, pixel: Array[ChannelType]) =
     readChannel(off, pixel) * 0x00010101 | readChannel(off, pixel) << 24
   final def writeARGB(off: Int, pixel: Array[ChannelType])(argb: Int) = {
     writeColor(off, pixel)(Color(argb))
   }
-  final def readColor(off: Int, pixel: Array[ChannelType]) = Color(readARGB(off, pixel))
+  final def readColor(off: Int, pixel: Array[ChannelType]) = {
+    val gray = readChannel(off, pixel)
+    Color(gray, gray, gray, readChannel(off + 1, pixel))
+  }
   final def writeColor(off: Int, pixel: Array[ChannelType])(color: Color) = {
     val c = color.toRGB
     pixel(off) = (c.red * 0.2989f + c.green * 0.5870f + c.blue * 0.1140f).toByte
@@ -154,9 +176,10 @@ trait GrayAlphaColorModel extends ByteColorModel {
 /** Stores only one of the RGB channel. */
 class RGBLayerColorModel(val channel: Int) extends ByteColorModel {
   final val n_channel = 1
-  final def readARGB(off: Int, pixel: Array[ChannelType]) = (
-    pixel(off) << (16 - channel * 8) | 0xff000000
-  )
+  final val has_alpha = false
+  final val alpha_channel = -1
+
+  final def readARGB(off: Int, pixel: Array[ChannelType]) = pixel(off) << (16 - channel * 8) | 0xff000000
   final def writeARGB(off: Int, pixel: Array[ChannelType])(argb: Int) = {
     pixel(off) = (argb >> (16 - channel * 8)).toByte
   }

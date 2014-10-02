@@ -16,14 +16,14 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 import com.sksamuel.scrimage.Raster;
 
 /**
  * An abstract superclass for point filters. The interface is the same as the old RGBImageFilter.
  */
-public abstract class PointFilter extends AbstractImageFilter {
+public abstract class PointFilter extends JavaAbstractImageFilter {
 
 	protected boolean canFilterIndexColorModel = false;
 

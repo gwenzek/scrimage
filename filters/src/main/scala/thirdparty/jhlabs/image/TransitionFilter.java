@@ -17,17 +17,20 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
-
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
-import java.lang.reflect.*;
-import java.beans.*;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
+
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 
 /**
  * A filter which uses another filter to perform a transition.
  * e.g. to create a blur transition, you could write: new TransitionFilter( new BoxBlurFilter(), "radius", 0, 100 );
  */
-public class TransitionFilter extends AbstractImageFilter {
+public class TransitionFilter extends JavaAbstractImageFilter {
 
 	private float transition = 0;
 	private Image destination;
@@ -37,7 +40,7 @@ public class TransitionFilter extends AbstractImageFilter {
     /**
      * The filter used for the transition.
      */
-    protected AbstractImageFilter filter;
+    protected JavaAbstractImageFilter filter;
 
     /**
      * The start value for the filter property.
@@ -62,7 +65,7 @@ public class TransitionFilter extends AbstractImageFilter {
      * @param minValue the start value for the filter property
      * @param maxValue the end value for the filter property
      */
-	public TransitionFilter( AbstractImageFilter filter, String property, float minValue, float maxValue ) {
+	public TransitionFilter( JavaAbstractImageFilter filter, String property, float minValue, float maxValue ) {
 		this.filter = filter;
 		this.property = property;
 		this.minValue = minValue;

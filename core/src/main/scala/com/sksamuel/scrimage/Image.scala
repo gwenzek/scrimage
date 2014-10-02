@@ -76,6 +76,12 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   def empty: Image = Image.empty(width, height)
   def copy: Image = new Image(raster.copy)
 
+  def map(f: Color => Color): Image = {
+    val target = copy
+    target.raster.write(this.raster.read.map(f))
+    target
+  }
+
   def map(f: (Int, Int, Int) => Int): Image = {
     val target = copy
     target.mapInPlace(f)
@@ -83,7 +89,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   }
 
   private[scrimage] def mapInPlace(f: (Int, Int, Int) => Int): Unit = {
-    points.foreach(p => raster.write(p._1, p._2, f(p._1, p._2, raster.read(p._1, p._2).toInt)))
+    points.foreach(p => raster.writeARGB(p._1, p._2, f(p._1, p._2, raster.pixel(p._1, p._2))))
   }
 
   /** Returns an image that is no larger than the given width and height.
@@ -604,7 +610,8 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
   def writer[T <: ImageWriter](format: Format[T]): T = format.writer(this)
 
   // This tuple contains all the state that identifies this particular image.
-  private[scrimage] def imageState = (width, height, raster.model.toList)
+  // Should two a ARGB image and RGB image be equals if the alpha value is everywhere at 255 ??
+  private[scrimage] def imageState = (width, height, raster.read.toList)
 
   // See this Stack Overflow question to see why this is implemented this way.
   // http://stackoverflow.com/questions/7370925/what-is-the-standard-idiom-for-implementing-equals-and-hashcode-in-scala

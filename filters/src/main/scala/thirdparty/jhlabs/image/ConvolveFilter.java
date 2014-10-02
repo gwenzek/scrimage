@@ -16,14 +16,14 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 
 /**
  * A filter which applies a convolution kernel to an image.
  * @author Jerry Huxtable
  */
-public class ConvolveFilter extends AbstractImageFilter {
+public class ConvolveFilter extends JavaAbstractImageFilter {
 
     /**
      * Treat pixels off the edge as zero.

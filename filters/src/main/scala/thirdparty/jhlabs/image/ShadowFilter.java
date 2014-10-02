@@ -17,8 +17,8 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import com.sksamuel.scrimage.ARGBRaster;
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 import com.sksamuel.scrimage.Raster;
 import com.sksamuel.scrimage.geom.Point2D;
 import com.sksamuel.scrimage.geom.Rectangle;
@@ -26,7 +26,7 @@ import com.sksamuel.scrimage.geom.Rectangle;
 /**
  * A filter which draws a drop shadow based on the alpha channel of the image.
  */
-public class ShadowFilter extends AbstractImageFilter {
+public class ShadowFilter extends JavaAbstractImageFilter {
 
 	private float radius = 5;
 	private float angle = (float)Math.PI*6/4;

@@ -16,14 +16,14 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 import com.sksamuel.scrimage.Raster;
 
 /**
  * A filter which uses the alpha channel of a "mask" image to interpolate between a source and destination image.
  */
-public class ApplyMaskFilter extends AbstractImageFilter {
+public class ApplyMaskFilter extends JavaAbstractImageFilter {
 
 	private Image destination;
 	private Image maskImage;
@@ -86,20 +86,20 @@ public class ApplyMaskFilter extends AbstractImageFilter {
      * @param dst the destination raster
      * @param sel the mask raster
      */
+    // TODO this methods seems wrong (array out of bound ??) but not used
 	public static void composeThroughMask(Raster src, Raster dst, Raster sel) {
-		int x = 0;
-		int y = 0;
-		int w = src.width();
-		int h = src.height();
+		final int x = 0;
+		final int w = src.width();
+		final int h = src.height();
 
 		int srcRGB[] = new int[w];
 		int selRGB[] = new int[w];
 		int dstRGB[] = new int[w];
 
-		for ( int i = 0; i < h; i++ ) {
-			srcRGB = src.getRGB(x, y, w, 1, srcRGB);
-			selRGB = sel.getRGB(x, y, w, 1, selRGB);
-			dstRGB = dst.getRGB(x, y, w, 1, dstRGB);
+		for ( int y = 0; y < h; y++ ) {
+            src.getRGB(x, y, w, 1, srcRGB);
+			sel.getRGB(x, y, w, 1, selRGB);
+            dst.getRGB(x, y, w, 1, dstRGB);
 
 			int k = x;
 			for ( int j = 0; j < w; j++ ) {
@@ -128,13 +128,8 @@ public class ApplyMaskFilter extends AbstractImageFilter {
 	}
 
     public Image filter( Image src, Image dst ) {
-        int width = src.width();
-        int height = src.height();
-		Raster srcRaster = src.raster();
-
         if ( dst == null )
             dst = createCompatibleDestImage(src);
-		Raster dstRaster = dst.raster();
 
         if ( destination != null && maskImage != null )
 			composeThroughMask( src.raster(), dst.raster(), maskImage.raster() );

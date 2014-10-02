@@ -16,8 +16,8 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 import com.sksamuel.scrimage.Raster;
 import com.sksamuel.scrimage.geom.Rectangle;
 
@@ -25,7 +25,7 @@ import com.sksamuel.scrimage.geom.Rectangle;
  * A filter which acts as a superclass for filters which need to have the whole image in memory
  * to do their stuff.
  */
-public abstract class WholeImageFilter extends AbstractImageFilter {
+public abstract class WholeImageFilter extends JavaAbstractImageFilter {
 
 	/**
      * The output image bounds.

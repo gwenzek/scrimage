@@ -17,15 +17,15 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
-import java.awt.geom.*;
-
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
+
+import java.awt.geom.Point2D;
 
 /**
  * A filter which priduces a video feedback effect by repeated transformations.
  */
-public class FeedbackFilter extends AbstractImageFilter {
+public class FeedbackFilter extends JavaAbstractImageFilter {
     private float centreX = 0.5f, centreY = 0.5f;
     private float distance;
     private float angle;

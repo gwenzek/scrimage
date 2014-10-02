@@ -16,13 +16,13 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 
 /**
  * A filter which performs a "smart blur". i.e. a blur which blurs smotth parts of the image while preserving edges.
  */
-public class SmartBlurFilter extends AbstractImageFilter {
+public class SmartBlurFilter extends JavaAbstractImageFilter {
 
 	private int hRadius = 5;
 	private int vRadius = 5;

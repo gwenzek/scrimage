@@ -17,14 +17,14 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import com.sksamuel.scrimage.ARGBRaster;
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 import thirdparty.jhlabs.math.FFT;
 
 /**
  * A filter which use FFTs to simulate lens blur on an image.
  */
-public class LensBlurFilter extends AbstractImageFilter {
+public class LensBlurFilter extends JavaAbstractImageFilter {
 
     private float radius = 10;
     private float bloom = 2;

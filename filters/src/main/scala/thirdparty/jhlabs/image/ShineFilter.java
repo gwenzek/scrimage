@@ -17,10 +17,10 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 import com.sksamuel.scrimage.ARGBRaster;
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 
-public class ShineFilter extends AbstractImageFilter {
+public class ShineFilter extends JavaAbstractImageFilter {
 
 	private float radius = 5;
 	private float angle = (float)Math.PI*7/4;

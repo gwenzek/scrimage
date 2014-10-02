@@ -17,16 +17,16 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
-import java.awt.geom.*;
-
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Composite;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
+
+import java.awt.geom.AffineTransform;
 
 /**
  * A filter which composites two images together with an optional transform.
  */
-public class CompositeFilter extends AbstractImageFilter {
+public class CompositeFilter extends JavaAbstractImageFilter {
 
 	private Composite composite;
     private AffineTransform transform;

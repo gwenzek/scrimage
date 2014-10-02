@@ -44,13 +44,14 @@ public class Thresholding extends MarvinAbstractImagePlugin {
             neighborhood,
             range;
 
-    public void load() {
+    public Thresholding(){
+        this(125, -1, -1);
+    }
 
-        // Attributes
-        attributes = getAttributes();
-        attributes.set("threshold", 125);
-        attributes.set("neighborhood", -1);
-        attributes.set("range", -1);
+    public Thresholding(int threshold, int neighborhood, int range){
+        this.threshold = threshold;
+        this.neighborhood = neighborhood;
+        this.range = range;
     }
 
     public void process
@@ -61,12 +62,9 @@ public class Thresholding extends MarvinAbstractImagePlugin {
                     MarvinImageMask mask,
                     boolean previewMode
             ) {
-        threshold = (Integer) attributes.get("threshold");
-        neighborhood = (Integer) attributes.get("neighborhood");
-        range = (Integer) attributes.get("range");
 
         MarvinImagePlugin l_filter = new GrayScale();
-        l_filter.process(imageIn, imageOut, attributesOut, mask, previewMode);
+        l_filter.process(imageIn, imageIn, attributesOut, mask, previewMode);
 
         boolean[][] bmask = mask.getMaskArray();
 

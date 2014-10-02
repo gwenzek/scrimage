@@ -16,14 +16,14 @@ limitations under the License.
 
 package thirdparty.jhlabs.image;
 
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 
 /**
  * A filter which performs a box blur on an image. The horizontal and vertical blurs can be specified separately
  * and a number of iterations can be given which allows an approximation to Gaussian blur.
  */
-public class BoxBlurFilter extends AbstractImageFilter {
+public class BoxBlurFilter extends JavaAbstractImageFilter {
 
 	private float hRadius;
 	private float vRadius;

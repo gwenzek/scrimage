@@ -17,9 +17,8 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
-
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 import com.sksamuel.scrimage.Raster;
 
 import java.awt.*;
@@ -27,7 +26,7 @@ import java.awt.*;
 /**
  * A filter which can be used to produce wipes by transferring the luma of a Destination image into the alpha channel of the source.
  */
-public class ChromaKeyFilter extends AbstractImageFilter {
+public class ChromaKeyFilter extends JavaAbstractImageFilter {
 
 	private float hTolerance = 0;
 	private float sTolerance = 0;

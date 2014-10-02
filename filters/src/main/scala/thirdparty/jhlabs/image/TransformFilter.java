@@ -17,8 +17,8 @@ limitations under the License.
 package thirdparty.jhlabs.image;
 
 
-import com.sksamuel.scrimage.AbstractImageFilter;
 import com.sksamuel.scrimage.Image;
+import com.sksamuel.scrimage.JavaAbstractImageFilter;
 import com.sksamuel.scrimage.Raster;
 import com.sksamuel.scrimage.geom.Rectangle;
 
@@ -26,7 +26,7 @@ import com.sksamuel.scrimage.geom.Rectangle;
  * An abstract superclass for filters which distort images in some way. The subclass only needs to override
  * two methods to provide the mapping between source and destination pixels.
  */
-public abstract class TransformFilter extends AbstractImageFilter {
+public abstract class TransformFilter extends JavaAbstractImageFilter {
 
     /**
      * Treat pixels off the edge as zero.
