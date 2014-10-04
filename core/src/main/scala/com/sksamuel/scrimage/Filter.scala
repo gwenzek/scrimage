@@ -18,11 +18,18 @@ package com.sksamuel.scrimage
 import java.awt.Graphics2D
 import java.awt.image.BufferedImageOp
 
-import com.sksamuel.scrimage.geom._
+import com.sksamuel.scrimage.geom.Rectangle
 
 /** @author Stephen Samuel */
 trait Filter {
   def apply(src: Image): Image
+
+  def then(other: Filter): Filter = {
+    val that = this
+    new Filter {
+      def apply(src: Image): Image = other.apply(that(src))
+    }
+  }
 }
 
 /** Extension of Filter that applies its filters using a standard java BufferedImageOp.
@@ -32,6 +39,7 @@ trait Filter {
 @deprecated("java awt is to be removed", since = "28/08/2014")
 abstract class BufferedOpFilter extends Filter {
   val op: BufferedImageOp
+
   def apply(image: Image): Image = {
     val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
     g2.drawImage(image.awt, op, 0, 0)
@@ -50,6 +58,7 @@ trait AbstractImageFilter extends Filter {
   def apply(src: Image): Image = filter(src, defaultDst(src))
 }
 
+/* Abstract class so java filters can inherit from it */
 abstract class JavaAbstractImageFilter extends AbstractImageFilter {
   def createCompatibleDestImage(src: Image) = new Image(src.raster.mimic)
 
@@ -63,50 +72,13 @@ abstract class JavaAbstractImageFilter extends AbstractImageFilter {
   def filter(src: Image, dst: Image): Image
 }
 
-trait GrayImageFilter extends AbstractImageFilter {
-  def defaultDst(src: Image) =
-    new Image(Raster(src.width, src.height, if (src.raster.has_alpha) Raster.GRAY_ALPHA else Raster.GRAY))
+trait CopyingFilter extends AbstractImageFilter {
+  def defaultDst(src: Image) = src.copy
 }
 
-trait GrayPixelMapper extends GrayZoneMapper {
-  def toGray(rgb: RGBColor): Int
-
-  def toGray(x: Int, y: Int, src: Raster) = toGray(src.read(x, y).toRGB)
-
-//  override def treatLine(y: Int, src: Raster, dst: Raster): Unit = {
-//    var x, c = 0
-//    while(x < src.width){
-//      c = 0
-//      while(c < dst.n_real_channel){
-//        dst.writeChannel(x, y, c, toGray(src.read(x, y).toRGB))
-//        c += 1
-//      }
-//      if(dst.has_alpha && src.has_alpha)
-//        dst.writeAlpha(x, y, src.readAlpha(x, y))
-//      x += 1
-//    }
-//  }
-
-  def in_place(img: Image) = filter(img, img)
-}
-
-trait GrayZoneMapper extends GrayImageFilter {
-  def toGray(x: Int, y: Int, src: Raster): Int
-
-  def treatLine(y: Int, src: Raster, dst: Raster): Unit = {
-    var x, c, gray = 0
-    while(x < src.width){
-      gray = toGray(x, y, src)
-      c = 0
-      while(c < dst.n_real_channel){
-        dst.writeChannel(x, y, c, gray)
-        c += 1
-      }
-      if(dst.has_alpha && src.has_alpha)
-        dst.writeAlpha(x, y, src.readAlpha(x, y))
-      x += 1
-    }
-  }
+/* The lines can be computed independently */
+trait LineByLine extends AbstractImageFilter {
+  def treatLine(y: Int, src: Raster, dst: Raster): Unit
 
   def filter(srcImage: Image, dstImage: Image) = {
     val src = srcImage.raster
@@ -116,22 +88,120 @@ trait GrayZoneMapper extends GrayImageFilter {
   }
 }
 
+/* The pixels can be computed independently */
+trait PixelByPixelFilter extends LineByLine {
+  def apply(x: Int, y: Int, src: Raster): Color
+
+  def treatLine(y: Int, src: Raster, dst: Raster): Unit = {
+    var x = 0
+    while (x < src.width) {
+      dst.write(x, y, apply(x, y, src))
+      x += 1
+    }
+  }
+}
+
+/* The new pixel depends only on the previous one */
+trait PixelMapperFilter extends PixelByPixelFilter with InPlaceFilter {
+  def apply(x: Int, y: Int, src: Raster): Color = apply(src.read(x, y))
+
+  def apply(color: Color): Color
+}
+
+/* A filter that can use the same image for input and output */
+trait InPlaceFilter extends AbstractImageFilter {
+  def in_place(src: Image) = filter(src, src)
+}
+
+/* Each block can be computed with only the pixels of this block */
+trait BlockByBlock extends AbstractImageFilter with InPlaceFilter {
+  val blockWidth: Int
+  val blockHeight: Int
+
+  def treatBlock(x: Int, y: Int, src: Raster, dst: Raster): Unit
+
+  def treatLine(y: Int, src: Raster, dst: Raster): Unit =
+    (0 until src.width by blockWidth).foreach(treatBlock(_, y, src, dst))
+
+  def filter(srcImage: Image, dstImage: Image) = {
+    val src = srcImage.raster
+    val dst = dstImage.raster
+    (0 until src.height by blockHeight).par.foreach(treatLine(_, src, dst))
+    dstImage
+  }
+}
+
+trait BeforeFilter extends AbstractImageFilter {
+  def before: Filter
+
+  override def apply(src: Image) = filter(before(src), defaultDst(src))
+}
+
+/* Returns a Gray image by default with the copied alpha channel */
+trait GrayOutput extends AbstractImageFilter {
+  def defaultDst(src: Image) = {
+    if (src.raster.has_alpha)
+      CopyAlpha.filter(src, new Image(Raster(src.width, src.height,  Raster.GRAY_ALPHA)))
+    else
+      new Image(Raster(src.width, src.height,  Raster.GRAY))
+  }
+
+  def writeGray(x: Int, y: Int, gray: Int, dst: Raster): Unit = {
+    var c = 0
+    while (c < dst.n_real_channel) {
+      dst.writeChannel(x, y, c, gray)
+      c += 1
+    }
+  }
+}
+
+object CopyAlpha extends AbstractImageFilter with LineByLine{
+
+  def defaultDst(src: Image): Image = new Image(src.raster.empty(src.width, src.height))
+
+  def treatLine(y: Int, src: Raster, dst: Raster): Unit = {
+    (0 until src.width).foreach(x => dst.writeAlpha(x, y, src.readAlpha(x, y)))
+  }
+}
+
+/* Alike to the PixelByPixel but for GrayFilter */
+trait GrayPixelByPixelFilter extends AbstractImageFilter with GrayOutput with LineByLine {
+  def toGray(x: Int, y: Int, src: Raster): Int
+
+  def treatLine(y: Int, src: Raster, dst: Raster): Unit = {
+    var x = 0
+    while (x < src.width) {
+      writeGray(x, y, toGray(x, y, src), dst)
+      x += 1
+    }
+  }
+}
+
+/* Alike to PixelMapper but for GrayImage */
+trait GrayPixelMapper extends GrayPixelByPixelFilter with InPlaceFilter {
+  def toGray(rgb: RGBColor): Int
+
+  def toGray(x: Int, y: Int, src: Raster) = toGray(src.read(x, y).toRGB)
+}
+
+/* Wrapper to convert java filters to scala Object */
 abstract class StaticImageFilter extends Filter {
-  val op: AbstractImageFilter
+  val op: JavaAbstractImageFilter
+
   def apply(src: Image) = op.apply(src)
 }
 
+/* Chained filters */
 class PipelineFilter(filters: Filter*) extends Filter {
   def apply(image: Image): Image = filters.foldLeft(image)((img, f) => f.apply(img))
 }
 
-object MapFilter{
-  def apply(f: Color => Color) = new Filter{
+object Filter {
+  def apply(f: Color => Color) = new Filter {
     def apply(src: Image): Image = src.map(f)
   }
 
-  def apply(f: (Int, Int, Int) => Int) = new Filter{
+  def apply(f: (Int, Int, Int) => Int) = new Filter {
     def apply(src: Image): Image = src.map(f)
   }
-
 }

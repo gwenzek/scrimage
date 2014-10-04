@@ -7,45 +7,45 @@ import org.scalatest.{FunSuite, OneInstancePerTest}
 class LensBlurFilterTest extends FunSuite with OneInstancePerTest {
 
   ignore("LensBlurFilter output matches expected") {
-    val f_exp = testFilterOn("/bird_small.png", LensBlurFilter(), "/bird_lens_blur.png")
-    writeAndCompare("blured", f_exp)
-    assert(f_exp._1 ===  f_exp._2)
+    val (f, exp) = testFilterOn("/bird_small.png", LensBlurFilter(), "/bird_lens_blur.png")
+    writeAndCompare("blured", f, exp)
+    assert(f === exp)
   }
 
   ignore("RippleFilter with Triangle output matches expected") {
-    val f_exp = testFilterOn("/bird_small.png", RippleFilter(RippleType.Triangle), "/bird_ripple_triangle.png")
-    writeAndCompare("ripple_triangle", f_exp)
-    assert(f_exp._1 ===  f_exp._2)
+    val (f, exp) = testFilterOn("/bird_small.png", RippleFilter(RippleType.Triangle), "/bird_ripple_triangle.png")
+    writeAndCompare("ripple_triangle", f, exp)
+    assert(f === exp)
   }
 
   ignore("RippleFilter with Sawtooth output matches expected") {
-    val f_exp = testFilterOn("/bird_small.png", RippleFilter(RippleType.Sawtooth), "/bird_ripple_sawtooth.png")
-    writeAndCompare("ripple_sawtooth", f_exp)
-    assert(f_exp._1 ===  f_exp._2)
+    val (f, exp) = testFilterOn("/bird_small.png", RippleFilter(RippleType.Sawtooth), "/bird_ripple_sawtooth.png")
+    writeAndCompare("ripple_sawtooth", f, exp)
+    assert(f === exp)
   }
 
   ignore("VintageFilter with Sawtooth output matches expected") {
-    val f_exp = testFilterOn("/bird_small.png", VintageFilter, "/com/sksamuel/scrimage/filters/bird_small_vintage.png", verbose = true)
-    writeAndCompare("vintage", f_exp)
-    assert(f_exp._1 ===  f_exp._2)
+    val (f, exp) = testFilterOn("/bird_small.png", VintageFilter, "/com/sksamuel/scrimage/filters/bird_small_vintage.png", verbose = true)
+    writeAndCompare("vintage", f, exp)
+    assert(f === exp)
   }
 
   ignore("SummerFilter with Sawtooth output matches expected") {
-    val f_exp = testFilterOn("/bird_small.png", SummerFilter(), "/com/sksamuel/scrimage/filters/bird_small_summer.png", verbose = true)
-    writeAndCompare("summer", f_exp)
-    assert(f_exp._1 ===  f_exp._2)
+    val (f, exp) = testFilterOn("/bird_small.png", SummerFilter(), "/com/sksamuel/scrimage/filters/bird_small_summer.png", verbose = true)
+    writeAndCompare("summer", f, exp)
+    assert(f === exp)
   }
 
   test("my EmbossFilter output matches expected") {
-    val f_exp = testFilterOn("/bird_small.png", thirdparty.marvin_scala.EmbossFilter, "/com/sksamuel/scrimage/filters/bird_small_emboss.png", verbose = false)
-    writeAndCompare("emboss", f_exp)
-    assert(f_exp._1 ===  f_exp._2)
+    val (f, exp) = testFilterOn("/bird_small.png", thirdparty.marvin_scala.EmbossFilter, "/com/sksamuel/scrimage/filters/bird_small_emboss.png", verbose = false)
+    writeAndCompare("emboss", f, exp)
+    assert(f === exp)
   }
 
   test("my SepiaFilter output matches expected") {
-    val f_exp = testFilterOn("/bird_small.png", thirdparty.marvin_scala.Sepia(20), "/com/sksamuel/scrimage/filters/bird_small_sepia.png", verbose = false)
-    writeAndCompare("sepia", f_exp)
-    assert(f_exp._1 ===  f_exp._2)
+    val (f, exp) = testFilterOn("/bird_small.png", thirdparty.marvin_scala.Sepia(20), "/com/sksamuel/scrimage/filters/bird_small_sepia.png", verbose = false)
+    writeAndCompare("sepia", f, exp)
+    assert(f === exp)
   }
 
   test("my GrayScaleFilter output matches marvin's one") {
@@ -56,7 +56,7 @@ class LensBlurFilterTest extends FunSuite with OneInstancePerTest {
     val f = img.filter(thirdparty.marvin_scala.MarvinGrayScaleFilter)
     printComparaison(f, exp, "GrayScale")
 //    printComparaison(f, exp, img)
-    writeAndCompare("grayscale", (f, exp))
+    writeAndCompare("grayscale", f, exp)
     assert(f ===  exp)
   }
 
@@ -69,8 +69,52 @@ class LensBlurFilterTest extends FunSuite with OneInstancePerTest {
     val f = img.filter(thirdparty.marvin_scala.Thresholding())
     printComparaison(f, exp, "Thresholding")
     printComparaison(f, exp, img)
-    writeAndCompare("threshold", (f, exp))
+    writeAndCompare("threshold", f, exp)
     assert(f ===  exp)
+  }
+
+  test("my TelevisionFilter output matches expected") {
+    val (f, exp) = testFilterOn("/bird_small.png", thirdparty.marvin_scala.TelevisionFilter, "/com/sksamuel/scrimage/filters/bird_small_television.png", verbose = false)
+    writeAndCompare("television", f, exp)
+    assert(f === exp)
+  }
+
+  test("my PrewittFilter output matches expected") {
+    val (f, exp) = testFilterOn("/bird_small.png", thirdparty.marvin_scala.Prewitt, "/com/sksamuel/scrimage/filters/bird_small_prewitt.png")
+    writeAndCompare("prewitt", f, exp)
+    assert(f === exp)
+  }
+
+  test("my RobertsFilter output matches expected") {
+    val (f, exp) = testFilterOn("/bird_small.png", thirdparty.marvin_scala.Roberts, "/com/sksamuel/scrimage/filters/bird_small_roberts.png")
+    writeAndCompare("roberts", f, exp)
+    assert(f === exp)
+  }
+
+  test("my SobelsFilter output matches expected") {
+    val (f, exp) = testFilterOn("/bird_small.png", thirdparty.marvin_scala.Sobel, "/com/sksamuel/scrimage/filters/bird_small_sobels.png")
+    writeAndCompare("sobels", f, exp)
+    assert(f === exp)
+  }
+
+  test("my DitherFilter output matches expected") {
+    val (f, exp) = testFilterOn("/bird_small.png", thirdparty.marvin_scala.Dithering(), "/com/sksamuel/scrimage/filters/bird_small_dither.png")
+    writeAndCompare("dither", f, exp)
+    assert(f === exp)
+  }
+
+  test("my RylandersFilter output matches expected") {
+//    val (f, exp) = testFilterOn("/bird_small.png", thirdparty.marvin_scala.Rylanders, "/com/sksamuel/scrimage/filters/bird_small_rylanders.png")
+
+    val img =  Image(getClass.getResourceAsStream("/bird_small.png"))
+    val exp = img.filter(new MarvinFilter {
+      val plugin = new thirdparty.marvin.image.halftone.Rylanders()
+    })
+    val f = img.filter(thirdparty.marvin_scala.Rylanders())
+    printComparaison(f, exp, "rylanders", verbose=true)
+
+    writeAndCompare("rylanders", f, exp)
+    assert(f === exp)
   }
 
   def testFilterOn(originalPath: String, filter: Filter, expectedPath: String, verbose: Boolean = false): (Image, Image) = {
@@ -81,7 +125,7 @@ class LensBlurFilterTest extends FunSuite with OneInstancePerTest {
   }
 
   def printComparaison(img1: Image, img2: Image, img3: Image) : Unit = {
-    val toGray: RGBColor => Int = thirdparty.marvin_scala.MarvinGrayScaleFilter.toGray(_)
+    val toGray: RGBColor => Int = thirdparty.marvin_scala.MarvinGrayScaleFilter.toGray
 
     for(x <- 0 until img1.width; y <- 0 until img1.height){
       val cf = img1.raster.read(x, y).toRGB
@@ -118,9 +162,9 @@ class LensBlurFilterTest extends FunSuite with OneInstancePerTest {
     println(s"Average error of ${err.toFloat / count}")
   }
 
-  def writeAndCompare(path: String, f_exp: (Image, Image)): Unit = {
-    f_exp._1.write(path + ".png")
-    f_exp._2.write(path + "_expected.png")
-    f_exp._1.filter(ErrorSpotterFilter(f_exp._2, 50)).write(path + "_errors.png")
+  def writeAndCompare(path: String, f: Image, exp: Image): Unit = {
+    f.write(path + ".png")
+    exp.write(path + "_expected.png")
+    f.filter(ErrorSpotterFilter(exp, 50)).write(path + "_errors.png")
   }
 }

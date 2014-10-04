@@ -18,14 +18,16 @@ package com.sksamuel.scrimage.canvas
 
 import java.awt._
 import java.awt.geom.AffineTransform
-import com.sksamuel.scrimage.{ Image, Filter }
+
+import com.sksamuel.scrimage.{Filter, Image}
 
 /** @author Stephen Samuel */
 class Watermark(text: String, font: Font, alpha: Double) extends Filter {
 
-  def apply(image: Image): Unit = {
+  def apply(image: Image): Image = {
 
-    val g2 = image.awt.getGraphics.asInstanceOf[Graphics2D]
+    val working = image.toBufferedImage
+    val g2 = working.getGraphics.asInstanceOf[Graphics2D]
     g2.setColor(java.awt.Color.white)
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
 
@@ -53,5 +55,7 @@ class Watermark(text: String, font: Font, alpha: Double) extends Filter {
 
     g2.drawString(text, 0.0f, 0.0f)
     g2.dispose()
+
+    Image(working)
   }
 }
