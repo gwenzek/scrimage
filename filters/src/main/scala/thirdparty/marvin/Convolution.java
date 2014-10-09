@@ -64,7 +64,7 @@ public class Convolution extends MarvinAbstractImagePlugin {
         resultGreen = Math.abs(resultGreen);
         resultBlue = Math.abs(resultBlue);
 
-        // allow the combination of multiple appications
+        // allow the combination of multiple applications
         resultRed += imageOut.getIntComponent0(x, y);
         resultGreen += imageOut.getIntComponent1(x, y);
         resultBlue += imageOut.getIntComponent2(x, y);

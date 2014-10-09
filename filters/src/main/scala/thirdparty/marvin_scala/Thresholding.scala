@@ -161,6 +161,7 @@ class Rylanders(val blockWidth: Int, val blockHeight: Int, val thresholds: Array
       j += 1
     }
     total / (math.min(blockWidth, src.width - x) * math.min(blockHeight, src.height - y))
+//    total / (blockWidth * blockHeight)
   }
 }
 

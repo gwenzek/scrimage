@@ -19,7 +19,7 @@ package thirdparty.jhlabs.image;
 import com.sksamuel.scrimage.Image;
 
 /**
- * A filter which applies Gaussian blur to an image. This is a subclass of ConvolveFilter
+ * A filter which applies Gaussian blur to an image. This is a subclass of ConvolutionFilter
  * which simply creates a kernel with a Gaussian distribution for blurring.
  *
  * @author Jerry Huxtable
