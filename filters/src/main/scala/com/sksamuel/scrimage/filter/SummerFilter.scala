@@ -17,7 +17,7 @@ package com.sksamuel.scrimage.filter
 
 import java.awt.Graphics2D
 
-import com.sksamuel.scrimage.{Filter, Image}
+import com.sksamuel.scrimage.{ Filter, Image }
 import thirdparty.romainguy.BlendComposite
 
 /** @author Stephen Samuel */

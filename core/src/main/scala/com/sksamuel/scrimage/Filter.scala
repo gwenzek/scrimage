@@ -141,9 +141,9 @@ trait BeforeFilter extends AbstractImageFilter {
 trait GrayOutput extends AbstractImageFilter {
   def defaultDst(src: Image) = {
     if (src.raster.has_alpha)
-      CopyAlpha.filter(src, new Image(Raster(src.width, src.height,  Raster.GRAY_ALPHA)))
+      CopyAlpha.filter(src, new Image(Raster(src.width, src.height, Raster.GRAY_ALPHA)))
     else
-      new Image(Raster(src.width, src.height,  Raster.GRAY))
+      new Image(Raster(src.width, src.height, Raster.GRAY))
   }
 
   def writeGray(x: Int, y: Int, gray: Int, dst: Raster): Unit = {
@@ -155,7 +155,7 @@ trait GrayOutput extends AbstractImageFilter {
   }
 }
 
-object CopyAlpha extends AbstractImageFilter with LineByLine{
+object CopyAlpha extends AbstractImageFilter with LineByLine {
 
   def defaultDst(src: Image): Image = new Image(src.raster.empty(src.width, src.height))
 

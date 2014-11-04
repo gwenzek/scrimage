@@ -16,17 +16,17 @@
 
 package com.sksamuel.scrimage
 
-import java.awt.image.{BufferedImage, DataBufferInt}
-import java.awt.{Graphics2D, RenderingHints}
-import java.io.{ByteArrayInputStream, File, InputStream}
+import java.awt.image.{ BufferedImage, DataBufferInt }
+import java.awt.{ Graphics2D, RenderingHints }
+import java.io.{ ByteArrayInputStream, File, InputStream }
 import javax.imageio.ImageIO
 
 import com.sksamuel.scrimage.Position.Center
 import com.sksamuel.scrimage.ScaleMethod._
 import com.sksamuel.scrimage.io.ImageWriter
 import com.sksamuel.scrimage.scaling.ResampleOpScala
-import org.apache.commons.io.{FileUtils, IOUtils}
-import thirdparty.mortennobel.{ResampleFilters, ResampleOp}
+import org.apache.commons.io.{ FileUtils, IOUtils }
+import thirdparty.mortennobel.{ ResampleFilters, ResampleOp }
 
 import scala.concurrent.ExecutionContext
 
@@ -48,7 +48,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     * @return a BufferedImage with the same data as this Image.
     */
   def toBufferedImage: BufferedImage = {
-    import java.awt.image.{ColorModel, DataBufferInt}
+    import java.awt.image.{ ColorModel, DataBufferInt }
     val cm = ColorModel.getRGBdefault
     val sm = cm.createCompatibleSampleModel(width, height)
     val db = new DataBufferInt(raster.extract.map(_.toInt), width * height)
@@ -58,7 +58,7 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
 
   @deprecated("java.awt is to be removed", "22 Jul 2014")
   lazy val awt: BufferedImage = {
-    import java.awt.image.{ColorModel, DataBufferInt}
+    import java.awt.image.{ ColorModel, DataBufferInt }
     val cm = ColorModel.getRGBdefault
     val sm = cm.createCompatibleSampleModel(width, height)
     val db = new DataBufferInt(raster.extract.map(_.toInt), width * height)

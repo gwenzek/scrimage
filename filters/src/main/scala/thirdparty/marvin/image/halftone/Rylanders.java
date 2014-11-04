@@ -52,13 +52,10 @@ public class Rylanders extends MarvinAbstractImagePlugin {
                         MarvinImageMask a_mask,
                         boolean a_previewMode) {
         double l_intensity;
-        int real_intesity;
 
         // Gray
         MarvinImagePlugin l_filter = new GrayScale();
         l_filter.process(a_imageIn, a_imageIn, a_attributesOut, a_mask, a_previewMode);
-
-        examinate(a_imageIn);
 
         boolean[][] l_arrMask = a_mask.getMaskArray();
 
@@ -74,24 +71,11 @@ public class Rylanders extends MarvinAbstractImagePlugin {
         }
     }
 
-    private int getRealSquareIntensity(int a_x, int a_y, MarvinImage image) {
-        int total = 0;
-        for (int y = 0; y < DOT_AREA; y++) {
-            for (int x = 0; x < DOT_AREA; x++) {
-                if (a_x + x < image.getWidth() && a_y + y < image.getHeight()) {
-                    total += image.getIntComponent0(a_x + x, a_y + y);
-                }
-            }
-        }
-        return total / 16;
-    }
-
     private void drawTone(int a_x, int a_y, MarvinImage a_imageIn, MarvinImage a_imageOut, double a_intensity) {
         double l_factor = 1.0 / 15;
         int l_toneIntensity = (int) Math.floor(a_intensity / l_factor);
         int l_x;
         int l_y;
-        int real_intesity = getRealSquareIntensity(a_x, a_y, a_imageIn);
 
         for (int x = 0; x < DOT_AREA * DOT_AREA; x++) {
             l_x = x % DOT_AREA;
@@ -109,7 +93,6 @@ public class Rylanders extends MarvinAbstractImagePlugin {
 
     private double getSquareIntensity(int a_x, int a_y, MarvinImage image) {
         double l_totalValue = 0;
-        double l_factor = 1.0 / 15;
         for (int y = 0; y < DOT_AREA; y++) {
             for (int x = 0; x < DOT_AREA; x++) {
                 if (a_x + x < image.getWidth() && a_y + y < image.getHeight()) {
@@ -119,33 +102,4 @@ public class Rylanders extends MarvinAbstractImagePlugin {
         }
         return (l_totalValue / (DOT_AREA * DOT_AREA * 255));
     }
-
-    private void examinate(MarvinImage image){
-        double l_factor = 1.0 / 15;
-
-        for(int y = 0; y < DOT_AREA; y++) {
-            for (int x = 0; x < DOT_AREA; x++) {
-                int level = -1;
-                int l_toneIntensity;
-                double sqIntensity;
-                do{
-                    level += 1;
-                    setBlock(image, level);
-                    sqIntensity = getSquareIntensity(0, 0, image);
-                    l_toneIntensity = (int) Math.floor(sqIntensity / l_factor);
-                } while(l_toneIntensity >= arrPattern[y * 4 + x]);
-                System.out.println("("+x+", "+y+") = "+level);
-
-            }
-        }
-    }
-
-    private void setBlock(MarvinImage image, int level){
-        for(int y = 0; y < DOT_AREA; y++) {
-            for (int x = 0; x < DOT_AREA; x++) {
-                image.setIntColor(x, y, level, level, level);
-            }
-        }
-    }
-
 }

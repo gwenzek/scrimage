@@ -32,7 +32,7 @@ trait Raster { self: ColorModel =>
 
   /** The number of real channels (without alpha) used by this Raster (herited from the ColorModel)  */
   val n_real_channel: Int = {
-    if(has_alpha) n_channel - 1
+    if (has_alpha) n_channel - 1
     else n_channel
   }
 
@@ -71,7 +71,6 @@ trait Raster { self: ColorModel =>
 
   /** Have undefined behavior if raster doesn't have alpha channel */
   def writeAlpha(x: Int, y: Int, a: Int) = writeChannel(offset(x, y, alpha_channel), model)(a)
-
 
   /** Returns the level at the given offset.
     * Used for fast access successives channels (inherited from the ColorModel).

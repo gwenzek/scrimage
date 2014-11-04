@@ -1,40 +1,38 @@
-/**
-Marvin Project <2007-2009>
-
- Initial version by:
-
- Danilo Rosetto Munoz
- Fabio Andrijauskas
- Gabriel Ambrosio Archanjo
-
- site: http://marvinproject.sourceforge.net
-
- GPL
- Copyright (C) <2007>
-
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+/** Marvin Project <2007-2009>
+  *
+  * Initial version by:
+  *
+  * Danilo Rosetto Munoz
+  * Fabio Andrijauskas
+  * Gabriel Ambrosio Archanjo
+  *
+  * site: http://marvinproject.sourceforge.net
+  *
+  * GPL
+  * Copyright (C) <2007>
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation; either version 2 of the License, or
+  * any later version.
+  *
+  * This program is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+  * You should have received a copy of the GNU General Public License along
+  * with this program; if not, write to the Free Software Foundation, Inc.,
+  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   */
 package thirdparty.marvin_scala
 
 import com.sksamuel.scrimage._
 
-/**
- * Thresholding
- *
- * @author Gabriel Ambrosio Archanjo
- */
+/** Thresholding
+  *
+  * @author Gabriel Ambrosio Archanjo
+  */
 
 object Thresholding {
   def apply(threshold: Int = 125, neighborhood: Int = 0, range: Int = 1) =
@@ -85,9 +83,8 @@ case class ContrastThreshold(neighborhood: Int, range: Int = 1) extends GrayPixe
   }
 }
 
-
 class Dithering(val blockWidth: Int, val blockHeight: Int, val thresholds: Array[Int])
-  extends GrayPixelByPixelFilter with GrayOutput {
+    extends GrayPixelByPixelFilter with GrayOutput {
 
   require(thresholds.length == blockHeight * blockWidth)
 
@@ -115,12 +112,14 @@ object Dithering {
 }
 
 object Rylanders {
+  val l_factor = 1.0 / 15
+
   def apply(): Rylanders = Rylanders(4, 4, Array(
-    239, 103, 205, 69,
-    171, 35, 137, 14,
-    188, 52, 222, 86,
-    120, 0, 154, 18)
-  )
+    1, 9, 3, 11,
+    5, 13, 7, 15,
+    4, 12, 2, 10,
+    8, 16, 6, 14
+  ))
 
   def apply(blockWidth: Int, blockHeight: Int, thresholds: Array[Int]): Rylanders =
     new Rylanders(blockWidth, blockHeight, thresholds)
@@ -140,7 +139,7 @@ class Rylanders(val blockWidth: Int, val blockHeight: Int, val thresholds: Array
       i = 0
       while (i < blockWidth) {
         if (x + i < src.width && y + j < src.height) {
-          writeGray(x + i, y + j, if (l <= thresholds(j * blockWidth + i)) 0 else 255, dst)
+          writeGray(x + i, y + j, if (l >= thresholds(j * blockWidth + i)) 0 else 255, dst)
         }
         i += 1
       }
@@ -154,14 +153,13 @@ class Rylanders(val blockWidth: Int, val blockHeight: Int, val thresholds: Array
       i = 0
       while (i < blockWidth) {
         if (x + i < src.width && y + j < src.height) {
-          total += MarvinGrayScaleFilter.toGray(src.read(x + i, y + j))
+          total += 255 - MarvinGrayScaleFilter.toGray(src.read(x + i, y + j))
         }
         i += 1
       }
       j += 1
     }
-    total / (math.min(blockWidth, src.width - x) * math.min(blockHeight, src.height - y))
-//    total / (blockWidth * blockHeight)
+    math.floor(total.toDouble / (blockWidth * blockHeight * 255) / Rylanders.l_factor).toInt
   }
 }
 

@@ -124,8 +124,8 @@ public class NoiseReduction extends MarvinAbstractImagePlugin {
             img_yy = diff_yy(mat);
             img_xy = diff_xy(mat);
 
-            for (int i = 0; i < width; i++) {
-                for (int j = 0; j < height; j++) {
+            for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; i++) {
                     double a = img_xx[i][j] * (val + Math.pow(img_y[i][j], 2));
                     double b = (2 * img_x[i][j] * img_y[i][j] * img_xy[i][j]);
                     double c = (img_yy[i][j] * (val + Math.pow(img_x[i][j], 2)));
@@ -141,7 +141,7 @@ public class NoiseReduction extends MarvinAbstractImagePlugin {
     }
 
 
-    // Function : diff_x - To compute differntiation along x axis.
+    // Function : diff_x - To compute differentiation along x axis.
     public double[][] diff_x(double matx[][]) {
         mat3 = new double[width][height];
         double mat1, mat2;

@@ -2,9 +2,8 @@ package thirdparty.marvin_scala
 
 import com.sksamuel.scrimage._
 
-/**
- * Created by guw on 03/10/14.
- */
+/** Created by guw on 03/10/14.
+  */
 trait MarvinConvolutionFilter extends LineByLine with CopyingFilter {
   val matrix: Array[Array[Double]]
   val xC: Int
@@ -15,10 +14,10 @@ trait MarvinConvolutionFilter extends LineByLine with CopyingFilter {
 
   def treatLine(y: Int, src: Raster, dst: Raster): Unit = {
     var x, c = 0
-    val channels = if(treatAlpha) src.n_channel else src.n_real_channel
+    val channels = if (treatAlpha) src.n_channel else src.n_real_channel
     while (x < src.width) {
       c = 0
-      while(c < channels) {
+      while (c < channels) {
         apply(x, y, c, src, dst)
         c += 1
       }
@@ -58,7 +57,7 @@ class CenteredConvolutionFilter(val matrix: Array[Array[Double]], val treatAlpha
   final val yC: Int = matHeight / 2
 }
 
-class XYConvolution(val matrixX: Array[Array[Double]], val matrixY: Array[Array[Double]], val treatAlpha: Boolean = false) extends Filter{
+class XYConvolution(val matrixX: Array[Array[Double]], val matrixY: Array[Array[Double]], val treatAlpha: Boolean = false) extends Filter {
   val convolX = new CenteredConvolutionFilter(matrixX, treatAlpha)
   val convolY = new CenteredConvolutionFilter(matrixY, treatAlpha)
 

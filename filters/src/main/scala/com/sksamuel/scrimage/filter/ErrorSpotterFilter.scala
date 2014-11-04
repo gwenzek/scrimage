@@ -1,10 +1,9 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{Color, Filter, Image, RGBColor}
+import com.sksamuel.scrimage.{ Color, Filter, Image, RGBColor }
 
-/**
- * Created by guw on 23/09/14.
- */
+/** Created by guw on 23/09/14.
+  */
 case class ErrorSpotterFilter(base: Image, ratio: Int = 50) extends Filter {
 
   def apply(src: Image): Image = {
@@ -12,7 +11,7 @@ case class ErrorSpotterFilter(base: Image, ratio: Int = 50) extends Filter {
     assert(src.height == base.height)
 
     val dst = src.copy
-    for(x <- 0 until src.width; y <- 0 until src.height){
+    for (x <- 0 until src.width; y <- 0 until src.height) {
       val delta = error(base.raster.read(x, y), src.raster.read(x, y))
       dst.raster.write(x, y, delta)
     }
@@ -23,16 +22,16 @@ case class ErrorSpotterFilter(base: Image, ratio: Int = 50) extends Filter {
   def error(rgb1: RGBColor, rgb2: RGBColor) = {
     var red, blue, delta = 0
     delta = rgb1.red - rgb2.red
-    if(delta > 0) red += delta
+    if (delta > 0) red += delta
     else blue -= delta
     delta = rgb1.blue - rgb2.blue
-    if(delta > 0) red += delta
+    if (delta > 0) red += delta
     else blue -= delta
     delta = rgb1.green - rgb2.green
-    if(delta > 0) red += delta
+    if (delta > 0) red += delta
     else blue -= delta
     delta = rgb1.alpha - rgb2.alpha
-    if(delta > 0) red += delta
+    if (delta > 0) red += delta
     else blue -= delta
     Color(math.min(ratio * red, 255), 0, math.min(ratio * blue, 255))
   }

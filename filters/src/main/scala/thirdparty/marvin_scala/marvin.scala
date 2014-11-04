@@ -2,9 +2,8 @@ package thirdparty
 
 import com.sksamuel.scrimage._
 
-/**
- * Created by guw on 02/10/14.
- */
+/** Created by guw on 02/10/14.
+  */
 package object marvin_scala {
   def Sepia(depth: Int): Filter = Filter(sepiaMap(depth)(_))
 
@@ -20,12 +19,11 @@ package object marvin_scala {
     else a
   }
 
-  /**
-   * Invert the pixels color to create an emboss effect.
-   *
-   * @author Chris Mack
-   * @version 1.0 12/07/2011
-   */
+  /** Invert the pixels color to create an emboss effect.
+    *
+    * @author Chris Mack
+    * @version 1.0 12/07/2011
+    */
   object EmbossFilter extends GrayPixelByPixelFilter {
     def toGray(x: Int, y: Int, src: Raster): Int = {
       var c, diff, maxDiff = 0
@@ -63,11 +61,9 @@ package object marvin_scala {
         if (y + w < dst.height) {
           if (w == 0) {
             dst.write(x, y + w, Color(truncate(r), 0, 0))
-          }
-          else if (w == 1) {
+          } else if (w == 1) {
             dst.write(x, y + w, Color(0, truncate(g), 0))
-          }
-          else if (w == 2) {
+          } else if (w == 2) {
             dst.write(x, y + w, Color(0, 0, truncate(b)))
           }
         }
@@ -75,7 +71,6 @@ package object marvin_scala {
       }
     }
   }
-
 
   def Prewitt = new XYConvolution(
     Array(Array(1.0, 0, -1), Array(1.0, 0, -1), Array(1.0, 0, -1)),
@@ -91,6 +86,5 @@ package object marvin_scala {
     Array(Array(1.0, 0, -1), Array(2.0, 0, -2), Array(1.0, 0, -1)),
     Array(Array(-1.0, -2, -1), Array(0.0, 0, 0), Array(1.0, 2, 1))
   )
-
 
 }
