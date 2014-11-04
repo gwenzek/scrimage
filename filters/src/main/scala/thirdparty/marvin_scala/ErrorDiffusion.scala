@@ -4,6 +4,12 @@ import com.sksamuel.scrimage.{ AbstractImageFilter, Image }
 
 /** Created by guw on 11/10/14.
   */
+
+object ErrorDiffusion {
+  def apply() = apply(127)
+  def apply(threshold: Int = 0) = new ErrorDiffusion(threshold)
+}
+
 case class ErrorDiffusion(threshold: Int) extends AbstractImageFilter {
   def defaultDst(src: Image): Image = MarvinGrayScaleFilter(src)
 
@@ -19,18 +25,18 @@ case class ErrorDiffusion(threshold: Int) extends AbstractImageFilter {
         dst.writeChannel(x, y, 0, color - dif)
         if (x + 1 < dst.width) {
           color = dst.readChannel(x + 1, y, 0) + (0.4375 * dif).toInt
-          dst.writeChannel(x + 1, y, 0, getValidGray(color))
+          dst.writeChannel(x + 1, y, 0, truncate(color))
           if (y + 1 < dst.height) {
             color = dst.readChannel(x + 1, y + 1, 0) + (0.0625 * dif).toInt
-            dst.writeChannel(x + 1, y + 1, 0, getValidGray(color))
+            dst.writeChannel(x + 1, y + 1, 0, truncate(color))
           }
         }
         if (y + 1 < dst.height) {
           color = dst.readChannel(x, y + 1, 0) + (0.3125 * dif).toInt
-          dst.writeChannel(x, y + 1, 0, getValidGray(color))
+          dst.writeChannel(x, y + 1, 0, truncate(color))
           if (x - 1 >= 0) {
             color = dst.readChannel(x - 1, y + 1, 0) + (0.1875 * dif).toInt
-            dst.writeChannel(x - 1, y + 1, 0, getValidGray(color))
+            dst.writeChannel(x - 1, y + 1, 0, truncate(color))
           }
         }
         x += 1
@@ -38,12 +44,5 @@ case class ErrorDiffusion(threshold: Int) extends AbstractImageFilter {
       y += 1
     }
     dstImage
-  }
-
-  @inline
-  private[this] def getValidGray(a_value: Int): Int = {
-    if (a_value < 0) 0
-    else if (a_value > 255) 255
-    else a_value
   }
 }

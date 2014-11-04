@@ -2,8 +2,37 @@ package thirdparty
 
 import com.sksamuel.scrimage._
 
-/** Created by guw on 02/10/14.
+/**
+Marvin Project <2007-2009>
+
+ Initial version by:
+
+ Danilo Rosetto Munoz
+ Fabio Andrijauskas
+ Gabriel Ambrosio Archanjo
+
+ site: http://marvinproject.sourceforge.net
+
+ Ported to scala by gwenzek
+
+ GPL
+ Copyright (C) <2007>
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc.,
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   */
+
 package object marvin_scala {
   def Sepia(depth: Int): Filter = Filter(sepiaMap(depth)(_))
 
@@ -13,6 +42,7 @@ package object marvin_scala {
     Color(truncate(avg + depth * 2), truncate(avg + depth), avg, rgb.alpha)
   }
 
+  @inline
   def truncate(a: Int): Int = {
     if (a < 0) 0
     else if (a > 255) 255
