@@ -296,6 +296,12 @@ class Image(val raster: Raster) extends ImageLike[Image] with WritableImageLike 
     */
   def filter(filters: Filter*): Image = filters.foldLeft(this)((image, filter) => image.filter(filter))
 
+  /** Blend the given image on this one */
+  def blendIn(img: Image, blender: Blender, alpha: Float = 1f) = blender.blend(img, this, alpha)
+
+  /** Blend this image on the given one */
+  def blendTo(img: Image, blender: Blender, alpha: Float = 1f) = blender.blend(this, img, alpha)
+
   def removeTransparency(color: java.awt.Color): Image = {
     def rmTransparency(c: RGBColor): RGBColor = {
       val r = (c.red * c.alpha + color.getRed * color.getAlpha * (255 - c.alpha) / 255) / 255

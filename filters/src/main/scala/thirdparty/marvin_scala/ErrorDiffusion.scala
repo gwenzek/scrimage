@@ -6,11 +6,11 @@ import com.sksamuel.scrimage.{ AbstractImageFilter, Image }
   */
 
 object ErrorDiffusion {
-  def apply() = apply(127)
-  def apply(threshold: Int = 0) = new ErrorDiffusion(threshold)
+  def apply(): ErrorDiffusion = apply(127)
+  def apply(threshold: Int): ErrorDiffusion = new ErrorDiffusion(threshold)
 }
 
-case class ErrorDiffusion(threshold: Int) extends AbstractImageFilter {
+class ErrorDiffusion(threshold: Int) extends AbstractImageFilter {
   def defaultDst(src: Image): Image = MarvinGrayScaleFilter(src)
 
   def filter(srcImage: Image, dstImage: Image): Image = {

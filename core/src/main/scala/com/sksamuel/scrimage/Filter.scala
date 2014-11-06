@@ -48,7 +48,7 @@ abstract class BufferedOpFilter extends Filter {
   }
 }
 
-/** A convenience class which implements those methods of BufferedImageOp which are rarely changed.
+/** Extended interface for filter with separated creation of the target image
   */
 trait AbstractImageFilter extends Filter {
   def defaultDst(src: Image): Image
@@ -72,7 +72,7 @@ abstract class JavaAbstractImageFilter extends AbstractImageFilter {
   def filter(src: Image, dst: Image): Image
 }
 
-trait CopyingFilter extends AbstractImageFilter {
+trait CopyingFilter {
   def defaultDst(src: Image) = src.copy
 }
 

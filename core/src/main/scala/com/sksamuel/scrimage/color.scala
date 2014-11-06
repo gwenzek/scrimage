@@ -33,6 +33,45 @@ object Color {
     RGBColor(red, green, blue, alpha)
   }
 
+  def toHSL(c: RGBColor) = RGBtoHSL(c.red, c.green, c.blue, c.alpha)
+
+  def RGBtoHSL(red: Int, green: Int, blue: Int, alpha: Int = 255) = {
+    val r = (red / 255f)
+    val g = (green / 255f)
+    val b = (blue / 255f)
+    val a = (alpha / 255f)
+
+    val varMin = math.min(r, math.min(g, b))
+    val varMax = math.max(r, math.max(g, b))
+    val delta = varMax - varMin;
+
+    val L = (varMax + varMin) / 2f;
+
+    if (delta - 0.01f <= 0.0f) {
+      HSLColor(0, 0, L, a)
+    } else {
+      val S = if (L < 0.5f) delta / (varMax + varMin) else delta / (2 - varMax - varMin)
+
+      val del_R = (((varMax - r) / 6f) + (delta / 2f)) / delta;
+      val del_G = (((varMax - g) / 6f) + (delta / 2f)) / delta;
+      val del_B = (((varMax - b) / 6f) + (delta / 2f)) / delta;
+
+      var H =
+        if (r == varMax) {
+          del_B - del_G;
+        } else if (g == varMax) {
+          (1 / 3f) + del_R - del_B;
+        } else {
+          (2 / 3f) + del_G - del_R;
+        }
+
+      if (H < 0) H += 1
+      if (H > 1) H -= 1
+
+      HSLColor(H, S, L, a)
+    }
+  }
+
   val White = RGBColor(255, 255, 255)
   val Black = RGBColor(0, 0, 0)
 }

@@ -1,11 +1,10 @@
 package com.sksamuel.scrimage
 
 import thirdparty.marvin_scala
-import thirdparty.marvin_scala.{Dithering, NoiseReductionSimple}
+import thirdparty.marvin_scala.{ Dithering, NoiseReductionSimple }
 
-/**
- * Alias for some filters of the marvin_scala package
- */
+/** Alias for some filters of the marvin_scala package
+  */
 package object filter {
 
   // color filters
