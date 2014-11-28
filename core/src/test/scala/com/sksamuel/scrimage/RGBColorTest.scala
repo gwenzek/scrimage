@@ -1,6 +1,5 @@
 package com.sksamuel.scrimage
 
-import com.sksamuel.scrimage.Color._
 import org.scalatest.{ FlatSpec, OneInstancePerTest }
 
 /** @author Stephen Samuel */
@@ -26,7 +25,7 @@ class RGBColorTest extends FlatSpec with OneInstancePerTest {
   }
 
   it should "convert from awt.color" in {
-    import Color._
+    import com.sksamuel.scrimage.Color._
     assert(awt2color(new java.awt.Color(255, 0, 255)) === Color(255, 0, 255))
     assert(awt2color(new java.awt.Color(255, 250, 255)) === Color(255, 250, 255))
     assert(awt2color(new java.awt.Color(14, 250, 255)) === Color(14, 250, 255))
@@ -35,5 +34,10 @@ class RGBColorTest extends FlatSpec with OneInstancePerTest {
 
   it should "convert from int to color using correct bit shifting" in {
     assert(Color(1088511) === Color(16, 155, 255, 0))
+  }
+
+  it should "convert to HSL losslessly" in {
+    val c = Color(125, 30, 62)
+    assert(Color.toHSL(c).toRGB === c)
   }
 }

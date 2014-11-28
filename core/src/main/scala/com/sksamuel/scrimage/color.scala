@@ -33,6 +33,9 @@ object Color {
     RGBColor(red, green, blue, alpha)
   }
 
+  def hsl(h: Float, s: Float, l: Float, alpha: Float = 1f) =
+    HSLColor(h, s, l, alpha)
+
   def toHSL(c: RGBColor) = RGBtoHSL(c.red, c.green, c.blue, c.alpha)
 
   def RGBtoHSL(red: Int, green: Int, blue: Int, alpha: Int = 255) = {
@@ -43,9 +46,9 @@ object Color {
 
     val varMin = math.min(r, math.min(g, b))
     val varMax = math.max(r, math.max(g, b))
-    val delta = varMax - varMin;
+    val delta = varMax - varMin
 
-    val L = (varMax + varMin) / 2f;
+    val L = (varMax + varMin) / 2f
 
     if (delta - 0.01f <= 0.0f) {
       HSLColor(0, 0, L, a)
@@ -68,7 +71,7 @@ object Color {
       if (H < 0) H += 1
       if (H > 1) H -= 1
 
-      HSLColor(H, S, L, a)
+      HSLColor(H * 360f, S, L, a)
     }
   }
 
@@ -78,10 +81,10 @@ object Color {
 
 case class RGBColor(red: Int, green: Int, blue: Int, alpha: Int = 255) extends Color {
 
-  require(0 <= red && red <= 255, "Red component is invalid")
-  require(0 <= green && green <= 255, "Green component is invalid")
-  require(0 <= blue && blue <= 255, "Blue component is invalid")
-  require(0 <= alpha && alpha <= 255, "Alpha component is invalid")
+  require(0 <= red && red <= 255, s"Red component is invalid $red")
+  require(0 <= green && green <= 255, s"Green component is invalid $green")
+  require(0 <= blue && blue <= 255, s"Blue component is invalid $blue")
+  require(0 <= alpha && alpha <= 255, s"Alpha component is invalid $alpha")
 
   def toRGB: RGBColor = this
   def toAWT: java.awt.Color = new java.awt.Color(red, green, blue, alpha)
@@ -160,27 +163,31 @@ case class HSLColor(hue: Float, saturation: Float, lightness: Float, alpha: Floa
   require(0 <= lightness && lightness <= 1f, "Lightness component is invalid")
   require(0 <= alpha && alpha <= 1f, "Alpha component is invalid")
 
-  override def toRGB: RGBColor = {
+  def toRGB: RGBColor = {
+    if (saturation <= 0.01f)
+      return RGBColor((lightness * 255f).toInt, (lightness * 255f).toInt, (lightness * 255f).toInt, (alpha * 255f).toInt)
+
     val h = (hue % 360f) / 360f
     val q = {
       if (lightness < 0.5) lightness * (1 + saturation)
       else (lightness + saturation) - (saturation * lightness)
-    }
-    val p = 2 * lightness - q
+    } // 2 * ligthness > q > 0
+    val p = 2 * lightness - q // p > 0
+
     def hue2rgb(p: Float, q: Float, h: Float): Float = {
-      val hprime = {
-        if (h < 0) h + 1
-        else if (h > 1) h - 1
-        else h
-      }
-      if (hprime * 6 < 1f) p + (q - p) * 6 * hprime
-      else if (hprime * 6 < 2f) q
-      else if (hprime * 6 < 3f) p + (q - p) * (2f / 3f - hprime) * 6
+      val hprime = h % 1f
+      if (hprime < 1f / 6f)
+        p + (q - p) * 6f * hprime
+      else if (hprime < 0.5f)
+        q
+      else if (hprime < 2f / 3f)
+        p + (q - p) * (2f / 3f - hprime) * 6f
       else p
     }
-    val r = Math.max(0, hue2rgb(p, q, h + (1.0f / 3.0f)))
-    val g = Math.max(0, hue2rgb(p, q, h))
-    val b = Math.max(0, hue2rgb(p, q, h - (1.0f / 3.0f)))
+
+    val r = hue2rgb(p, q, h + (1.0f / 3.0f))
+    val g = hue2rgb(p, q, h)
+    val b = hue2rgb(p, q, h - (1.0f / 3.0f))
 
     RGBColor((r * 255f + 0.5f).toInt, (g * 255f + 0.5f).toInt, (b * 255f + 0.5f).toInt, (alpha * 255f + 0.5f).toInt)
   }

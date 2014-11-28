@@ -105,6 +105,29 @@ trait Raster { self: ColorModel =>
     for (x <- 0 until width * height) yield readColor(x * n_channel, model)
   }
 
+  def readBlockChannelsWith(c: Int, x0: Int, y0: Int, w: Int, h: Int, buffer: Array[Int] = null)(f: (Int, Int, Int) => Int): Array[Int] = {
+    val out = if (buffer == null) Array.ofDim[Int](w * h) else buffer
+    for (x <- x0 until x0 + w; y <- y0 until y0 + h) {
+      if (x >= width)
+        out((y - y0) * w + (x - x0)) = f(x, y, c)
+    }
+    out
+  }
+
+  def wrappedChannelReader(x: Int, y: Int, c: Int): Int =
+    readChannel((x + width) % width, (y + height) % height, c)
+
+  def clampedChannelReader(x: Int, y: Int, c: Int): Int =
+    readChannel(
+      math.min(math.max(0, x), width - 1),
+      math.min(math.max(0, y), height - 1),
+      c
+    )
+
+  def zeroedChannelReader(x: Int, y: Int, c: Int): Int =
+    if (x < 0 || x >= width || y < 0 || y >= height) 0
+    else readChannel(x, y, c)
+
   /** Set all the pixels with the given colors.
     * Pixels are set row by row, left to right and top to bottom.
     */

@@ -1,7 +1,9 @@
-package com.sksamuel.scrimage
+package com.sksamuel.scrimage.filter
 
 import java.awt.Graphics2D
 
+import com.sksamuel.scrimage.filter.blender.Blender
+import com.sksamuel.scrimage.{ Blender, Image }
 import org.scalatest.FunSuite
 import thirdparty.romainguy.BlendComposite
 import thirdparty.romainguy.BlendComposite.BlendingMode
@@ -79,15 +81,11 @@ class BlenderTest extends FunSuite {
 
   test("Colordodge blenders correspond") {
     val (o, n) = compare(Blender.colorDodge, BlendingMode.COLOR_DODGE)
-    o.write("color_dodge_old.png")
-    n.write("color_dodge_new.png")
     assert(o == n)
   }
 
   test("InverseColorDodge blenders correspond") {
     val (o, n) = compare(Blender.inverseColorDodge, BlendingMode.INVERSE_COLOR_DODGE)
-    o.write("inverse_color_dodge_old.png")
-    n.write("inverse_color_dodge_new.png")
     assert(o == n)
   }
 
@@ -128,8 +126,6 @@ class BlenderTest extends FunSuite {
 
   test("Heat blenders correspond") {
     val (o, n) = compare(Blender.heat, BlendingMode.HEAT)
-    o.write("heat_old.png")
-    n.write("heat_new.png")
     assert(o == n)
   }
 
@@ -165,21 +161,29 @@ class BlenderTest extends FunSuite {
 
   test("Hue blenders correspond") {
     val (o, n) = compare(Blender.hue, BlendingMode.HUE)
+    o.write("hue_old.png")
+    n.write("hue_new.png")
     assert(o == n)
   }
 
   test("Saturation blenders correspond") {
     val (o, n) = compare(Blender.saturation, BlendingMode.SATURATION)
+    o.write("saturation_old.png")
+    n.write("saturation_new.png")
     assert(o == n)
   }
 
   test("Color blenders correspond") {
     val (o, n) = compare(Blender.color, BlendingMode.COLOR)
+    o.write("color_old.png")
+    n.write("color_new.png")
     assert(o == n)
   }
 
   test("Luminosity blenders correspond") {
     val (o, n) = compare(Blender.luminosity, BlendingMode.LUMINOSITY)
+    o.write("luminosity_old.png")
+    n.write("luminosity_new.png")
     assert(o == n)
   }
 }
