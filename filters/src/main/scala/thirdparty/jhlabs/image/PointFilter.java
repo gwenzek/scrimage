@@ -40,10 +40,10 @@ public abstract class PointFilter extends JavaAbstractImageFilter {
 
 		int[] inPixels = new int[width];
         for ( int y = 0; y < height; y++ ) {
-            srcRaster.getRGB( 0, y, width, 1, inPixels, 0, width );
+            srcRaster.getRGB( 0, y, width, 1, inPixels);
             for ( int x = 0; x < width; x++ )
                 inPixels[x] = filterRGB( x, y, inPixels[x] );
-            dstRaster.setRGB( 0, y, width, 1, inPixels, 0, width );
+            dstRaster.setRGB( 0, y, width, 1, inPixels);
         }
 
         return dst;

@@ -54,7 +54,7 @@ public class ImageFunction2D implements Function2D {
 	public int[] getRGB( Image image, int x, int y, int width, int height, int[] pixels ) {
 		if (pixels.equals(null))
             pixels = new int[width * height];
-		return image.raster().getRGB( x, y, width, height, pixels, 0, width );
+		return image.raster().getRGB( x, y, width, height, pixels);
     }
 
 	public void init(int[] pixels, int width, int height, int edgeAction, boolean alpha) {

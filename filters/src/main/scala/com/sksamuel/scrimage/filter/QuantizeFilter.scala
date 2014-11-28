@@ -1,6 +1,6 @@
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.StaticImageFilter
+import com.sksamuel.scrimage.filter.util.StaticImageFilter
 
 /** @author Stephen Samuel */
 class QuantizeFilter(colors: Int, dither: Boolean) extends StaticImageFilter {

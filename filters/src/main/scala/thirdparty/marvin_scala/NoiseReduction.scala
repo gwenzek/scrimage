@@ -1,6 +1,7 @@
 package thirdparty.marvin_scala
 
 import com.sksamuel.scrimage._
+import com.sksamuel.scrimage.filter.util.CopyingFilter
 
 /** Created by gwenzek on 10/10/14.
   */

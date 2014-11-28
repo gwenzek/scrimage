@@ -1,6 +1,7 @@
 package thirdparty.marvin_scala
 
-import com.sksamuel.scrimage.{ AbstractImageFilter, Image }
+import com.sksamuel.scrimage.Image
+import com.sksamuel.scrimage.AbstractImageFilter
 
 /** Created by guw on 11/10/14.
   */

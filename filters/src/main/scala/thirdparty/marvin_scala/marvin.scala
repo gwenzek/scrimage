@@ -1,6 +1,7 @@
 package thirdparty
 
 import com.sksamuel.scrimage._
+import com.sksamuel.scrimage.filter.util.{ BlockByBlock, CopyingFilter, GrayPixelByPixelFilter, GrayPixelMapper }
 
 /** Marvin Project <2007-2009>
   *

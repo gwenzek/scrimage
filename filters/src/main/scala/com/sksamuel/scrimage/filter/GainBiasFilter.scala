@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.StaticImageFilter
+import com.sksamuel.scrimage.filter.util.StaticImageFilter
 import thirdparty.jhlabs.image.GainFilter
 
 /** @author Stephen Samuel */

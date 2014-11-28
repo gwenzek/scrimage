@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.StaticImageFilter
+import com.sksamuel.scrimage.filter.util.StaticImageFilter
 
 /** @author Stephen Double */
 class HSBFilter(hue: Double, saturation: Double, brightness: Double) extends StaticImageFilter {

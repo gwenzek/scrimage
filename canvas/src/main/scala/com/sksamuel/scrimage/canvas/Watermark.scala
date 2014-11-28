@@ -19,7 +19,7 @@ package com.sksamuel.scrimage.canvas
 import java.awt._
 import java.awt.geom.AffineTransform
 
-import com.sksamuel.scrimage.{Filter, Image}
+import com.sksamuel.scrimage.{ Filter, Image }
 
 /** @author Stephen Samuel */
 class Watermark(text: String, font: Font, alpha: Double) extends Filter {

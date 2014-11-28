@@ -28,6 +28,7 @@
 package thirdparty.marvin_scala
 
 import com.sksamuel.scrimage._
+import com.sksamuel.scrimage.filter.util._
 
 /** Thresholding
   *

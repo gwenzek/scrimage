@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.StaticImageFilter
+import com.sksamuel.scrimage.filter.util.StaticImageFilter
 
 /** @author Stephen Samuel */
 class SparkleFilter(x: Int, y: Int, rays: Int, radius: Int, amount: Int) extends StaticImageFilter {

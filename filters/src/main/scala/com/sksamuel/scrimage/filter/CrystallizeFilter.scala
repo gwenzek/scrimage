@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.StaticImageFilter
+import com.sksamuel.scrimage.filter.util.StaticImageFilter
 
 /** @author Stephen Samuel */
 class CrystallizeFilter(scale: Double, edgeThickness: Double, edgeColor: Int, randomness: Double) extends StaticImageFilter {
