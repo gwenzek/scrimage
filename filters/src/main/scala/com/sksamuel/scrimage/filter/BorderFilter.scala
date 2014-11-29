@@ -15,22 +15,23 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ Image, Filter }
-import java.awt.{ Color, Graphics2D }
+import com.sksamuel.scrimage.{ Image, Raster, Color }
+import com.sksamuel.scrimage.filter.util._
 
-/** @author Stephen Samuel */
-class BorderFilter(width: Int, color: Color = Color.BLACK) extends Filter {
-  def apply(image: Image) = {
-    val buffered = image.toBufferedImage
-    val g2 = buffered.getGraphics.asInstanceOf[Graphics2D]
-    g2.setColor(color)
-    g2.fillRect(0, 0, width, image.height) // left
-    g2.fillRect(image.width - width, 0, width, image.height) // right
-    g2.fillRect(0, 0, image.width, width) // top
-    g2.fillRect(0, image.height - width, image.width, width) // bottom
-    Image(buffered)
-  }
+class BorderFilter(width: Int, height: Int, color: Color = Color.Black)
+    extends CopyingFilter with PixelByPixelFilter {
+
+  def apply(x: Int, y: Int, src: Raster) =
+    if (x < width || x >= src.width - width || y < height || y >= src.height - height)
+      color
+    else
+      src.read(x, y)
 }
+
 object BorderFilter {
-  def apply(width: Int, color: Color = Color.BLACK) = new BorderFilter(width, color)
+  def apply(width: Int, color: Color = Color.Black) =
+    new BorderFilter(width, width, color)
+
+  def apply(width: Int, height: Int, color: Color) =
+    new BorderFilter(width, height, color)
 }

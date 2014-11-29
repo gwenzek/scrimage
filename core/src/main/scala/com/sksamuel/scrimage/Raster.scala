@@ -108,8 +108,7 @@ trait Raster { self: ColorModel =>
   def readBlockChannelsWith(c: Int, x0: Int, y0: Int, w: Int, h: Int, buffer: Array[Int] = null)(f: (Int, Int, Int) => Int): Array[Int] = {
     val out = if (buffer == null) Array.ofDim[Int](w * h) else buffer
     for (x <- x0 until x0 + w; y <- y0 until y0 + h) {
-      if (x >= width)
-        out((y - y0) * w + (x - x0)) = f(x, y, c)
+      out((y - y0) * w + (x - x0)) = f(x, y, c)
     }
     out
   }
