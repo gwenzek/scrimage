@@ -13,11 +13,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package com.sksamuel.scrimage.filter
+// package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.filter.util.StaticImageFilter
+// import com.sksamuel.scrimage.filter.util.StaticImageFilter
 
-/** @author Stephen Samuel */
-object BumpFilter extends StaticImageFilter {
-  val op = new thirdparty.jhlabs.image.BumpFilter()
-}
+// /** @author Stephen Samuel */
+// object BumpFilter extends StaticImageFilter {
+//   val op = new thirdparty.jhlabs.image.BumpFilter()
+// }

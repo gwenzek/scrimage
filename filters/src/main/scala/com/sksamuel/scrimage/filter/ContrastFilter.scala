@@ -15,14 +15,14 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.filter.util.StaticImageFilter
+import com.sksamuel.scrimage.filter.util.SampledChannelMapper
 
 /** @author Stephen Samuel */
-class ContrastFilter(contrast: Double) extends StaticImageFilter {
-  val op = new thirdparty.jhlabs.image.ContrastFilter
-  op.setBrightness(1.0f)
-  op.setContrast(contrast.toFloat)
+class ContrastFilter(brightness: Float, contrast: Float)
+    extends SampledChannelMapper(x => (x * brightness - 0.5f) * contrast + 0.5f) {
 }
+
 object ContrastFilter {
-  def apply(contrast: Double): ContrastFilter = new ContrastFilter(contrast)
+  def apply(contrast: Double): ContrastFilter =
+    new ContrastFilter(1f, contrast.toFloat)
 }

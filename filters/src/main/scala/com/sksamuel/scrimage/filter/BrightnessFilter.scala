@@ -17,14 +17,8 @@ package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.filter.util.StaticImageFilter
 
-/** @author Stephen Samuel */
-class BrightnessFilter(brightness: Double) extends StaticImageFilter {
-  val op = new thirdparty.jhlabs.image.ContrastFilter
-  op.setBrightness(brightness.toFloat)
-  op.setContrast(1.0f)
-}
-
 object BrightnessFilter {
-  def apply(amount: Double) = new BrightnessFilter(amount)
+  def apply(brightness: Double): ContrastFilter =
+    new ContrastFilter(brightness.toFloat, 1f)
 }
 

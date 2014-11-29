@@ -31,4 +31,10 @@ package object filter {
     2 / 14f, 2 / 14f, 2 / 14f,
     1 / 14f, 2 / 14f, 1 / 14f
   ))
+
+  val BumpFilter = ConvolveFilter(Array(
+    -1.0f, -1.0f, 0.0f,
+    -1.0f, 1.0f, 1.0f,
+    0.0f, 1.0f, 1.0f
+  ))
 }
