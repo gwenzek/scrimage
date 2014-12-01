@@ -15,7 +15,7 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.filter.util.StaticImageFilter
+import com.sksamuel.scrimage.filter.util._
 
 /** @author Stephen Samuel */
 class ChromeFilter(amount: Float, exposure: Float) extends StaticImageFilter {
@@ -27,4 +27,9 @@ class ChromeFilter(amount: Float, exposure: Float) extends StaticImageFilter {
 object ChromeFilter {
   def apply(): ChromeFilter = apply(0.5f, 1.0f)
   def apply(amount: Float, exposure: Float): ChromeFilter = new ChromeFilter(amount, exposure)
+
+  def chrome(amount: Float, exposure: Float) = new SampledChannelMapper(x =>
+    1 - math.exp(-exposure * (x + amount * math.sin(2 * math.Pi * x).toFloat)).toFloat
+  )
 }
+

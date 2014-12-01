@@ -9,30 +9,30 @@ import thirdparty.jhlabscala.image.ConvolveFilter
 package object filter {
 
   // color filters
-  val EmbossFilter = marvin_scala.EmbossFilter
-  val SepiaFilter = marvin_scala.Sepia(20)
+  def EmbossFilter = marvin_scala.EmbossFilter
+  def SepiaFilter = marvin_scala.Sepia(20)
 
   // edge filters
-  val SobelsFilter = marvin_scala.Sobel
-  val PrewittFilter = marvin_scala.Prewitt
-  val RobertsFilter = marvin_scala.Roberts
+  def SobelsFilter = marvin_scala.Sobel
+  def PrewittFilter = marvin_scala.Prewitt
+  def RobertsFilter = marvin_scala.Roberts
 
   // halftone filters
-  val DitherFilter = Dithering()
-  val ErrorDiffusionHalftoneFilter = marvin_scala.ErrorDiffusion
-  val RylandersFilter = marvin_scala.Rylanders()
+  def DitherFilter = Dithering()
+  def ErrorDiffusionHalftoneFilter = marvin_scala.ErrorDiffusion
+  def RylandersFilter = marvin_scala.Rylanders()
 
   //miscanellous
-  val TelevisionFilter = marvin_scala.TelevisionFilter
-  val NoiseReductionFilter = new NoiseReductionSimple(20)
+  def TelevisionFilter = marvin_scala.TelevisionFilter
+  def NoiseReductionFilter = new NoiseReductionSimple(20)
 
-  val BlurFilter = ConvolveFilter(Array(
+  def BlurFilter = ConvolveFilter(Array(
     1 / 14f, 2 / 14f, 1 / 14f,
     2 / 14f, 2 / 14f, 2 / 14f,
     1 / 14f, 2 / 14f, 1 / 14f
   ))
 
-  val BumpFilter = ConvolveFilter(Array(
+  def BumpFilter = ConvolveFilter(Array(
     -1.0f, -1.0f, 0.0f,
     -1.0f, 1.0f, 1.0f,
     0.0f, 1.0f, 1.0f

@@ -241,38 +241,38 @@ public class LightFilter extends WholeImageFilter {
 				GaussianFilter.convolveAndTranspose( kernel, bumpPixels, tmpPixels, bumpWidth, bumpHeight, true, false, false, GaussianFilter.WRAP_EDGES );
 				GaussianFilter.convolveAndTranspose( kernel, tmpPixels, softPixels, bumpHeight, bumpWidth, true, false, false, GaussianFilter.WRAP_EDGES );
 				bump = new ImageFunction2D(softPixels, bumpWidth, bumpHeight, ImageFunction2D.CLAMP, bumpSource == BUMPS_FROM_IMAGE_ALPHA);
-final Function2D bbump = bump;
-if ( bumpShape != 0 ) {
-	bump = new Function2D() {
-		private Function2D original = bbump;
+				final Function2D bbump = bump;
+				if ( bumpShape != 0 ) {
+					bump = new Function2D() {
+						private Function2D original = bbump;
 
-		public float evaluate(float x, float y) {
-			float v = original.evaluate( x, y );
-			switch ( bumpShape ) {
-			case 1:
-//				v = v > 0.5f ? 0.5f : v;
-				v *= ImageMath.smoothStep( 0.45f, 0.55f, v );
-				break;
-			case 2:
-				v = v < 0.5f ? 0.5f : v;
-				break;
-			case 3:
-				v = ImageMath.triangle( v );
-				break;
-			case 4:
-				v = ImageMath.circleDown( v );
-				break;
-			case 5:
-				v = ImageMath.gain( v, 0.75f );
-				break;
-			}
-			return v;
-		}
-	};
-}
+						public float evaluate(float x, float y) {
+							float v = original.evaluate( x, y );
+							switch ( bumpShape ) {
+							case 1:
+				//				v = v > 0.5f ? 0.5f : v;
+								v *= ImageMath.smoothStep( 0.45f, 0.55f, v );
+								break;
+							case 2:
+								v = v < 0.5f ? 0.5f : v;
+								break;
+							case 3:
+								v = ImageMath.triangle( v );
+								break;
+							case 4:
+								v = ImageMath.circleDown( v );
+								break;
+							case 5:
+								v = ImageMath.gain( v, 0.75f );
+								break;
+							}
+							return v;
+						}
+					};
+				}
 			} else if ( bumpSource != BUMPS_FROM_MAP )
 				bump = new ImageFunction2D(inPixels, width, height, ImageFunction2D.CLAMP, bumpSource == BUMPS_FROM_IMAGE_ALPHA);
-		}
+			}
 
 		float reflectivity = material.reflectivity;
 		float areflectivity = (1-reflectivity);
@@ -295,6 +295,7 @@ if ( bumpShape != 0 ) {
 			position.y = y;
 			for (int x = 0; x < width; x++)
 				heightWindow[2][x] = width45*bump.evaluate(x, y+1);
+
 			for (int x = 0; x < width; x++) {
 				boolean x0 = x > 0;
 				boolean x1 = x < width-1;
