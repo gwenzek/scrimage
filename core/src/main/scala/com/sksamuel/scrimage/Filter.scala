@@ -26,7 +26,7 @@ import com.sksamuel.scrimage.geom.Rectangle
 trait Filter {
   def apply(src: Image): Image
 
-  def then(other: Filter): Filter = {
+  def andThen(other: Filter): Filter = {
     val that = this
     new Filter {
       def apply(src: Image): Image = other.apply(that(src))
