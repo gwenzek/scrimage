@@ -16,8 +16,7 @@
 package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.Raster
-import com.sksamuel.scrimage.filter.util.{ CopyingFilter, IndependentPixelByPixel }
-import com.sksamuel.scrimage.filter.util.Util._
+import com.sksamuel.scrimage.filter.util._
 import ColorHalftoneFilter._
 
 /** @author Stephen Samuel */

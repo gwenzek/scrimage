@@ -13,11 +13,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-// package com.sksamuel.scrimage.filter
+package com.sksamuel.scrimage.filter
 
-// import com.sksamuel.scrimage.filter.util.StaticImageFilter
+import thirdparty.jhlabscala.image.ConvolveFilter
 
-// /** @author Stephen Samuel */
-// object BumpFilter extends StaticImageFilter {
-//   val op = new thirdparty.jhlabs.image.BumpFilter()
-// }
+object BumpFilter extends ConvolveFilter(
+  ConvolveFilter.CLAMP_EDGES,
+  Array(
+    -1.0f, -1.0f, 0.0f,
+    -1.0f, 1.0f, 1.0f,
+    0.0f, 1.0f, 1.0f
+  ),
+  3,
+  3,
+  false
+)

@@ -15,10 +15,17 @@
  */
 package com.sksamuel.scrimage.filter
 
-/** @author Stephen Samuel */
+import thirdparty.jhlabscala.image.ConvolveFilter
 
-// import com.sksamuel.scrimage.filter.util.StaticImageFilter
-// object BlurFilter extends StaticImageFilter {
-//   val op = new thirdparty.jhlabs.image.BlurFilter()
-// }
+object BlurFilter extends ConvolveFilter(
+  ConvolveFilter.CLAMP_EDGES,
+  Array(
+    1 / 14f, 2 / 14f, 1 / 14f,
+    2 / 14f, 2 / 14f, 2 / 14f,
+    1 / 14f, 2 / 14f, 1 / 14f
+  ),
+  3,
+  3,
+  false
+)
 
