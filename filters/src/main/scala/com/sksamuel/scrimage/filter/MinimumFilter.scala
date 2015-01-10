@@ -15,9 +15,19 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.filter.util.StaticImageFilter
+import com.sksamuel.scrimage.{ Image, Raster }
+import com.sksamuel.scrimage.filter.util._
 
-/** @author Stephen Samuel */
-object MinimumFilter extends StaticImageFilter {
-  val op = new thirdparty.jhlabs.image.MinimumFilter()
+object MinimumFilter extends IndependentPixelByPixel with CopyingFilter {
+
+  val treat_alpha = false
+
+  def apply(x: Int, y: Int, c: Int, src: Raster): Int = {
+    var min = 255
+    for (
+      xi <- math.max(0, x - 1) to math.min(src.width - 1, x + 1);
+      yi <- math.max(0, y - 1) to math.min(src.height - 1, y + 1)
+    ) min = math.min(min, src.readChannel(xi, yi, c))
+    min
+  }
 }
