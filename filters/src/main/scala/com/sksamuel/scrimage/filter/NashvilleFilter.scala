@@ -15,7 +15,7 @@ object NashvilleFilter extends PipelineFilter(
 object BackgroundBlendFilter extends Filter {
   def apply(image: Image) = {
     val background = image.filled(Color(51, 0, 0))
-    image.blendTo(background, Blender.add)
+    Blender.add.in_place(image, background, 1f)
   }
 }
 
