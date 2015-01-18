@@ -38,6 +38,11 @@ class ImageTest extends FunSuite with BeforeAndAfter with Matchers {
     assert(50 === scaled.height)
   }
 
+  test("when scaling to the same size then result image equals the original image") {
+    val scaled = image.scaleTo(image.width, image.height)
+    assert(image === scaled)
+  }
+
   test("when scaling by scale factor then the output image has the scaled dimensions") {
     val scaled = image.scale(0.5)
     assert(972 === scaled.width)

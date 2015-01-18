@@ -2,9 +2,8 @@ package com.sksamuel.scrimage.scaling
 
 import com.sksamuel.scrimage.{ Image, Raster }
 
-import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration._
-import scala.collection.immutable.IndexedSeq
+import scala.concurrent.{ Await, Future }
 
 object ResampleOpScala {
 
@@ -67,11 +66,8 @@ object ResampleOpScala {
   private[this] def createSubSampling(filter: ResampFilter, srcSize: Int, dstSize: Int): SubSamplingData = {
     val scale = dstSize.toFloat / srcSize.toFloat
     val arrN = Array.ofDim[Int](dstSize)
-    var numContributors: Int = 0
-    var arrWeight: Array[Float] = null
-    var arrPixel: Array[Int] = null
+    val centerOffset = 0.5f / scale - 0.5f
     val fwidth = filter.samplingRadius
-    val centerOffset = 0.5f / scale
 
     var subindex = 0
     var center = centerOffset
@@ -83,12 +79,16 @@ object ResampleOpScala {
     var k = 0
     var n = 0
     var max = 0
+
     if (scale < 1.0f) {
+      // shrinking the image
       val width = fwidth / scale
-      numContributors = (width * 2.0f + 2).toInt
-      arrWeight = Array.ofDim[Float](dstSize * numContributors)
-      arrPixel = Array.ofDim[Int](dstSize * numContributors)
       val fNormFac = (1f / (Math.ceil(width) / fwidth)).toFloat
+      val numContributors = (width * 2.0f + 2).toInt
+
+      val arrWeight = Array.ofDim[Float](dstSize * numContributors)
+      val arrPixel = Array.ofDim[Int](dstSize * numContributors)
+
       var i = 0
       while (i < dstSize) {
         subindex = i * numContributors
@@ -96,40 +96,32 @@ object ResampleOpScala {
         left = Math.floor(center - width).toInt
         right = Math.ceil(center + width).toInt
         j = left
+        tot = 0f
         while (j <= right) {
           weight = filter((center - j) * fNormFac)
-          if (weight != 0.0f) {
-            n = if (j < 0) -j
-            else if (j >= srcSize) srcSize - j + srcSize - 1
-            else j
+          if (weight != 0f && j >= 0 && j < srcSize) {
             k = arrN(i)
             arrN(i) += 1
-            arrPixel(subindex + k) = n
-            arrWeight(subindex + k) = if (n < 0 || n >= srcSize) 0.0f
-            else weight
+            arrPixel(subindex + k) = j
+            arrWeight(subindex + k) = weight
+            tot += weight
           }
           j += 1
         }
         max = arrN(i)
-        tot = 0f
         k = 0
         while (k < max) {
-          tot += arrWeight(subindex + k)
+          arrWeight(subindex + k) /= tot
           k += 1
-        }
-        if (tot != 0f) {
-          k = 0
-          while (k < max) {
-            arrWeight(subindex + k) /= tot
-            k += 1
-          }
         }
         i += 1
       }
+      SubSamplingData(arrN, arrPixel, arrWeight, numContributors)
     } else {
-      numContributors = (fwidth * 2.0f + 1).toInt
-      arrWeight = Array.ofDim[Float](dstSize * numContributors)
-      arrPixel = Array.ofDim[Int](dstSize * numContributors)
+      // enlarging the image
+      val numContributors = fwidth * 2 + 1
+      val arrWeight = Array.ofDim[Float](dstSize * numContributors)
+      val arrPixel = Array.ofDim[Int](dstSize * numContributors)
       var i = 0
       while (i < dstSize) {
         subindex = i * numContributors
@@ -137,40 +129,29 @@ object ResampleOpScala {
         left = Math.floor(center - fwidth).toInt
         right = Math.ceil(center + fwidth).toInt
         j = left
+        tot = 0f
         while (j <= right) {
           weight = filter(center - j)
-          if (weight != 0.0f) {
-            val n: Int = if (j < 0) -j
-            else if (j >= srcSize) srcSize - j + srcSize - 1
-            else j
+          if (weight != 0.0f && j >= 0 && j < srcSize) {
             k = arrN(i)
             arrN(i) += 1
-            if (n < 0 || n >= srcSize) weight = 0.0f
-            arrPixel(subindex + k) = n
+            arrPixel(subindex + k) = j
             arrWeight(subindex + k) = weight
+            tot += weight
           }
           j += 1
         }
-        max = arrN(i)
-        tot = 0f
+
+        // assert(tot != 0) // "should never happen except bug in filter"
         k = 0
         while (k < max) {
-          tot += arrWeight(subindex + k)
+          arrWeight(subindex + k) /= tot
           k += 1
-        }
-        assert(tot != 0) // "should never happen except bug in filter"
-        if (tot != 0f) {
-          k = 0
-          while (k < max) {
-            arrWeight(subindex + k) /= tot
-            k += 1
-          }
         }
         i += 1
       }
+      SubSamplingData(arrN, arrPixel, arrWeight, numContributors)
     }
-
-    SubSamplingData(arrN, arrPixel, arrWeight, numContributors)
   }
 
   def scaleTo(filter: ResampFilter)(img: Image)(dstWidth: Int, dstHeight: Int, numberOfThreads: Int = 0): Image = {
