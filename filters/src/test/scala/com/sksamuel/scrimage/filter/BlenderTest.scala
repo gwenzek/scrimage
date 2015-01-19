@@ -2,8 +2,8 @@ package com.sksamuel.scrimage.filter
 
 import java.awt.Graphics2D
 
-import com.sksamuel.scrimage.filter.blender.Blender
-import com.sksamuel.scrimage.{ Blender, Image }
+import com.sksamuel.scrimage.filter.Blender
+import com.sksamuel.scrimage.{ Image }
 import org.scalatest.FunSuite
 import thirdparty.romainguy.BlendComposite
 import thirdparty.romainguy.BlendComposite.BlendingMode

@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.{ Image, Filter, PipelineFilter, Color }
-import com.sksamuel.scrimage.filter.blender.Blender
+import com.sksamuel.scrimage.filter.Blender
 
 /** @author Stephen Samuel */
 object NashvilleFilter extends PipelineFilter(
