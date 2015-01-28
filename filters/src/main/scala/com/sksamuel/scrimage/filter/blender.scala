@@ -5,7 +5,7 @@ import com.sksamuel.scrimage.filter.util._
 /** Created by guw on 24/11/14.
   */
 
-object Blender {
+object Blenders {
   def apply(f: (Color, Color) => Color) = new LocalBlender {
     def blend(c1: Color, c2: Color): Color = f(c1, c2)
   }
@@ -40,7 +40,7 @@ object Blender {
         math.min(1f, c1.alpha + c2.alpha))
   }
 
-  def byChannel(f: (Int, Int) => Int) = Blender(f, f, f)
+  def byChannel(f: (Int, Int) => Int) = apply(f, f, f)
 
   // mathematical composition
   def add = byChannel((c1, c2) => math.min(255, c1 + c2))
@@ -56,13 +56,13 @@ object Blender {
   def subtract = byChannel((c1, c2) => math.max(0, c1 + c2 - 256))
 
   // TODO check effects of this ones
-  def red = Blender.rgb((c1, c2) =>
+  def red = rgb((c1, c2) =>
     Color(c1.red, c2.green, c2.blue, math.min(255, c1.alpha + c2.alpha))
   )
-  def green = Blender.rgb((c1, c2) =>
+  def green = rgb((c1, c2) =>
     Color(c2.red, c1.green, c2.blue, math.min(255, c1.alpha + c2.alpha))
   )
-  def blue = Blender.rgb((c1, c2) =>
+  def blue = rgb((c1, c2) =>
     Color(c2.red, c2.green, c1.blue, math.min(255, c1.alpha + c2.alpha))
   )
 

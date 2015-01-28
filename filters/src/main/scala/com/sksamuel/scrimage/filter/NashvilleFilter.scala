@@ -1,7 +1,7 @@
 package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.{ Image, Filter, PipelineFilter, Color }
-import com.sksamuel.scrimage.filter.Blender
+import com.sksamuel.scrimage.filter.Blenders
 
 /** @author Stephen Samuel */
 object NashvilleFilter extends PipelineFilter(
@@ -15,7 +15,7 @@ object NashvilleFilter extends PipelineFilter(
 object BackgroundBlendFilter extends Filter {
   def apply(image: Image) = {
     val background = image.filled(Color(51, 0, 0))
-    Blender.add.in_place(image, background, 1f)
+    Blenders.add.in_place(image, background, 1f)
   }
 }
 
