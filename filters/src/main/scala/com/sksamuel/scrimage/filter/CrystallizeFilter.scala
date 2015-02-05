@@ -15,17 +15,45 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.filter.util.StaticImageFilter
+import com.sksamuel.scrimage.{ Color, Raster }
+import com.sksamuel.scrimage.filter.util._
+import com.sksamuel.scrimage.filter.CellularFilter._
 
-/** @author Stephen Samuel */
-class CrystallizeFilter(scale: Double, edgeThickness: Double, edgeColor: Int, randomness: Double) extends StaticImageFilter {
-  val op = new thirdparty.jhlabs.image.CrystallizeFilter
-  op.setEdgeColor(edgeColor)
-  op.setEdgeThickness(edgeThickness.toFloat)
-  op.setScale(scale.toFloat)
-  op.setRandomness(randomness.toFloat)
-}
 object CrystallizeFilter {
-  def apply(scale: Double = 16, edgeThickness: Double = 0.4, edgeColor: Int = 0xff000000, randomness: Double = 0.2): CrystallizeFilter =
-    new CrystallizeFilter(scale, edgeThickness, edgeColor, randomness)
+  def apply(
+    scale: Double = 16,
+    edgeThickness: Double = 0.4,
+    edgeColor: Color = Color.Black,
+    fadeEdges: Boolean = false,
+    randomness: Double = 0.2): CrystallizeFilter =
+    new CrystallizeFilter(scale.toFloat, edgeThickness.toFloat, edgeColor, fadeEdges, randomness.toFloat)
+}
+
+class CrystallizeFilter(
+  scale: Float = 16f,
+  edgeThickness: Float = 0.4f,
+  edgeColor: Color = Color.Black,
+  fadeEdges: Boolean = false,
+  randomness: Float = 0f)
+    extends CellularFilter(scale = scale, randomness = randomness) {
+
+  override def apply(x: Int, y: Int, src: Raster): Color = {
+    val nx = (m00 * x + m01 * y) / scale + 1000
+    val ny = (m10 * x + m11 * y) / (scale * stretch) + 1000
+
+    val results = Array.fill(3) { new Point }
+    findPoints(nx, ny, results)
+    val f1 = results(0).distance
+    val f2 = results(1).distance
+
+    val v = readPointColor(results(0), src)
+    val f = smoothStep(0, edgeThickness, (f2 - f1) / edgeThickness)
+    if (fadeEdges) {
+      val v2 = mixColors(0.5f, readPointColor(results(1), src), v)
+      mixColors(f, v2, v)
+    } else
+      mixColors(f, edgeColor, v)
+  }
+
+  override def toString(): String = "Pixellate/Crystallize..."
 }

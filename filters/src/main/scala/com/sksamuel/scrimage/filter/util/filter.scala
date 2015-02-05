@@ -33,6 +33,36 @@ package object util {
     else r
   }
 
+  def smoothStep(a: Float, b: Float, x: Float) = {
+    if (x < a) 0
+    else if (x >= b) 1
+    else {
+      val y = (x - a) / (b - a)
+      y * y * (3 - 2 * y)
+    }
+  }
+
+  /** Linear interpolation.
+    * @param t the interpolation parameter
+    * @param a the lower interpolation range
+    * @param b the upper interpolation range
+    * @return the interpolated value
+    */
+  def lerp(t: Float, a: Int, b: Int) = (a + t * (b - a)).toInt
+
+  /** Linear interpolation of ARGB values.
+    * @param t the interpolation parameter
+    * @param rgb1 the lower interpolation range
+    * @param rgb2 the upper interpolation range
+    * @return the interpolated value
+    */
+  def mixColors(t: Float, rgb1: RGBColor, rgb2: RGBColor) = Color(
+    lerp(t, rgb1.red, rgb2.red),
+    lerp(t, rgb1.green, rgb2.green),
+    lerp(t, rgb1.blue, rgb2.blue),
+    lerp(t, rgb1.alpha, rgb2.alpha)
+  )
+
   trait CopyingFilter {
     def defaultDst(src: Image) = src.copy
   }

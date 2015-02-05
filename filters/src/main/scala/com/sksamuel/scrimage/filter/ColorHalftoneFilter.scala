@@ -34,15 +34,6 @@ object ColorHalftoneFilter {
 
   def apply(radius: Double = 1.2): ColorHalftoneFilter =
     new ColorHalftoneFilter(radius)
-
-  def smoothStep(a: Float, b: Float, x: Float): Float = {
-    if (x < a) 0
-    else if (x >= b) 1
-    else {
-      val y = (x - a) / (b - a)
-      y * y * (3 - 2 * y)
-    }
-  }
 }
 
 class ColorHalftoneFilter(radius: Double)
