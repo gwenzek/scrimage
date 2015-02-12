@@ -56,8 +56,8 @@ class ColorHalftoneFilter(radius: Double)
       val tty = ty + my(i) * gridSize
       val ntx = ttx * cos(c) - tty * sin(c)
       val nty = ttx * sin(c) + tty * cos(c)
-      val nx = clamp(ntx.toInt, 0, width - 1)
-      val ny = clamp(nty.toInt, 0, height - 1)
+      val nx = clamp(ntx.toInt, width)
+      val ny = clamp(nty.toInt, height)
       var l = src.readChannel(nx, ny, c) / 255.0f
       l = 1 - l * l
       l *= (halfGridSize * 1.414).toFloat

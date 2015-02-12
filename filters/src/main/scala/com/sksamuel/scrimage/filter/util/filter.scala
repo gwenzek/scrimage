@@ -6,6 +6,8 @@ import com.sksamuel.scrimage._
   */
 package object util {
 
+  val TwoPi = math.Pi.toFloat * 2f
+
   def clamp(x: Int) =
     if (x > 255) 255
     else if (x < 0) 0
@@ -14,6 +16,11 @@ package object util {
   def clamp(x: Int, min: Int, max: Int) =
     if (x > max) max
     else if (x < min) min
+    else x
+
+  def clamp(x: Int, max: Int) =
+    if (x >= max) max - 1
+    else if (x < 0) 0
     else x
 
   def clamp(x: Float) =
@@ -28,6 +35,13 @@ package object util {
 
   def mod(a: Float, b: Float) = {
     val n = (a / b).toInt
+    val r = a - n * b
+    if (r < 0) r + b
+    else r
+  }
+
+  def mod(a: Int, b: Int) = {
+    val n = a / b
     val r = a - n * b
     if (r < 0) r + b
     else r
@@ -63,6 +77,30 @@ package object util {
     lerp(t, rgb1.alpha, rgb2.alpha)
   )
 
+  /** Bilinear interpolation of ARGB values.
+    * @param x the X interpolation parameter 0..1
+    * @param y the y interpolation parameter 0..1
+    * @param rgb colors in the order NW, NE, SW, SE
+    * @return the interpolated value
+    */
+  def bilinearInterpolate(x: Float, y: Float, nw: RGBColor, ne: RGBColor, sw: RGBColor, se: RGBColor) = {
+    val cx = 1.0f - x
+    val cy = 1.0f - y
+
+    def i(nw: Int, ne: Int, sw: Int, se: Int) = {
+      val north = cx * nw + x * ne
+      val south = cx * sw + x * se
+      (cy * north + y * south).toInt
+    }
+
+    Color(
+      i(nw.red, ne.red, sw.red, se.red),
+      i(nw.green, ne.green, sw.green, se.green),
+      i(nw.blue, ne.blue, sw.blue, se.blue),
+      i(nw.alpha, ne.alpha, sw.alpha, se.alpha)
+    )
+  }
+
   trait CopyingFilter {
     def defaultDst(src: Image) = src.copy
   }
@@ -78,7 +116,7 @@ package object util {
     def filter(srcImage: Image, dstImage: Image) = {
       val src = srcImage.raster
       val dst = dstImage.raster
-      (0 until srcImage.height).par.foreach(treatLine(_, src, dst))
+      (0 until dst.height).par.foreach(treatLine(_, src, dst))
       dstImage
     }
   }
@@ -89,7 +127,7 @@ package object util {
 
     def treatLine(y: Int, src: Raster, dst: Raster): Unit = {
       var x = 0
-      while (x < src.width) {
+      while (x < dst.width) {
         dst.write(x, y, apply(x, y, src))
         x += 1
       }

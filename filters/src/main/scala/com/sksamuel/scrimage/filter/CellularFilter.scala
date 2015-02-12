@@ -276,8 +276,8 @@ case class CellularFilter(
   }
 
   def readPointColor(p: Point, src: Raster) = {
-    val srcx = clamp(((p.x - 1000) * scale).toInt, 0, src.width - 1)
-    val srcy = clamp(((p.y - 1000) * scale).toInt, 0, src.height - 1)
+    val srcx = clamp(((p.x - 1000) * scale).toInt, src.width)
+    val srcy = clamp(((p.y - 1000) * scale).toInt, src.height)
     src.read(srcx, srcy)
   }
 
