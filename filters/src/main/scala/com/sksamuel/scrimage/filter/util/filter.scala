@@ -56,6 +56,15 @@ package object util {
     }
   }
 
+  /** The triangle function. Returns a repeating triangle shape in the range 0..1 with wavelength 1.0
+    * @param x the input parameter
+    * @return the output value
+    */
+  def triangle(x: Float) = {
+    val r = mod(x, 1.0f)
+    2.0f * (if (r < 0.5) r else 1 - r)
+  }
+
   /** Linear interpolation.
     * @param t the interpolation parameter
     * @param a the lower interpolation range
@@ -116,7 +125,7 @@ package object util {
     def filter(srcImage: Image, dstImage: Image) = {
       val src = srcImage.raster
       val dst = dstImage.raster
-      (0 until dst.height).par.foreach(treatLine(_, src, dst))
+      (0 until dst.height).foreach(treatLine(_, src, dst))
       dstImage
     }
   }

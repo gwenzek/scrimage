@@ -15,32 +15,28 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.filter.util.StaticImageFilter
-import com.sksamuel.scrimage.filter.RippleType.{ Noise, Triangle, Sawtooth, Sine }
+import com.sksamuel.scrimage.filter.RippleType._
+import com.sksamuel.scrimage.filter.util._
 
-/** @author Stephen Samuel */
-sealed trait RippleType
 object RippleType {
-  case object Sine extends RippleType
-  case object Sawtooth extends RippleType
-  case object Triangle extends RippleType
-  case object Noise extends RippleType
+  def Sine(x: Float) = math.sin(x).toFloat
+  def Sawtooth(x: Float) = mod(x, 1)
+  def Triangle(x: Float) = com.sksamuel.scrimage.filter.util.triangle(x)
+  def Noise(x: Float) = thirdparty.jhlabs.math.Noise.noise1(x)
 }
 
-class RippleFilter(rippleType: RippleType, xAmplitude: Float, yAmplitude: Float, xWavelength: Float, yWavelength: Float)
-    extends StaticImageFilter {
-  val op = new thirdparty.jhlabs.image.RippleFilter()
-  op.setXAmplitude(xAmplitude)
-  op.setYAmplitude(yAmplitude)
-  op.setXWavelength(xWavelength)
-  op.setYWavelength(yWavelength)
-  rippleType match {
-    case Sine => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.SINE)
-    case Sawtooth => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.SAWTOOTH)
-    case Triangle => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.TRIANGLE)
-    case Noise => op.setWaveType(thirdparty.jhlabs.image.RippleFilter.NOISE)
-  }
-}
 object RippleFilter {
-  def apply(rippleType: RippleType) = new RippleFilter(rippleType, 2f, 2f, 6f, 6f)
+  def apply(rippleType: (Float => Float)) = new RippleFilter(rippleType, 2f, 2f, 6f, 6f)
+}
+
+case class RippleFilter(ripple: (Float => Float),
+                        xAmplitude: Float, yAmplitude: Float,
+                        xWavelength: Float, yWavelength: Float) extends TransformFilter {
+
+  def transformInverse(x: Int, y: Int) = {
+    val fx: Float = ripple(y.toFloat / xWavelength)
+    val fy: Float = ripple(x.toFloat / yWavelength)
+
+    (x + xAmplitude * fx, y + yAmplitude * fy)
+  }
 }
