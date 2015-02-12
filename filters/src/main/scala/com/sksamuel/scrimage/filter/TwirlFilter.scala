@@ -15,18 +15,44 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.filter.util.StaticImageFilter
+import com.sksamuel.scrimage.{ Image, Filter }
+import com.sksamuel.scrimage.filter.TransformFilter._
+import TwirlFilter._
 
-/** @author Stephen Samuel */
-class TwirlFilter(angle: Double, radius: Int, centerX: Float, centerY: Float) extends StaticImageFilter {
-  val op = new thirdparty.jhlabs.image.TwirlFilter()
-  op.setCentreX(centerX)
-  op.setCentreY(centerY)
-  op.setRadius(radius.toFloat)
-  op.setAngle(angle.toFloat)
-}
 object TwirlFilter {
   def apply(radius: Int): TwirlFilter = apply(Math.PI / 1.5, radius)
   def apply(angle: Double, radius: Int, centerX: Float = 0.5f, centerY: Float = 0.5f): TwirlFilter =
     new TwirlFilter(angle, radius, centerX, centerY)
+
+  private class SpeTwirlFilter(
+      angle: Double, radius: Int,
+      centerX: Float, centerY: Float,
+      width: Int, height: Int) extends TransformFilter {
+
+    private[this] val iCenterX = width * centerX
+    private[this] val iCenterY = height * centerY
+    private[this] val radius2 = radius * radius
+
+    override val edgeAction = Clamp
+
+    def transformInverse(x: Int, y: Int) = {
+      val dx = x - iCenterX
+      val dy = y - iCenterY
+      val d2 = dx * dx + dy * dy
+
+      if (d2 > radius2) (x, y)
+      else {
+        val d = math.sqrt(d2).toFloat
+        val a = math.atan2(dy, dx) + angle * (radius - d) / radius
+        (iCenterX + d * math.cos(a).toFloat, iCenterY + d * math.sin(a).toFloat)
+      }
+    }
+  }
+}
+
+class TwirlFilter(angle: Double, radius: Int, centerX: Float, centerY: Float) extends Filter {
+
+  def apply(src: Image) = {
+    new SpeTwirlFilter(angle, radius, centerX, centerY, src.width, src.height)(src)
+  }
 }
