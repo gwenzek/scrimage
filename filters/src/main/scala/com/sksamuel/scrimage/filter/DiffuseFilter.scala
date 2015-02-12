@@ -15,14 +15,28 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.filter.util.StaticImageFilter
+import com.sksamuel.scrimage.filter.TransformFilter._
+import com.sksamuel.scrimage.filter.util.TwoPi
 
-/** @author Stephen Samuel */
-class DiffuseFilter(scale: Float) extends StaticImageFilter {
-  val op = new thirdparty.jhlabs.image.DiffuseFilter()
-  op.setScale(scale)
-}
 object DiffuseFilter {
   def apply(): DiffuseFilter = apply(4)
-  def apply(scale: Float): DiffuseFilter = new DiffuseFilter(scale)
+}
+
+case class DiffuseFilter(scale: Float) extends TransformFilter {
+
+  val sinTable = Array.ofDim[Float](256)
+  val cosTable = Array.ofDim[Float](256)
+  for (i <- 0 until 256) {
+    val angle = TwoPi * i / 256f
+    sinTable(i) = (scale * math.sin(angle)).toFloat
+    cosTable(i) = (scale * math.cos(angle)).toFloat
+  }
+
+  override val edgeAction = Clamp
+
+  def transformInverse(x: Int, y: Int) = {
+    val angle = (math.random * 255).toInt
+    val distance = math.random.toFloat
+    (x + distance * sinTable(angle), y + distance * cosTable(angle))
+  }
 }

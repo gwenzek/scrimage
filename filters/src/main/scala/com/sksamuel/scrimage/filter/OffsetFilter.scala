@@ -15,15 +15,17 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.filter.util.StaticImageFilter
+import com.sksamuel.scrimage.filter.TransformFilter._
 
-/** @author Stephen Samuel */
-class OffsetFilter(x: Int, y: Int) extends StaticImageFilter {
-  val op = new thirdparty.jhlabs.image.OffsetFilter()
-  op.setWrap(true)
-  op.setXOffset(x)
-  op.setYOffset(y)
-}
 object OffsetFilter {
   def apply(x: Int, y: Int): OffsetFilter = new OffsetFilter(x, y)
+}
+
+case class OffsetFilter(xOffset: Int, yOffset: Int, wrap: Boolean = true)
+    extends TransformFilter {
+
+  override def edgeAction = if (wrap) Wrap else Zero
+  override val interpolation = NearestNeighbor
+
+  def transformInverse(x: Int, y: Int) = (x - xOffset, y - yOffset)
 }
