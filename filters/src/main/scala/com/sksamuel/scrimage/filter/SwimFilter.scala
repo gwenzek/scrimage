@@ -15,15 +15,40 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.filter.util.StaticImageFilter
+import com.sksamuel.scrimage.filter.util._
+import thirdparty.jhlabs.math.Noise
 
-/** @author Stephen Samuel */
-class SwimFilter(amount: Double, stretch: Double) extends StaticImageFilter {
-  val op = new thirdparty.jhlabs.image.SwimFilter()
-  op.setAmount(amount.toFloat)
-  op.setStretch(stretch.toFloat)
-}
 object SwimFilter {
   def apply(): SwimFilter = apply(6f, 2f)
-  def apply(amount: Double, stretch: Double): SwimFilter = new SwimFilter(amount, stretch)
+
+  def apply(amount: Double, stretch: Double): SwimFilter =
+    new SwimFilter(amount.toFloat, stretch.toFloat)
+}
+
+class SwimFilter(
+    amount: Float = 1,
+    stretch: Float = 1,
+    scale: Float = 32,
+    angle: Float = 0,
+    turbulence: Float = 1,
+    time: Float = 0) extends TransformFilter {
+
+  private[this] val cos = math.cos(angle).toFloat
+  private[this] val sin = math.sin(angle).toFloat
+
+  // override val edgeAction = Clamp
+
+  def transformInverse(x: Int, y: Int) = {
+    val nx = (cos * x + sin * y) / scale
+    val ny = (cos * y - sin * x) / (scale * stretch)
+
+    if (turbulence == 1f) (
+      x + amount * Noise.noise3(nx + 0.5f, ny, time),
+      y + amount * Noise.noise3(nx, ny + 0.5f, time)
+    )
+    else (
+      x + amount * Noise.turbulence3(nx + 0.5f, ny, turbulence, time),
+      y + amount * Noise.turbulence3(nx, ny + 0.5f, turbulence, time)
+    )
+  }
 }

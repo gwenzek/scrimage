@@ -301,4 +301,22 @@ package object util {
 
     def apply(src: Image) = op.apply(src)
   }
+
+  trait ContextuallizedFilter extends AbstractImageFilter {
+    def prepare(src: Image): AbstractImageFilter
+
+    override def apply(src: Image): Image = {
+      val f = prepare(src)
+      f.filter(src, f.defaultDst(src))
+    }
+  }
+
+  trait ResizeFilter extends AbstractImageFilter {
+    def resize(width: Int, height: Int): (Int, Int)
+
+    def defaultDst(src: Image) = {
+      val (w, h) = resize(src.width, src.height)
+      new Image(src.raster.empty(w, h))
+    }
+  }
 }
