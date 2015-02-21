@@ -15,7 +15,7 @@ class ShearFilter(
     xAngle: Double,
     yAngle: Double,
     width: Int = 0,
-    height: Int = 0) extends TransformFilter with ContextuallizedFilter with ResizeFilter {
+    height: Int = 0) extends TransformFilter with ContextualizedFilter with ResizeFilter {
 
   private[this] val xOff = -height * math.tan(xAngle).toFloat
   private[this] val yOff = -width * math.tan(yAngle).toFloat

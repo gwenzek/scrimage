@@ -37,7 +37,7 @@ class PinchFilter(
     centerX: Float = 0.5f,
     centerY: Float = 0.5f,
     width: Int = 0,
-    height: Int = 0) extends ContextuallizedFilter with TransformFilter {
+    height: Int = 0) extends ContextualizedFilter with TransformFilter {
 
   private[this] val iCenterX = width * centerX
   private[this] val iCenterY = height * centerY

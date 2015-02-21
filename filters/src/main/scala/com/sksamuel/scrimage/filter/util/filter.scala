@@ -86,6 +86,13 @@ package object util {
     lerp(t, rgb1.alpha, rgb2.alpha)
   )
 
+  def scale(s: Float, rgb: RGBColor) = Color(
+    (s * rgb.red).toInt,
+    (s * rgb.green).toInt,
+    (s * rgb.blue).toInt,
+    rgb.alpha
+  )
+
   /** Bilinear interpolation of ARGB values.
     * @param x the X interpolation parameter 0..1
     * @param y the y interpolation parameter 0..1
@@ -302,7 +309,7 @@ package object util {
     def apply(src: Image) = op.apply(src)
   }
 
-  trait ContextuallizedFilter extends AbstractImageFilter {
+  trait ContextualizedFilter extends AbstractImageFilter {
     def prepare(src: Image): AbstractImageFilter
 
     override def apply(src: Image): Image = {

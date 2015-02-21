@@ -17,7 +17,7 @@ package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage.{ Image, Filter }
 import com.sksamuel.scrimage.filter.TransformFilter._
-import com.sksamuel.scrimage.filter.util.ContextuallizedFilter
+import com.sksamuel.scrimage.filter.util.ContextualizedFilter
 import TwirlFilter._
 
 object TwirlFilter {
@@ -32,7 +32,7 @@ class TwirlFilter(
     centerX: Float,
     centerY: Float,
     width: Int = 0,
-    height: Int = 0) extends TransformFilter with ContextuallizedFilter {
+    height: Int = 0) extends TransformFilter with ContextualizedFilter {
 
   private[this] val iCenterX = width * centerX
   private[this] val iCenterY = height * centerY
