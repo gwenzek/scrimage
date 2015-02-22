@@ -25,7 +25,6 @@ object BlurFilter extends ConvolveFilter(
     1 / 14f, 2 / 14f, 1 / 14f
   ),
   3,
-  3,
-  false
+  3
 )
 

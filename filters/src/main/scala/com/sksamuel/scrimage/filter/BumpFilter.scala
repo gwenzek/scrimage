@@ -25,6 +25,5 @@ object BumpFilter extends ConvolveFilter(
     0.0f, 1.0f, 1.0f
   ),
   3,
-  3,
-  false
+  3
 )

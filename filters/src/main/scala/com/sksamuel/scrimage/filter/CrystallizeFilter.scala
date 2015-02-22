@@ -38,8 +38,8 @@ class CrystallizeFilter(
     extends CellularFilter(scale = scale, randomness = randomness) {
 
   override def apply(x: Int, y: Int, src: Raster): Color = {
-    val nx = (m00 * x + m01 * y) / scale + 1000
-    val ny = (m10 * x + m11 * y) / (scale * stretch) + 1000
+    val nx = (cos * x + sin * y) / scale + 1000
+    val ny = (-sin * x + cos * y) / (scale * stretch) + 1000
 
     val results = Array.fill(3) { new Point }
     findPoints(nx, ny, results)

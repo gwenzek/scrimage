@@ -31,9 +31,7 @@ import com.sksamuel.scrimage.{ Image, Raster }
 import com.sksamuel.scrimage.filter.util._
 
 class MotionBlurFilter(angle: Double, distance: Double, rotation: Double, zoom: Double)
-    extends IndependentPixelByPixel with CopyingFilter {
-
-  val treat_alpha = true
+    extends IndependentPixelByPixel {
 
   private[this] val translateX = (distance * math.cos(angle)).toFloat
   private[this] val translateY = (distance * -math.sin(angle)).toFloat

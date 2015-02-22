@@ -18,9 +18,7 @@ package com.sksamuel.scrimage.filter
 import com.sksamuel.scrimage.{ Image, Raster }
 import com.sksamuel.scrimage.filter.util._
 
-object MinimumFilter extends IndependentPixelByPixel with CopyingFilter {
-
-  val treat_alpha = false
+object MinimumFilter extends IndependentPixelByPixel {
 
   def apply(x: Int, y: Int, c: Int, src: Raster): Int = {
     var min = 255

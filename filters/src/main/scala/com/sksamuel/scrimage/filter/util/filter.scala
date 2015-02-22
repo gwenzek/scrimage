@@ -8,6 +8,10 @@ package object util {
 
   val TwoPi = math.Pi.toFloat * 2f
 
+  def colorClamp(r: Int, g: Int, b: Int, alpha: Int) = Color(
+    clamp(r), clamp(g), clamp(b), clamp(alpha)
+  )
+
   def clamp(x: Int) =
     if (x > 255) 255
     else if (x < 0) 0
@@ -138,7 +142,7 @@ package object util {
   }
 
   /* The pixels can be computed independently */
-  trait PixelByPixelFilter extends LineByLine {
+  trait PixelByPixelFilter extends LineByLine with ExhaustiveFilter {
     def apply(x: Int, y: Int, src: Raster): Color
 
     def treatLine(y: Int, src: Raster, dst: Raster): Unit = {
@@ -151,13 +155,13 @@ package object util {
   }
 
   /* The new pixel depends only on the previous one */
-  trait PixelMapperFilter extends PixelByPixelFilter with InPlaceFilter {
+  trait PixelMapperFilter extends PixelByPixelFilter with InPlaceFilter with ExhaustiveFilter {
     def apply(x: Int, y: Int, src: Raster): Color = apply(src.read(x, y))
 
-    def apply(color: Color): Color
+    def apply(color: RGBColor): Color
   }
 
-  trait ChannelMapper extends IndependentPixelByPixel with InPlaceFilter {
+  trait ChannelMapper extends IndependentPixelByPixel with InPlaceFilter with ExhaustiveFilter {
     def apply(x: Int, y: Int, c: Int, src: Raster): Int =
       apply(src.readChannel(x, y, c))
 
@@ -165,9 +169,7 @@ package object util {
   }
 
   class SampledChannelMapper(val f: Float => Float)
-      extends ChannelMapper with CopyingFilter {
-
-    val treat_alpha = false
+      extends ChannelMapper {
 
     private[this] val sampling = Array.ofDim[Int](256)
 
@@ -176,28 +178,23 @@ package object util {
     def apply(x: Int) = sampling(x)
   }
 
-  trait Independent {
-    def treat_alpha: Boolean
-
-    def n_channel_to_treat(src: Raster): Int =
-      if (treat_alpha) src.n_channel
-      else src.n_real_channel
-  }
-
-  trait IndependentPixelByPixel extends LineByLine with Independent {
+  trait IndependentPixelByPixel extends LineByLine with ExhaustiveFilter {
 
     def apply(x: Int, y: Int, c: Int, src: Raster): Int
+
+    def get_alpha(x: Int, y: Int, src: Raster) = src.readAlpha(x, y)
 
     def treatLine(y: Int, src: Raster, dst: Raster): Unit = {
       var x = 0
       var c = 0
-      val n = n_channel_to_treat(src)
-      while (x < src.width) {
+      val n = src.n_real_channel
+      while (x < dst.width) {
         c = 0
         while (c < n) {
           dst.writeChannel(x, y, c, apply(x, y, c, src))
           c += 1
         }
+        dst.writeAlpha(x, y, get_alpha(x, y, src))
         x += 1
       }
     }

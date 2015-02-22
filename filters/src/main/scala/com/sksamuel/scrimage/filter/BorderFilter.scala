@@ -19,7 +19,7 @@ import com.sksamuel.scrimage.{ Image, Raster, Color }
 import com.sksamuel.scrimage.filter.util._
 
 class BorderFilter(width: Int, height: Int, color: Color = Color.Black)
-    extends CopyingFilter with PixelByPixelFilter {
+    extends PixelByPixelFilter {
 
   def apply(x: Int, y: Int, src: Raster) =
     if (x < width || x >= src.width - width || y < height || y >= src.height - height)

@@ -15,13 +15,25 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.filter.util.StaticImageFilter
+import com.sksamuel.scrimage.filter.util._
+import com.sksamuel.scrimage.{ Color, RGBColor }
 
-/** @author Stephen Samuel */
-class DissolveFilter(density: Double) extends StaticImageFilter {
-  val op = new thirdparty.jhlabs.image.DissolveFilter()
-  op.setDensity(density.toFloat)
+class DissolveFilter(density: Float = 1, softness: Float = 0) extends PixelMapperFilter {
+
+  private[this] val d = (1 - density) * (1 + softness)
+  private[this] val minDensity = d - softness
+  private[this] val maxDensity = d
+  private[this] val randomNumbers = new java.util.Random(0)
+
+  def apply(rgb: RGBColor): Color = {
+    val v = randomNumbers.nextFloat()
+    val f = smoothStep(minDensity, maxDensity, v)
+    rgb.copy(alpha = (rgb.alpha * f).toInt)
+  }
 }
+
 object DissolveFilter {
-  def apply(density: Double) = new DissolveFilter(density)
+  def apply(density: Double) = new DissolveFilter(density.toFloat)
+  def apply(density: Double, softness: Double) =
+    new DissolveFilter(density.toFloat, softness.toFloat)
 }

@@ -62,10 +62,8 @@ case class CellularFilter(
     randomness: Float = 0f,
     gridType: Int = HEXAGONAL) extends PixelByPixelFilter with ExhaustiveFilter {
 
-  protected var m00 = Math.cos(angle).toFloat
-  protected var m01 = Math.sin(angle).toFloat
-  protected var m10 = -Math.sin(angle).toFloat
-  protected var m11 = Math.cos(angle).toFloat
+  protected var cos = Math.cos(angle).toFloat
+  protected var sin = Math.sin(angle).toFloat
 
   def setCoefficient(i: Int, v: Float) {
     coefficients(i) = v
@@ -282,8 +280,8 @@ case class CellularFilter(
   }
 
   def apply(x: Int, y: Int, src: Raster): Color = {
-    val nx: Float = (m00 * x + m01 * y) / scale + 1000
-    val ny: Float = (m10 * x + m11 * y) / (scale * stretch) + 1000
+    val nx: Float = (cos * x + sin * y) / scale + 1000
+    val ny: Float = (-sin * x + cos * y) / (scale * stretch) + 1000
 
     val results = Array.fill(3) { new Point }
     var f =

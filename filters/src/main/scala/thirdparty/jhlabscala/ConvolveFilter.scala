@@ -20,17 +20,15 @@ object ConvolveFilter {
   def apply(matrix: Array[Float]) = new ConvolveFilter(
     CLAMP_EDGES,
     matrix,
-    3, 3,
-    treat_alpha = false
+    3, 3
   )
 }
 
 class ConvolveFilter(val edgeAction: Int,
                      val matrix: Array[Float],
                      val kernelWidth: Int,
-                     val kernelHeight: Int,
-                     val treat_alpha: Boolean = false)
-    extends IndependentPixelByPixel with CopyingFilter {
+                     val kernelHeight: Int)
+    extends IndependentPixelByPixel {
 
   val buffer = Array.ofDim[Int](matrix.length)
   val dx = (kernelWidth / 2)

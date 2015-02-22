@@ -18,11 +18,19 @@ package com.sksamuel.scrimage.filter
 import com.sksamuel.scrimage.filter.util.SampledChannelMapper
 
 /** @author Stephen Samuel */
-class ContrastFilter(brightness: Float, contrast: Float)
+class ContrastFilter(contrast: Float, brightness: Float)
     extends SampledChannelMapper(x => (x * brightness - 0.5f) * contrast + 0.5f) {
 }
 
 object ContrastFilter {
   def apply(contrast: Double): ContrastFilter =
-    new ContrastFilter(1f, contrast.toFloat)
+    new ContrastFilter(contrast.toFloat, 1f)
+
+  def apply(contrast: Float, brightness: Float): ContrastFilter =
+    new ContrastFilter(contrast, brightness)
+}
+
+object BrightnessFilter {
+  def apply(brightness: Double): ContrastFilter =
+    new ContrastFilter(1f, brightness.toFloat)
 }

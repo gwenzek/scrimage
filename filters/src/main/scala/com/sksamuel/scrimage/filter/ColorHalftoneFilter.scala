@@ -37,9 +37,8 @@ object ColorHalftoneFilter {
 }
 
 class ColorHalftoneFilter(radius: Double)
-    extends IndependentPixelByPixel with CopyingFilter {
+    extends IndependentPixelByPixel {
 
-  val treat_alpha = false
   val gridSize: Float = 2 * radius.toFloat * 1.414f
   val halfGridSize: Float = gridSize / 2
 

@@ -24,7 +24,7 @@ object ExampleGenerator extends App {
     ("despeckle", DespeckleFilter),
     ("diffuse", DiffuseFilter(4)),
     ("dither", DitherFilter),
-    ("edge", EdgeFilter),
+    ("edge", EdgeFilter()),
     ("emboss", EmbossFilter),
     ("errordiffusion", ErrorDiffusionHalftoneFilter()),
     ("gamma", GammaFilter(2)),
