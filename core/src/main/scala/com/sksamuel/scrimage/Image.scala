@@ -777,6 +777,9 @@ object Image {
     * @return the new Image with the given width and height
     */
   def empty(width: Int, height: Int): Image = new Image(ARGBRaster(width, height))
+
+  def fromFile(filename: String) =
+    Image(new java.io.File(filename))
 }
 
 sealed trait ScaleMethod

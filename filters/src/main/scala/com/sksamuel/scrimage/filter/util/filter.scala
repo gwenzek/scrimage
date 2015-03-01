@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage.filter
 
 import com.sksamuel.scrimage._
+import com.sksamuel.scrimage.Color._
 
 /** Created by guw on 24/11/14.
   */
@@ -261,6 +262,13 @@ package object util {
         new Image(Raster(src.width, src.height, Raster.GRAY))
     }
 
+    def filterToARGB(src: Image) = {
+      val argb = new Image(Raster(src.width, src.height, Raster.ARGB))
+      CopyAlpha.filter(src, argb)
+
+      filter(src, argb)
+    }
+
     def writeGray(x: Int, y: Int, gray: Int, dst: Raster): Unit = {
       var c = 0
       while (c < dst.n_real_channel) {
@@ -322,5 +330,11 @@ package object util {
       val (w, h) = resize(src.width, src.height)
       new Image(src.raster.empty(w, h))
     }
+  }
+
+  trait YCbCrMapper extends PixelByPixelFilter with InPlaceFilter with ExhaustiveFilter {
+    def apply(x: Int, y: Int, src: Raster): Color = apply(Color.toYCbCr(src.read(x, y)))
+
+    def apply(color: YCbCrColor): Color
   }
 }

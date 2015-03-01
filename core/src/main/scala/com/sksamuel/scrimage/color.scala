@@ -1,6 +1,7 @@
 package com.sksamuel.scrimage
 
 import java.awt.Paint
+import Color._
 
 /** @author Stephen Samuel */
 
@@ -74,6 +75,13 @@ object Color {
       HSLColor(H * 360f, S, L, a)
     }
   }
+
+  def toYCbCr(c: RGBColor) = YCbCrColor(
+    c.red * 0.299 + c.green * 0.587 + c.blue * 0.114,
+    c.red * -0.168736 + c.green * -0.331264 + c.blue * 0.5,
+    c.red * 0.5 + c.green * -0.418688 + c.blue * -0.081312,
+    c.alpha
+  )
 
   val White = RGBColor(255, 255, 255)
   val Black = RGBColor(0, 0, 0)
@@ -189,6 +197,32 @@ case class HSLColor(hue: Float, saturation: Float, lightness: Float, alpha: Floa
     val g = hue2rgb(p, q, h)
     val b = hue2rgb(p, q, h - (1.0f / 3.0f))
 
-    RGBColor((r * 255f + 0.5f).toInt, (g * 255f + 0.5f).toInt, (b * 255f + 0.5f).toInt, (alpha * 255f + 0.5f).toInt)
+    RGBColor(
+      clamp(r * 255f + 0.5f),
+      clamp(g * 255f + 0.5f),
+      clamp(b * 255f + 0.5f),
+      clamp(alpha * 255f + 0.5f)
+    )
+  }
+
+  private[this] def clamp(x: Float) = {
+    if (x < 0) 0
+    else if (x > 255) 255
+    else x.toInt
+  }
+}
+
+case class YCbCrColor(Y: Double, Cb: Double, Cr: Double, alpha: Int = 255) extends Color {
+  def toRGB: RGBColor = Color(
+    clamp(Y + Cr * 1.402),
+    clamp(Y + Cb * -0.344136 - Cr * 0.714136),
+    clamp(Y + Cb * 1.772),
+    alpha
+  )
+
+  private[this] def clamp(x: Double) = {
+    if (x < 0) 0
+    else if (x > 255) 255
+    else x.toInt
   }
 }

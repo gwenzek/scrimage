@@ -11,7 +11,7 @@ class BlenderTest extends FunSuite {
 
   val image = Image(getClass.getResourceAsStream("/bird_small.png"))
   val applicative = Image(getClass.getResourceAsStream("/palm.jpg")).scaleTo(image.width, image.height)
-  val alpha = 0.6f
+  val alpha = 0.3f
 
   def blend(src: Image, applicative: Image, mode: BlendingMode, alpha: Float) = {
     val buff = src.toBufferedImage

@@ -15,17 +15,21 @@
  */
 package com.sksamuel.scrimage.filter
 
-import com.sksamuel.scrimage.{ PixelTools, Image, Filter }
+import com.sksamuel.scrimage.{ PixelTools, Image, Filter, RGBColor }
+import com.sksamuel.scrimage.filter.util._
 
 /** @author Stephen Samuel */
-object GrayscaleFilter extends Filter {
-  def apply(image: Image) = {
-    image.map((x, y, p) => {
-      val red = 0.21 * PixelTools.red(p)
-      val green = 0.71 * PixelTools.green(p)
-      val blue = 0.07 * PixelTools.blue(p)
-      val gray = red + green + blue
-      PixelTools.rgb(gray.toInt, gray.toInt, gray.toInt)
-    })
-  }
+object GrayscaleFilter extends GrayPixelMapper {
+  // def apply(image: Image) = {
+  //   image.map((x, y, p) => {
+  //     val red = 0.21 * PixelTools.red(p)
+  //     val green = 0.71 * PixelTools.green(p)
+  //     val blue = 0.07 * PixelTools.blue(p)
+  //     val gray = red + green + blue
+  //     PixelTools.rgb(gray.toInt, gray.toInt, gray.toInt)
+  //   })
+  // }
+
+  def toGray(c: RGBColor) =
+    (0.21 * c.red + 0.71 * c.green + 0.07 * c.blue).toInt
 }
